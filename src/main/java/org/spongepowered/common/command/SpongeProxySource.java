@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import net.minecraft.command.ICommandSender;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ProxySource;
-import org.spongepowered.api.service.context.ServiceContext;
+import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.service.permission.SubjectCollection;
 import org.spongepowered.api.service.permission.SubjectData;
@@ -124,7 +124,7 @@ public class SpongeProxySource implements ProxySource, IMixinCommandSourceName {
     }
 
     @Override
-    public boolean hasPermission(Set<ServiceContext> contexts, String permission) {
+    public boolean hasPermission(Set<Context> contexts, String permission) {
         return this.subjectDelegate.hasPermission(contexts, permission);
     }
 
@@ -134,7 +134,7 @@ public class SpongeProxySource implements ProxySource, IMixinCommandSourceName {
     }
 
     @Override
-    public Tristate getPermissionValue(Set<ServiceContext> contexts, String permission) {
+    public Tristate getPermissionValue(Set<Context> contexts, String permission) {
         return this.subjectDelegate.getPermissionValue(contexts, permission);
     }
 
@@ -144,7 +144,7 @@ public class SpongeProxySource implements ProxySource, IMixinCommandSourceName {
     }
 
     @Override
-    public boolean isChildOf(Set<ServiceContext> contexts, Subject parent) {
+    public boolean isChildOf(Set<Context> contexts, Subject parent) {
         return this.subjectDelegate.isChildOf(contexts, parent);
     }
 
@@ -154,7 +154,7 @@ public class SpongeProxySource implements ProxySource, IMixinCommandSourceName {
     }
 
     @Override
-    public List<Subject> getParents(Set<ServiceContext> contexts) {
+    public List<Subject> getParents(Set<Context> contexts) {
         return this.subjectDelegate.getParents(contexts);
     }
 
