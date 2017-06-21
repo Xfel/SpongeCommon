@@ -25,6 +25,7 @@
 package org.spongepowered.common.command;
 
 import net.minecraft.command.ICommandSender;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandSource;
@@ -57,7 +58,7 @@ public final class CommandPermissions {
         }
         Optional<? extends CommandMapping> mapping = SpongeImpl.getGame().getCommandManager().get(commandName);
         if (mapping.isPresent()) {
-            CommandCallable callable = mapping.get().getCallable();
+            Command callable = mapping.get().getCallable();
             if (callable instanceof MinecraftCommandWrapper) {
                 return source.hasPermission(((MinecraftCommandWrapper) callable).getCommandPermission());
             }
