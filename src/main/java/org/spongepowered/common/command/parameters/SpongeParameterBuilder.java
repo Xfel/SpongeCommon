@@ -90,6 +90,12 @@ public class SpongeParameterBuilder implements Parameter.Builder {
     }
 
     @Override
+    public Parameter.Builder addModifiers(List<ValueParameterModifier> modifiers) {
+        this.modifiers.addAll(modifiers);
+        return this;
+    }
+
+    @Override
     public Parameter.Builder addModifierToBeginning(ValueParameterModifier modifier) {
         this.modifiers.add(0, modifier);
         return this;
@@ -134,8 +140,13 @@ public class SpongeParameterBuilder implements Parameter.Builder {
 
     @Override
     public Parameter.Builder from(Parameter value) {
-        // TODO
-        throw new UnsupportedOperationException();
+        if (!(value instanceof SpongeParameter)) {
+            throw new IllegalArgumentException("value must be a SpongeParameter");
+        }
+        reset();
+
+        ((SpongeParameter) value).populateBuilder(this);
+        return this;
     }
 
     @Override

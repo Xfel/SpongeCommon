@@ -148,6 +148,15 @@ public class SpongeTokenizedArgs implements TokenizedArgs {
         return null;
     }
 
+    public String rawArgsFromCurrentPosition() {
+        if (hasNext()) {
+            this.iterator.next();
+            return getRaw().substring(this.iterator.previous().getStartIndex());
+        }
+
+        return "";
+    }
+
     static class State {
         private final int index;
         private final UUID internalIdentifier;

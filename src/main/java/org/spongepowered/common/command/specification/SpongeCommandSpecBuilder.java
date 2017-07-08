@@ -51,6 +51,7 @@ import java.util.Map;
 public class SpongeCommandSpecBuilder implements CommandSpec.Builder {
 
     private static final CommandExecutor SUBCOMMAND_ONLY_EXECUTOR = (s, c) -> {
+        // TODO: Make this better!
         throw new CommandException(t("This command requires a subcommand."));
     };
 
@@ -173,7 +174,8 @@ public class SpongeCommandSpecBuilder implements CommandSpec.Builder {
             throw new IllegalArgumentException("value must be a SpongeCommandSpec");
         }
 
-        // TODO
+        reset();
+        ((SpongeCommandSpec) value).populateBuilder(this);
         return this;
     }
 

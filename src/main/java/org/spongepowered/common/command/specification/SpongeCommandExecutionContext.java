@@ -51,6 +51,7 @@ public class SpongeCommandExecutionContext implements CommandExecutionContext {
     private final boolean isCompletion;
     @Nullable private final Location<World> targetBlock;
     private Flags flags = NoFlags.INSTANCE;
+    @Nullable private String currentCommand = null;
 
     private static String textToArgKey(Text key) {
         if (key instanceof TranslatableText) { // Use translation key
@@ -151,7 +152,7 @@ public class SpongeCommandExecutionContext implements CommandExecutionContext {
 
     @Override
     public Object getState() {
-        return new State(this.internalIdentifier, ImmutableMultimap.copyOf(this.parsedArgs));
+        return new State(this.internalIdentifier, ImmutableMultimap.copyOf(this.parsedArgs), this.currentCommand);
     }
 
     @Override
@@ -164,15 +165,27 @@ public class SpongeCommandExecutionContext implements CommandExecutionContext {
         this.parsedArgs.clear();
         this.parsedArgs.putAll(((State) state).contextState);
 
+        this.currentCommand = currentCommand;
+    }
+
+    // Used for determining the current subcommand - if we know what it is.
+    public Optional<String> getCurrentCommand() {
+        return Optional.ofNullable(this.currentCommand);
+    }
+
+    public void setCurrentCommand(@Nullable String command) {
+        this.currentCommand = command;
     }
 
     private static class State {
         private final UUID internalIdentifier;
         private final Multimap<String, Object> contextState;
+        @Nullable private final String currentCommand;
 
-        private State(UUID internalIdentifier, Multimap<String, Object> contextState) {
+        private State(UUID internalIdentifier, Multimap<String, Object> contextState, @Nullable String currentCommand) {
             this.internalIdentifier = internalIdentifier;
             this.contextState = contextState;
+            this.currentCommand = currentCommand;
         }
     }
 

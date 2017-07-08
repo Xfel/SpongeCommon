@@ -134,16 +134,32 @@ public class SpongeCommandManager implements CommandManager {
                             + "(in other words, is 'plugin' actually your plugin object?");
         }
 
-        PluginContainer container = containerOptional.get();
+        return register(containerOptional.get(), callable, aliases);
+    }
 
+    @Override
+    public Optional<CommandMapping> register(PluginContainer pluginContainer, CommandLowLevel callable, String... alias) {
+        return register(pluginContainer, callable, Arrays.asList(alias));
+    }
+
+    @Override
+    public Optional<CommandMapping> register(PluginContainer pluginContainer, CommandLowLevel callable, List<String> aliases) {
+        return register(pluginContainer, callable, aliases, Function.identity());
+    }
+
+    @Override
+    public Optional<CommandMapping> register(PluginContainer pluginContainer, CommandLowLevel callable, List<String> aliases,
+            Function<List<String>, List<String>> callback) {
+        checkNotNull(pluginContainer, "pluginContainer");
         synchronized (this.lock) {
             // <namespace>:<alias> for all commands
             List<String> aliasesWithPrefix = new ArrayList<>(aliases.size() * 3);
             for (String alias : aliases) {
                 if (alias.contains(" ")) {
-                    throw new IllegalArgumentException("Plugin '" + container.getId() + "' attempted to register an alias ('" + alias + "') which contained a space.");
+                    throw new IllegalArgumentException("Plugin '" + pluginContainer.getId() +
+                            "' attempted to register an alias ('" + alias + "') which contained a space.");
                 }
-                final Collection<CommandMapping> ownedCommands = this.owners.get(container);
+                final Collection<CommandMapping> ownedCommands = this.owners.get(pluginContainer);
                 for (CommandMapping mapping : this.dispatcher.getAll(alias)) {
                     if (ownedCommands.contains(mapping)) {
                         boolean isWrapper = callable instanceof MinecraftCommandWrapper;
@@ -154,14 +170,14 @@ public class SpongeCommandManager implements CommandManager {
                 }
 
                 aliasesWithPrefix.add(alias);
-                aliasesWithPrefix.add(container.getId() + ':' + alias);
+                aliasesWithPrefix.add(pluginContainer.getId() + ':' + alias);
             }
 
             Optional<CommandMapping> mapping = this.dispatcher.register(callable, aliasesWithPrefix, callback);
 
             if (mapping.isPresent()) {
-                this.owners.put(container, mapping.get());
-                this.reverseOwners.put(mapping.get(), container);
+                this.owners.put(pluginContainer, mapping.get());
+                this.reverseOwners.put(mapping.get(), pluginContainer);
             }
 
             return mapping;
@@ -255,6 +271,11 @@ public class SpongeCommandManager implements CommandManager {
     @Override
     public boolean containsMapping(CommandMapping mapping) {
         return this.dispatcher.containsMapping(mapping);
+    }
+
+    @Override
+    public Optional<String> getPrimaryAlias(CommandLowLevel command) {
+        return this.reverseOwners.keySet().stream().filter(x -> x.getCallable() == command).findFirst().map(CommandMapping::getPrimaryAlias);
     }
 
     @Override
@@ -359,7 +380,7 @@ public class SpongeCommandManager implements CommandManager {
                 src.sendMessage(error(t("Error getting suggestions: %s", ((CommandException) e).getText())));
                 return Collections.emptyList();
             }
-            throw new RuntimeException(String.format("Error occured while tab completing '%s'", arguments), e);
+            throw new RuntimeException(String.format("Error occurred while tab completing '%s'", arguments), e);
         }
     }
 

@@ -27,12 +27,24 @@ package org.spongepowered.common.command.specification;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandExecutionResult;
 import org.spongepowered.api.command.CommandLowLevel;
 import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandMessageFormatting;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.dispatcher.Disambiguator;
+import org.spongepowered.api.command.dispatcher.Dispatcher;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.ParameterParseException;
 import org.spongepowered.api.command.parameters.tokens.InputTokenizer;
@@ -45,19 +57,27 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.flags.Flags;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.common.SpongeImpl;
+import org.spongepowered.common.command.SpongeCommandMapping;
 import org.spongepowered.common.command.parameters.flags.NoFlags;
 import org.spongepowered.common.command.parameters.tokenized.SpongeTokenizedArgs;
+import org.spongepowered.common.command.specification.childexception.ChildCommandException;
 
 import javax.annotation.Nullable;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class SpongeCommandSpec implements CommandSpec {
+public class SpongeCommandSpec implements CommandSpec, Dispatcher {
 
     private final Parameter parameters;
-    private final Map<String, CommandLowLevel> children;
+    private final Map<String, CommandMapping> mappings = Maps.newHashMap();
     private final ChildExceptionBehavior childExceptionBehavior;
     private final InputTokenizer inputTokenizer;
     private final Flags flags;
@@ -77,7 +97,6 @@ public class SpongeCommandSpec implements CommandSpec {
             @Nullable Text extendedDescription,
             boolean requirePermissionForChildren) {
         this.parameters = Parameter.seq(parameters);
-        this.children = children;
         this.childExceptionBehavior = childExceptionBehavior;
         this.inputTokenizer = inputTokenizer;
         this.flags = flags;
@@ -86,21 +105,73 @@ public class SpongeCommandSpec implements CommandSpec {
         this.shortDescription = shortDescription;
         this.extendedDescription = extendedDescription;
         this.requirePermissionForChildren = requirePermissionForChildren;
+
+        if (!children.isEmpty()) {
+            // Register the commands
+            Map<CommandLowLevel, List<String>> intermediate = children.entrySet().stream()
+                    .collect(Collectors.groupingBy(Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
+            intermediate.forEach((lowLevel, aliases) -> {
+                SpongeCommandMapping spongeCommandMapping;
+                if (aliases.size() == 1) {
+                    spongeCommandMapping = new SpongeCommandMapping(lowLevel, aliases.get(0));
+                } else {
+                    spongeCommandMapping = new SpongeCommandMapping(lowLevel, aliases.get(0), aliases.subList(1, aliases.size()));
+                }
+
+                aliases.forEach(x -> this.mappings.put(x, spongeCommandMapping));
+            });
+        }
     }
 
     @Override
-    public CommandResult process(CommandSource source, String arguments) throws CommandException {
+    public CommandExecutionResult process(CommandSource source, String arguments) throws CommandException {
+        // Step one, create the TokenizedArgs and CommandExecutionContext
+        SpongeTokenizedArgs args = new SpongeTokenizedArgs(this.inputTokenizer.tokenize(arguments, true), arguments);
+        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+        return processInternal(source, args, context);
+    }
+
+    private CommandExecutionResult processInternal(CommandSource source, SpongeTokenizedArgs args, SpongeCommandExecutionContext context)
+            throws CommandException {
         if (this.requirePermissionForChildren) {
             checkPermission(source);
         }
 
-        // Step one, create the TokenizedArgs and CommandExecutionContext
-        TokenizedArgs args = new SpongeTokenizedArgs(this.inputTokenizer.tokenize(arguments, true), arguments);
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
-        CommandException childException = null;
+        ChildCommandException childException = null;
 
         // Step two, children. If we have any, we parse them now.
-        // TODO: Integrate dispatcher?
+        if (!this.mappings.isEmpty() && args.hasNext()) {
+            Object argsState = args.getState();
+            Object contextState = context.getState();
+            String subCommand = args.next().toLowerCase(Locale.ENGLISH);
+            Optional<? extends CommandMapping> optionalChild = get(subCommand.toLowerCase(Locale.ENGLISH));
+            if (optionalChild.isPresent()) {
+                // Get the command
+                CommandLowLevel cmd = optionalChild.get().getCallable();
+                context.setCurrentCommand(subCommand);
+                try {
+                    if (cmd instanceof SpongeCommandSpec) {
+                        SpongeCommandSpec childSpec = (SpongeCommandSpec) cmd;
+                        return childSpec.processInternal(source, args, context);
+                    } else {
+                        return cmd.process(source, args.rawArgsFromCurrentPosition());
+                    }
+                } catch (CommandException ex) {
+                    // This might still rethrow, depends on the selected behavior
+                    CommandException eex = this.childExceptionBehavior.onChildCommandError(ex).orElse(null);
+                    if (eex instanceof ChildCommandException) {
+                        childException = (ChildCommandException) eex;
+                    } else {
+                        childException = new ChildCommandException(subCommand, eex, null);
+                    }
+                }
+            }
+
+            // Reset the state.
+            args.setState(argsState);
+            context.setState(contextState);
+        }
+
 
         // Step three, this command
         if (!this.requirePermissionForChildren) {
@@ -108,7 +179,19 @@ public class SpongeCommandSpec implements CommandSpec {
         }
 
         populateContext(source, args, context);
-        return null;
+
+        try {
+            return this.executor.execute(source, context);
+        } catch (CommandException ex) {
+            if (childException != null) {
+                throw new ChildCommandException(
+                        context.getCurrentCommand().orElseGet(() ->
+                                Sponge.getCommandManager().getPrimaryAlias(this).orElse("")), ex, childException);
+            }
+
+            // Rethrow
+            throw ex;
+        }
     }
 
     @Override
@@ -155,6 +238,20 @@ public class SpongeCommandSpec implements CommandSpec {
         return Text.joinWith(CommandMessageFormatting.SPACE_TEXT, this.flags.getUsage(source), this.parameters.getUsage(source));
     }
 
+    void populateBuilder(SpongeCommandSpecBuilder builder) {
+        builder.childExceptionBehavior(this.childExceptionBehavior)
+               .description(this.shortDescription)
+               .extendedDescription(this.extendedDescription)
+               .executor(this.executor)
+               .flags(this.flags)
+               .inputTokenizer(this.inputTokenizer)
+               .parameters(this.parameters)
+               .permission(this.permission)
+               .requirePermissionForChildren(this.requirePermissionForChildren);
+
+        this.mappings.forEach((alias, mapping) -> builder.addChild(mapping.getCallable(), mapping.getAllAliases()));
+    }
+
     private void checkPermission(CommandSource source) throws CommandPermissionException {
         if (!testPermission(source)) {
             throw new CommandPermissionException();
@@ -175,4 +272,56 @@ public class SpongeCommandSpec implements CommandSpec {
         this.parameters.parse(source, args, context);
     }
 
+    @Override
+    public Set<? extends CommandMapping> getCommands() {
+        return ImmutableSet.copyOf(this.mappings.values());
+    }
+
+    @Override
+    public Set<String> getPrimaryAliases() {
+        return this.mappings.values().stream().map(CommandMapping::getPrimaryAlias).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<String> getAliases() {
+        return ImmutableSet.copyOf(this.mappings.keySet());
+    }
+
+    @Override
+    public Optional<? extends CommandMapping> get(String alias) {
+        return get(alias, null);
+    }
+
+    @Override
+    public Optional<? extends CommandMapping> get(String alias, @Nullable CommandSource source) {
+        // No need to use a disambiguator, we don't allow multiple children with the same name.
+        CommandMapping mapping = this.mappings.get(alias.toLowerCase(Locale.ENGLISH));
+        if (mapping != null && (source == null || mapping.getCallable().testPermission(source))) {
+            return Optional.of(mapping);
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Set<? extends CommandMapping> getAll(String alias) {
+        return get(alias).map(ImmutableSet::of).orElseGet(ImmutableSet::of);
+    }
+
+    @Override
+    public Multimap<String, CommandMapping> getAll() {
+        ImmutableMultimap.Builder<String, CommandMapping> im = ImmutableMultimap.builder();
+        this.mappings.forEach(im::put);
+        return im.build();
+    }
+
+    @Override
+    public boolean containsAlias(String alias) {
+        return this.mappings.containsKey(alias.toLowerCase(Locale.ENGLISH));
+    }
+
+    @Override
+    public boolean containsMapping(CommandMapping mapping) {
+        return this.mappings.containsValue(mapping);
+    }
 }

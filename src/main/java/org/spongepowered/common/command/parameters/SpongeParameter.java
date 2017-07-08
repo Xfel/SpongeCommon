@@ -77,4 +77,8 @@ class SpongeParameter implements Parameter {
         return usage;
     }
 
+    void populateBuilder(SpongeParameterBuilder builder) {
+        builder.addModifiers(this.modifiers).key(this.key).parser(this.valueParameter);
+    }
+
 }
