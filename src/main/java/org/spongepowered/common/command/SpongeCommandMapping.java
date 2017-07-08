@@ -26,7 +26,7 @@ package org.spongepowered.common.command;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.spongepowered.api.command.Command;
+import org.spongepowered.api.command.CommandLowLevel;
 import org.spongepowered.api.command.CommandMapping;
 
 import java.util.Arrays;
@@ -43,7 +43,7 @@ public final class SpongeCommandMapping implements CommandMapping {
 
     private final String primary;
     private final Set<String> aliases;
-    private final Command callable;
+    private final CommandLowLevel callable;
 
     /**
      * Create a new instance.
@@ -53,7 +53,7 @@ public final class SpongeCommandMapping implements CommandMapping {
      * @param alias A list of all aliases
      * @throws IllegalArgumentException Thrown if aliases are duplicated
      */
-    public SpongeCommandMapping(Command callable, String primary, String... alias) {
+    public SpongeCommandMapping(CommandLowLevel callable, String primary, String... alias) {
         this(callable, primary, Arrays.asList(checkNotNull(alias, "alias")));
     }
 
@@ -65,7 +65,7 @@ public final class SpongeCommandMapping implements CommandMapping {
      * @param aliases A collection of all aliases
      * @throws IllegalArgumentException Thrown if aliases are duplicated
      */
-    public SpongeCommandMapping(Command callable, String primary, Collection<String> aliases) {
+    public SpongeCommandMapping(CommandLowLevel callable, String primary, Collection<String> aliases) {
         checkNotNull(primary, "primary");
         checkNotNull(aliases, "aliases");
         this.primary = primary;
@@ -85,7 +85,7 @@ public final class SpongeCommandMapping implements CommandMapping {
     }
 
     @Override
-    public Command getCallable() {
+    public CommandLowLevel getCallable() {
         return this.callable;
     }
 

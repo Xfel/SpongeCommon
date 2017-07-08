@@ -47,7 +47,7 @@ public class SpongeParameterBuilder implements Parameter.Builder {
     @Nullable private ValueParameter valueParameter;
     @Nullable private ValueParser parser;
     @Nullable private ValueCompleter completer;
-    @Nullable private BiFunction<Text, CommandSource, Text> usage;
+    @Nullable private ValueUsage usage;
     private final List<ValueParameterModifier> modifiers = Lists.newArrayList();
     @Nullable private String permission;
 
@@ -78,7 +78,7 @@ public class SpongeParameterBuilder implements Parameter.Builder {
     }
 
     @Override
-    public Parameter.Builder usage(@Nullable BiFunction<Text, CommandSource, Text> usage) {
+    public Parameter.Builder usage(@Nullable ValueUsage usage) {
         this.usage = usage;
         return this;
     }
@@ -117,12 +117,12 @@ public class SpongeParameterBuilder implements Parameter.Builder {
 
         ValueParser parserToUse;
         ValueCompleter completerToUse;
-        BiFunction<Text, CommandSource, Text> usageToUse;
+        ValueUsage usageToUse;
 
         if (this.valueParameter != null) {
             parserToUse = this.valueParameter;
             completerToUse = this.completer == null ? this.valueParameter : this.completer;
-            usageToUse = this.usage == null ? this.valueParameter::getUsage : this.usage;
+            usageToUse = this.usage == null ? this.valueParameter : this.usage;
         } else {
             parserToUse = this.parser;
             completerToUse = this.completer == null ? (cs, args, cec) -> new ArrayList<>() : this.completer;
@@ -154,12 +154,12 @@ public class SpongeParameterBuilder implements Parameter.Builder {
 
         private final ValueParser parser;
         private final ValueCompleter completer;
-        private final BiFunction<Text, CommandSource, Text> usage;
+        private final ValueUsage usage;
 
         private SpongeValueParameter(
                 ValueParser parser,
                 ValueCompleter completer,
-                BiFunction<Text, CommandSource, Text> usage) {
+                ValueUsage usage) {
             this.parser = parser;
             this.completer = completer;
             this.usage = usage;
@@ -177,7 +177,7 @@ public class SpongeParameterBuilder implements Parameter.Builder {
 
         @Override
         public Text getUsage(Text key, CommandSource source) {
-            return this.usage.apply(key, source);
+            return this.usage.getUsage(key, source);
         }
 
     }

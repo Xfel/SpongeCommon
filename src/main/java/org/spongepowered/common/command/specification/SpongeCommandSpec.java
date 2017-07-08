@@ -25,24 +25,20 @@
 package org.spongepowered.common.command.specification;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.spongepowered.api.util.SpongeApiTranslationHelper.t;
 
 import com.google.common.collect.ImmutableList;
-import org.spongepowered.api.command.Command;
-import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.CommandLowLevel;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandMessageFormatting;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.CommandArgs;
-import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.ParameterParseException;
 import org.spongepowered.api.command.parameters.tokens.InputTokenizer;
 import org.spongepowered.api.command.specification.ChildExceptionBehavior;
 import org.spongepowered.api.command.specification.CommandExecutor;
-import org.spongepowered.api.command.specification.CommandSpecification;
+import org.spongepowered.api.command.specification.CommandSpec;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -58,10 +54,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class SpongeCommandSpecification implements CommandSpecification {
+public class SpongeCommandSpec implements CommandSpec {
 
     private final Parameter parameters;
-    private final Map<String, Command> children;
+    private final Map<String, CommandLowLevel> children;
     private final ChildExceptionBehavior childExceptionBehavior;
     private final InputTokenizer inputTokenizer;
     private final Flags flags;
@@ -71,8 +67,8 @@ public class SpongeCommandSpecification implements CommandSpecification {
     @Nullable private final Text extendedDescription;
     private final boolean requirePermissionForChildren;
 
-    SpongeCommandSpecification(Iterable<Parameter> parameters,
-            Map<String, Command> children,
+    SpongeCommandSpec(Iterable<Parameter> parameters,
+            Map<String, CommandLowLevel> children,
             ChildExceptionBehavior childExceptionBehavior,
             InputTokenizer inputTokenizer,
             Flags flags,

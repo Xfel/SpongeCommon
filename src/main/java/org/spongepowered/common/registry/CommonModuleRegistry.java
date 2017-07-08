@@ -36,7 +36,7 @@ import org.spongepowered.api.block.trait.IntegerTrait;
 import org.spongepowered.api.boss.BossBarColor;
 import org.spongepowered.api.boss.BossBarOverlay;
 import org.spongepowered.api.boss.ServerBossBar;
-import org.spongepowered.api.command.Result;
+import org.spongepowered.api.command.CommandExecutionResult;
 import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.flags.Flags;
 import org.spongepowered.api.command.parameters.flags.UnknownFlagBehavior;
@@ -364,7 +364,7 @@ public final class CommonModuleRegistry {
             .registerBuilderSupplier(Parameter.Builder.class, SpongeParameterBuilder::new)
             .registerBuilderSupplier(Parameter.SequenceBuilder.class, SpongeParameterSequenceBuilder::new)
             .registerBuilderSupplier(Flags.Builder.class, SpongeFlagsBuilder::new)
-            .registerBuilderSupplier(Result.Builder.class, SpongeResultBuilder::new)
+            .registerBuilderSupplier(CommandExecutionResult.Builder.class, SpongeResultBuilder::new)
         ;
     }
 

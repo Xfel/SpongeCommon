@@ -26,12 +26,12 @@ package org.spongepowered.common.command;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import org.spongepowered.api.command.Command;
+import org.spongepowered.api.command.CommandLowLevel;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.specification.CommandSpecification;
+import org.spongepowered.api.command.specification.CommandSpec;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
@@ -49,8 +49,8 @@ public class SpongeHelpCommand {
 
     private static final Comparator<CommandMapping> COMMAND_COMPARATOR = Comparator.comparing(CommandMapping::getPrimaryAlias);
 
-    public static CommandSpecification create() {
-        return CommandSpecification
+    public static CommandSpec create() {
+        return CommandSpec
             .builder()
             .parameters(Parameter.builder().key("command").optional().string().build())
             .description(Text.of("View a list of all commands."))
@@ -62,7 +62,7 @@ public class SpongeHelpCommand {
                 if (command.isPresent()) {
                     Optional<? extends CommandMapping> mapping = SpongeImpl.getGame().getCommandManager().get(command.get(), src);
                     if (mapping.isPresent()) {
-                        Command callable = mapping.get().getCallable();
+                        CommandLowLevel callable = mapping.get().getCallable();
                         Optional<? extends Text> desc = callable.getHelp(src);
                         if (desc.isPresent()) {
                             src.sendMessage(desc.get());

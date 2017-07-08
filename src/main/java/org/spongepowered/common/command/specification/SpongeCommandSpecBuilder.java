@@ -30,15 +30,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import org.spongepowered.api.command.Command;
-import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.CommandLowLevel;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.parameters.tokens.InputTokenizer;
 import org.spongepowered.api.command.parameters.tokens.InputTokenizers;
 import org.spongepowered.api.command.specification.ChildExceptionBehavior;
 import org.spongepowered.api.command.specification.ChildExceptionBehaviors;
 import org.spongepowered.api.command.specification.CommandExecutor;
-import org.spongepowered.api.command.specification.CommandSpecification;
+import org.spongepowered.api.command.specification.CommandSpec;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.flags.Flags;
@@ -49,15 +48,15 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
-public class SpongeCommandSpecificationBuilder implements CommandSpecification.Builder {
+public class SpongeCommandSpecBuilder implements CommandSpec.Builder {
 
     private static final CommandExecutor SUBCOMMAND_ONLY_EXECUTOR = (s, c) -> {
         throw new CommandException(t("This command requires a subcommand."));
     };
 
     private Iterable<Parameter> parameters = ImmutableList.of();
-    private final Map<String, Command> children = Maps.newHashMap();
-    private ChildExceptionBehavior behavior = ChildExceptionBehaviors.RETHROW;
+    private final Map<String, CommandLowLevel> children = Maps.newHashMap();
+    private ChildExceptionBehavior behavior = ChildExceptionBehaviors.SUPPRESS;
     private InputTokenizer inputTokenizer = InputTokenizers.LENIENT_QUOTED_STRING;
     @Nullable private CommandExecutor executor = null;
     @Nullable private Flags flags = null;
@@ -67,18 +66,18 @@ public class SpongeCommandSpecificationBuilder implements CommandSpecification.B
     private boolean requirePermissionForChildren = true;
 
     @Override
-    public CommandSpecification.Builder addChild(Command child, String... keys) {
+    public CommandSpec.Builder addChild(CommandLowLevel child, String... keys) {
         return addChild(child, Arrays.asList(keys));
     }
 
     @Override
-    public CommandSpecification.Builder addChild(Command child, Iterable<String> keys) {
+    public CommandSpec.Builder addChild(CommandLowLevel child, Iterable<String> keys) {
         return addChildren(ImmutableMap.of(keys, child));
     }
 
     @Override
-    public CommandSpecification.Builder addChildren(Map<? extends Iterable<String>, Command> children) {
-        Map<String, Command> stage = Maps.newHashMap();
+    public CommandSpec.Builder addChildren(Map<? extends Iterable<String>, CommandLowLevel> children) {
+        Map<String, CommandLowLevel> stage = Maps.newHashMap();
         children.forEach((key, value) ->
                 key.forEach(x -> Preconditions.checkArgument(stage.put(x.toLowerCase(Locale.ENGLISH), value) == null,
                 "No two children can have the same key. Keys are case insensitive.")));
@@ -91,70 +90,70 @@ public class SpongeCommandSpecificationBuilder implements CommandSpecification.B
     }
 
     @Override
-    public CommandSpecification.Builder requirePermissionForChildren(boolean required) {
+    public CommandSpec.Builder requirePermissionForChildren(boolean required) {
         this.requirePermissionForChildren = required;
         return this;
     }
 
     @Override
-    public CommandSpecification.Builder childExceptionBehavior(ChildExceptionBehavior exceptionBehavior) {
+    public CommandSpec.Builder childExceptionBehavior(ChildExceptionBehavior exceptionBehavior) {
         this.behavior = exceptionBehavior;
         return this;
     }
 
     @Override
-    public CommandSpecification.Builder description(@Nullable Text description) {
+    public CommandSpec.Builder description(@Nullable Text description) {
         this.shortDescription = description;
         return this;
     }
 
     @Override
-    public CommandSpecification.Builder executor(CommandExecutor executor) {
+    public CommandSpec.Builder executor(CommandExecutor executor) {
         this.executor = executor;
         return this;
     }
 
     @Override
-    public CommandSpecification.Builder extendedDescription(@Nullable Text extendedDescription) {
+    public CommandSpec.Builder extendedDescription(@Nullable Text extendedDescription) {
         this.extendedDescription = extendedDescription;
         return this;
     }
 
     @Override
-    public CommandSpecification.Builder flags(Flags flags) {
+    public CommandSpec.Builder flags(Flags flags) {
         this.flags = flags;
         return this;
     }
 
     @Override
-    public CommandSpecification.Builder parameters(Parameter... parameters) {
+    public CommandSpec.Builder parameters(Parameter... parameters) {
         return parameters(Arrays.asList(parameters));
     }
 
     @Override
-    public CommandSpecification.Builder parameters(Iterable<Parameter> parameters) {
+    public CommandSpec.Builder parameters(Iterable<Parameter> parameters) {
         this.parameters = ImmutableList.copyOf(parameters);
         return this;
     }
 
     @Override
-    public CommandSpecification.Builder permission(@Nullable String permission) {
+    public CommandSpec.Builder permission(@Nullable String permission) {
         this.permission = permission;
         return this;
     }
 
     @Override
-    public CommandSpecification.Builder inputTokenizer(InputTokenizer tokenizer) {
+    public CommandSpec.Builder inputTokenizer(InputTokenizer tokenizer) {
         this.inputTokenizer = tokenizer;
         return this;
     }
 
     @Override
-    public CommandSpecification build() {
+    public CommandSpec build() {
 
         Preconditions.checkState(!this.children.isEmpty() || this.executor != null,
                 "The command must have an executor or at least one child command.");
-        return new SpongeCommandSpecification(
+        return new SpongeCommandSpec(
                 this.parameters,
                 this.children,
                 this.behavior,
@@ -169,9 +168,9 @@ public class SpongeCommandSpecificationBuilder implements CommandSpecification.B
     }
 
     @Override
-    public CommandSpecification.Builder from(CommandSpecification value) {
-        if (!(value instanceof SpongeCommandSpecification)) {
-            throw new IllegalArgumentException("value must be a SpongeCommandSpecification");
+    public CommandSpec.Builder from(CommandSpec value) {
+        if (!(value instanceof SpongeCommandSpec)) {
+            throw new IllegalArgumentException("value must be a SpongeCommandSpec");
         }
 
         // TODO
@@ -179,7 +178,7 @@ public class SpongeCommandSpecificationBuilder implements CommandSpecification.B
     }
 
     @Override
-    public CommandSpecification.Builder reset() {
+    public CommandSpec.Builder reset() {
         this.parameters = ImmutableList.of();
         this.children.clear();
         this.behavior = ChildExceptionBehaviors.RETHROW;

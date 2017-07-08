@@ -24,13 +24,13 @@
  */
 package org.spongepowered.common.command.result;
 
-import org.spongepowered.api.command.Result;
+import org.spongepowered.api.command.CommandExecutionResult;
 
 import java.util.OptionalInt;
 
 import javax.annotation.Nullable;
 
-public class SpongeResult implements Result {
+public class SpongeResult implements CommandExecutionResult {
 
     public static final SpongeResult EMPTY = new SpongeResult(null, null, null, null, null);
     public static final SpongeResult SUCCESS = new SpongeResult(1, null, null, null, null);
