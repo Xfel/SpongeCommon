@@ -27,16 +27,13 @@ package org.spongepowered.common.command;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.collect.Lists;
-import org.spongepowered.api.command.CommandLowLevel;
+import org.spongepowered.api.command.CallableCommand;
 import org.spongepowered.api.command.CommandMapping;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,7 +44,7 @@ public final class SpongeCommandMapping implements CommandMapping {
 
     private final String primary;
     private final Set<String> aliases;
-    private final CommandLowLevel callable;
+    private final CallableCommand callable;
 
     /**
      * Create a new instance.
@@ -57,7 +54,7 @@ public final class SpongeCommandMapping implements CommandMapping {
      * @param alias A list of all aliases
      * @throws IllegalArgumentException Thrown if aliases are duplicated
      */
-    public SpongeCommandMapping(CommandLowLevel callable, String primary, String... alias) {
+    public SpongeCommandMapping(CallableCommand callable, String primary, String... alias) {
         this(callable, primary, Arrays.asList(checkNotNull(alias, "alias")));
     }
 
@@ -69,7 +66,7 @@ public final class SpongeCommandMapping implements CommandMapping {
      * @param aliases A collection of all aliases
      * @throws IllegalArgumentException Thrown if aliases are duplicated
      */
-    public SpongeCommandMapping(CommandLowLevel callable, String primary, Collection<String> aliases) {
+    public SpongeCommandMapping(CallableCommand callable, String primary, Collection<String> aliases) {
         checkNotNull(primary, "primary");
         checkNotNull(aliases, "aliases");
         this.primary = primary;
@@ -89,7 +86,7 @@ public final class SpongeCommandMapping implements CommandMapping {
     }
 
     @Override
-    public CommandLowLevel getCallable() {
+    public CallableCommand getCallable() {
         return this.callable;
     }
 

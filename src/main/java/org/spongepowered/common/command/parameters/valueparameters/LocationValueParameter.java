@@ -35,7 +35,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 
@@ -67,7 +67,7 @@ public class LocationValueParameter implements CatalogedValueParameter {
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
         Object state = args.getState();
         Optional<String> nextPossibility = args.nextIfPresent();
         if (nextPossibility.isPresent() && nextPossibility.get().startsWith("@")) {
@@ -84,7 +84,7 @@ public class LocationValueParameter implements CatalogedValueParameter {
 
     @Override
     public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
-            throws ParameterParseException {
+            throws ArgumentParseException {
         Object state = args.getState();
         if (args.peek().startsWith("@")) { // We are a selector
             return Optional.of(Selector.parse(args.next()).resolve(source).stream()
@@ -96,7 +96,7 @@ public class LocationValueParameter implements CatalogedValueParameter {
         Object vec = null;
         try {
             world = checkNotNull(this.worldParser.getValue(args.next()), "worldVal");
-        } catch (ParameterParseException ex) {
+        } catch (ArgumentParseException ex) {
             args.setState(state);
             if (!(source instanceof Locatable)) {
                 throw args.createError(t("Source must have a location in order to have a fallback world"));
@@ -104,7 +104,7 @@ public class LocationValueParameter implements CatalogedValueParameter {
             world = ((Locatable) source).getWorld().getProperties();
             try {
                 vec = checkNotNull(this.vectorParser.getValue(source, args, context), "vectorVal");
-            } catch (ParameterParseException ex2) {
+            } catch (ArgumentParseException ex2) {
                 args.setState(state);
                 throw ex;
             }

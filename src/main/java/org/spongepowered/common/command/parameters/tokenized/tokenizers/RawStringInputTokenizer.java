@@ -25,7 +25,7 @@
 package org.spongepowered.common.command.parameters.tokenized.tokenizers;
 
 
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.tokens.InputTokenizer;
 import org.spongepowered.api.command.parameters.tokens.SingleArg;
 import org.spongepowered.common.command.parameters.tokenized.SpongeSingleArg;
@@ -36,7 +36,7 @@ import java.util.List;
 public class RawStringInputTokenizer implements InputTokenizer {
 
     @Override
-    public List<SingleArg> tokenize(String arguments, boolean lenient) throws ParameterParseException {
+    public List<SingleArg> tokenize(String arguments, boolean lenient) throws ArgumentParseException {
         return Collections.singletonList(new SpongeSingleArg(arguments, 0, arguments.length()));
     }
 

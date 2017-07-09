@@ -26,7 +26,7 @@ package org.spongepowered.common.command.parameters.flags;
 
 import org.spongepowered.api.command.CommandMessageFormatting;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.Parameter;
@@ -57,7 +57,7 @@ public class SpongeFlags implements Flags {
     }
 
     @Override
-    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
         if (args.hasPrevious() && !this.anchorFlags || !args.hasNext() || !args.peek().startsWith("-")) {
             return; // Nothing to parse, move along.
         }
@@ -74,7 +74,7 @@ public class SpongeFlags implements Flags {
     }
 
     private void parseShort(String flag, CommandSource source, TokenizedArgs args, CommandExecutionContext context, Object tokenizedPreviousState,
-            Object contextPreviousState) throws ParameterParseException {
+            Object contextPreviousState) throws ArgumentParseException {
         String shortFlag = flag.substring(1, 2).toLowerCase(Locale.ENGLISH);
         Parameter param = this.flags.get(shortFlag);
         if (param == null) {
@@ -85,7 +85,7 @@ public class SpongeFlags implements Flags {
     }
 
     private void parseLong(String flag, CommandSource source, TokenizedArgs args, CommandExecutionContext context, Object tokenizedPreviousState,
-            Object contextPreviousState) throws ParameterParseException {
+            Object contextPreviousState) throws ArgumentParseException {
         String longFlag = flag.substring(2).toLowerCase(Locale.ENGLISH);
         Parameter param = this.flags.get(longFlag);
         if (param == null) {

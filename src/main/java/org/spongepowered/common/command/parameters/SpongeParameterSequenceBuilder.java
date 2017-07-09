@@ -27,11 +27,10 @@ package org.spongepowered.common.command.parameters;
 import com.google.common.base.Preconditions;
 import org.spongepowered.api.command.CommandMessageFormatting;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.flags.Flags;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 
 import java.util.ArrayList;
@@ -39,8 +38,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.spongepowered.api.util.SpongeApiTranslationHelper.t;
-
-import javax.annotation.Nullable;
 
 public class SpongeParameterSequenceBuilder implements Parameter.SequenceBuilder {
 
@@ -108,14 +105,14 @@ public class SpongeParameterSequenceBuilder implements Parameter.SequenceBuilder
         }
 
         @Override
-        public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
-            List<ParameterParseException> exceptions = new ArrayList<>();
+        public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+            List<ArgumentParseException> exceptions = new ArrayList<>();
             for (Parameter parameter : this.parameters) {
                 Object state = context.getState();
                 try {
                     parameter.parse(source, args, context);
                     return;
-                } catch (ParameterParseException ex) {
+                } catch (ArgumentParseException ex) {
                     context.setState(state);
                 }
             }
@@ -126,7 +123,7 @@ public class SpongeParameterSequenceBuilder implements Parameter.SequenceBuilder
         }
 
         @Override
-        public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+        public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
             List<String> completions = new ArrayList<>();
             for (Parameter parameter : this.parameters) {
                 Object state = context.getState();

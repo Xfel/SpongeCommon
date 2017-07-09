@@ -30,7 +30,7 @@ import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 import org.spongepowered.api.text.Text;
 
 import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.specification.ValueParameter;
 import org.spongepowered.api.command.parameters.specification.ValueParameterModifier;
 
@@ -54,12 +54,12 @@ class SpongeParameter implements Parameter {
     }
 
     @Override
-    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
         new SpongeParsingContext(this.key, source, args, context, this.modifiers.listIterator(), this.valueParameter).next();
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
         List<String> completions = this.valueParameter.complete(source, args, context);
         for (ValueParameterModifier modifier : this.modifiers) {
             completions = modifier.complete(source, args, context, completions);

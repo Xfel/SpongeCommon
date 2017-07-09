@@ -35,7 +35,7 @@ import org.spongepowered.api.util.blockray.BlockRayHit;
 import org.spongepowered.api.world.Locatable;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 
@@ -61,7 +61,7 @@ public class Vector3dValueParameter implements CatalogedValueParameter {
 
     @Override
     public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
-            throws ParameterParseException {
+            throws ArgumentParseException {
         String xStr;
         String yStr;
         String zStr;
@@ -98,7 +98,7 @@ public class Vector3dValueParameter implements CatalogedValueParameter {
     }
 
     @Override
-    public List<String> complete(CommandSource src, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+    public List<String> complete(CommandSource src, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
         Optional<String> arg = args.nextIfPresent();
         // Traverse through the possible arguments. We can't really complete arbitrary integers
         if (arg.isPresent()) {
@@ -117,7 +117,7 @@ public class Vector3dValueParameter implements CatalogedValueParameter {
         return ImmutableList.of();
     }
 
-    private double parseRelativeDouble(TokenizedArgs args, String arg, @Nullable Double relativeTo) throws ParameterParseException {
+    private double parseRelativeDouble(TokenizedArgs args, String arg, @Nullable Double relativeTo) throws ArgumentParseException {
         boolean relative = arg.startsWith("~");
         if (relative) {
             if (relativeTo == null) {

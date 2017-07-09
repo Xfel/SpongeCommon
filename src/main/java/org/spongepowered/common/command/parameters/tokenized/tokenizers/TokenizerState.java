@@ -24,7 +24,7 @@
  */
 package org.spongepowered.common.command.parameters.tokenized.tokenizers;
 
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.text.Text;
 
 class TokenizerState {
@@ -42,22 +42,22 @@ class TokenizerState {
         return this.index + 1 < this.buffer.length();
     }
 
-    public int peek() throws ParameterParseException {
+    public int peek() throws ArgumentParseException {
         if (!hasMore()) {
             throw createException(Text.of("Buffer overrun while parsing args"));
         }
         return this.buffer.codePointAt(this.index + 1);
     }
 
-    public int next() throws ParameterParseException {
+    public int next() throws ArgumentParseException {
         if (!hasMore()) {
             throw createException(Text.of("Buffer overrun while parsing args"));
         }
         return this.buffer.codePointAt(++this.index);
     }
 
-    ParameterParseException createException(Text message) {
-        return new ParameterParseException(message, this.buffer, this.index);
+    ArgumentParseException createException(Text message) {
+        return new ArgumentParseException(message, this.buffer, this.index);
     }
 
     boolean isLenient() {

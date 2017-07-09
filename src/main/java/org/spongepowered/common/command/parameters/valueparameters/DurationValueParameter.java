@@ -29,7 +29,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
 
 import javax.annotation.Nullable;
@@ -62,13 +62,13 @@ public class DurationValueParameter implements CatalogedValueParameter {
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
         return Lists.newArrayList();
     }
 
     @Override
     public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
-            throws ParameterParseException {
+            throws ArgumentParseException {
         String arg = args.next();
         if (arg.contains(":")) {
             // Split and test.

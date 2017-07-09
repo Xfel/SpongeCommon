@@ -30,7 +30,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.specification.*;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 
@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
 public class SpongeParameterBuilder implements Parameter.Builder {
 
@@ -72,7 +71,7 @@ public class SpongeParameterBuilder implements Parameter.Builder {
     }
 
     @Override
-    public Parameter.Builder onComplete(@Nullable ValueCompleter completer) {
+    public Parameter.Builder suggestions(@Nullable ValueCompleter completer) {
         this.completer = completer;
         return this;
     }
@@ -177,12 +176,12 @@ public class SpongeParameterBuilder implements Parameter.Builder {
         }
 
         @Override
-        public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+        public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
             return this.parser.getValue(source, args, context);
         }
 
         @Override
-        public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+        public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
             return this.completer.complete(source, args, context);
         }
 
@@ -203,7 +202,7 @@ public class SpongeParameterBuilder implements Parameter.Builder {
 
         @Override
         public void onParse(Text key, CommandSource source, TokenizedArgs args, CommandExecutionContext context, ParsingContext parsingContext)
-                throws ParameterParseException {
+                throws ArgumentParseException {
             if (source.hasPermission(this.permission)) {
                 parsingContext.next();
             }
@@ -211,7 +210,7 @@ public class SpongeParameterBuilder implements Parameter.Builder {
 
         @Override
         public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context, List<String> currentCompletions)
-                throws ParameterParseException {
+                throws ArgumentParseException {
             return Lists.newArrayList();
         }
 

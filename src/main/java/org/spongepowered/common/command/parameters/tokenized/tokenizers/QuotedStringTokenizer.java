@@ -24,7 +24,7 @@
  */
 package org.spongepowered.common.command.parameters.tokenized.tokenizers;
 
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.tokens.InputTokenizer;
 import org.spongepowered.api.command.parameters.tokens.SingleArg;
 import org.spongepowered.api.text.Text;
@@ -67,7 +67,7 @@ public class QuotedStringTokenizer implements InputTokenizer {
     }
 
     @Override
-    public List<SingleArg> tokenize(String arguments, boolean lenient) throws ParameterParseException {
+    public List<SingleArg> tokenize(String arguments, boolean lenient) throws ArgumentParseException {
         if (arguments.length() == 0) {
             return Collections.emptyList();
         }
@@ -94,7 +94,7 @@ public class QuotedStringTokenizer implements InputTokenizer {
 
     // Parsing methods
 
-    private void skipWhiteSpace(TokenizerState state) throws ParameterParseException {
+    private void skipWhiteSpace(TokenizerState state) throws ArgumentParseException {
         if (!state.hasMore()) {
             return;
         }
@@ -103,7 +103,7 @@ public class QuotedStringTokenizer implements InputTokenizer {
         }
     }
 
-    private String nextArg(TokenizerState state) throws ParameterParseException {
+    private String nextArg(TokenizerState state) throws ArgumentParseException {
         StringBuilder argBuilder = new StringBuilder();
         if (state.hasMore()) {
             int codePoint = state.peek();
@@ -117,7 +117,7 @@ public class QuotedStringTokenizer implements InputTokenizer {
         return argBuilder.toString();
     }
 
-    private void parseQuotedString(TokenizerState state, int startQuotation, StringBuilder builder) throws ParameterParseException {
+    private void parseQuotedString(TokenizerState state, int startQuotation, StringBuilder builder) throws ArgumentParseException {
         // Consume the start quotation character
         int nextCodePoint = state.next();
         if (nextCodePoint != startQuotation) {
@@ -144,7 +144,7 @@ public class QuotedStringTokenizer implements InputTokenizer {
         }
     }
 
-    private void parseUnquotedString(TokenizerState state, StringBuilder builder) throws ParameterParseException {
+    private void parseUnquotedString(TokenizerState state, StringBuilder builder) throws ArgumentParseException {
         while (state.hasMore()) {
             int nextCodePoint = state.peek();
             if (Character.isWhitespace(nextCodePoint)) {
@@ -157,7 +157,7 @@ public class QuotedStringTokenizer implements InputTokenizer {
         }
     }
 
-    private void parseEscape(TokenizerState state, StringBuilder builder) throws ParameterParseException {
+    private void parseEscape(TokenizerState state, StringBuilder builder) throws ArgumentParseException {
         state.next(); // Consume \
         builder.appendCodePoint(state.next()); // TODO: Unicode character escapes (\u00A7 type thing)?
     }

@@ -27,7 +27,7 @@ package org.spongepowered.common.command.parameters.valueparameters;
 import com.google.common.collect.Lists;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 
@@ -47,13 +47,13 @@ public class NoneValueParameter implements CatalogedValueParameter {
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
         return Lists.newArrayList();
     }
 
     @Override
     public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
-            throws ParameterParseException {
+            throws ArgumentParseException {
         return Optional.empty();
     }
 }

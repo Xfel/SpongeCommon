@@ -34,7 +34,7 @@ import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 import org.spongepowered.api.world.DimensionType;
 import org.spongepowered.api.world.Locatable;
 import org.spongepowered.api.world.storage.WorldProperties;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
 import org.spongepowered.api.command.parameters.specification.impl.PatternMatchingValueParameter;
 
@@ -63,7 +63,7 @@ public class WorldPropertiesValueParameter extends PatternMatchingValueParameter
 
     @Override
     public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
-            throws ParameterParseException {
+            throws ArgumentParseException {
         final String next = args.peek();
         if (next.startsWith("#")) {
             String specifier = next.substring(1);

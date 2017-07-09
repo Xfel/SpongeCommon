@@ -28,7 +28,7 @@ import static org.spongepowered.common.util.SpongeCommonTranslationHelper.t;
 
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.flags.UnknownFlagBehavior;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 
@@ -36,7 +36,7 @@ public class ErrorBehavior implements UnknownFlagBehavior {
 
     @Override
     public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context, Object tokenizedArgsPreviousState,
-                      Object contextPreviousState) throws ParameterParseException {
+                      Object contextPreviousState) throws ArgumentParseException {
         args.setState(tokenizedArgsPreviousState);
         throw args.createError(t("%s is not a valid flag", args.next()));
     }

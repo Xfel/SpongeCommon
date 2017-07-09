@@ -28,7 +28,7 @@ import com.google.common.base.Preconditions;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.specification.ParsingContext;
 import org.spongepowered.api.command.parameters.specification.ValueParameterModifier;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
@@ -44,7 +44,7 @@ public class RepeatedModifier implements ValueParameterModifier {
 
     @Override
     public void onParse(Text key, CommandSource source, TokenizedArgs args, CommandExecutionContext context, ParsingContext parsingContext)
-            throws ParameterParseException {
+            throws ArgumentParseException {
         for (int count = 0; count < this.numberOfRepetitions; count++) {
             parsingContext.next();
         }

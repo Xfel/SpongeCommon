@@ -29,7 +29,7 @@ import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.specification.ParsingContext;
 import org.spongepowered.api.command.parameters.specification.ValueParameter;
 import org.spongepowered.api.command.parameters.specification.ValueParameterModifier;
@@ -55,7 +55,7 @@ public class SpongeParsingContext implements ParsingContext {
         this.valueParameter = valueParameter;
     }
 
-    @Override public void next() throws ParameterParseException {
+    @Override public void next() throws ArgumentParseException {
         if (this.modifierListIterator.hasNext()) {
             try {
                 this.modifierListIterator.next().onParse(this.key, this.source, this.args, this.context, this);

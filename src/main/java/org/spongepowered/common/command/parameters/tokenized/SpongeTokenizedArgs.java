@@ -27,7 +27,7 @@ package org.spongepowered.common.command.parameters.tokenized;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.tokens.SingleArg;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 
@@ -59,7 +59,7 @@ public class SpongeTokenizedArgs implements TokenizedArgs {
     }
 
     @Override
-    public String next() throws ParameterParseException {
+    public String next() throws ArgumentParseException {
         if (hasNext()) {
             return this.iterator.next().getArg();
         }
@@ -71,13 +71,13 @@ public class SpongeTokenizedArgs implements TokenizedArgs {
     public Optional<String> nextIfPresent() {
         try {
             return Optional.of(next());
-        } catch (ParameterParseException e) {
+        } catch (ArgumentParseException e) {
             return Optional.empty();
         }
     }
 
     @Override
-    public String peek() throws ParameterParseException {
+    public String peek() throws ArgumentParseException {
         if (hasNext()) {
             this.iterator.next();
             return this.iterator.previous().getArg();
@@ -92,7 +92,7 @@ public class SpongeTokenizedArgs implements TokenizedArgs {
     }
 
     @Override
-    public String previous() throws ParameterParseException {
+    public String previous() throws ArgumentParseException {
         if (hasPrevious()) {
             return this.iterator.previous().getArg();
         }
@@ -139,12 +139,12 @@ public class SpongeTokenizedArgs implements TokenizedArgs {
 
     // TODO
     @Override
-    public ParameterParseException createError(Text message) {
+    public ArgumentParseException createError(Text message) {
         return null;
     }
 
     @Override
-    public ParameterParseException createError(Text message, Throwable inner) {
+    public ArgumentParseException createError(Text message, Throwable inner) {
         return null;
     }
 

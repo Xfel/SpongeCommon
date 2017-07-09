@@ -28,7 +28,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 import org.spongepowered.common.command.specification.SpongeCommandExecutionContext;
 
@@ -56,7 +56,7 @@ public class SpongeSequenceParameter implements Parameter {
     }
 
     @Override
-    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
         boolean parseFlags = context instanceof SpongeCommandExecutionContext && !((SpongeCommandExecutionContext) context).getFlags().isAnchored();
         for (Parameter parameter : this.parameters) {
             parameter.parse(source, args, context);
@@ -67,7 +67,7 @@ public class SpongeSequenceParameter implements Parameter {
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
         for (Iterator<Parameter> it = this.parameters.iterator(); it.hasNext(); ) {
             Parameter element = it.next();
             Object startState = args.getState();
@@ -85,7 +85,7 @@ public class SpongeSequenceParameter implements Parameter {
 
                     args.setState(endState);
                 }
-            } catch (ParameterParseException e) {
+            } catch (ArgumentParseException e) {
                 args.setState(startState);
                 return element.complete(source, args, context);
             }

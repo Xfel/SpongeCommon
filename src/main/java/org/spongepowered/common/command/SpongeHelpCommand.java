@@ -26,7 +26,7 @@ package org.spongepowered.common.command;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import org.spongepowered.api.command.CommandLowLevel;
+import org.spongepowered.api.command.CallableCommand;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandSource;
@@ -62,7 +62,7 @@ public class SpongeHelpCommand {
                 if (command.isPresent()) {
                     Optional<? extends CommandMapping> mapping = SpongeImpl.getGame().getCommandManager().get(command.get(), src);
                     if (mapping.isPresent()) {
-                        CommandLowLevel callable = mapping.get().getCallable();
+                        CallableCommand callable = mapping.get().getCallable();
                         Optional<? extends Text> desc = callable.getHelp(src);
                         if (desc.isPresent()) {
                             src.sendMessage(desc.get());

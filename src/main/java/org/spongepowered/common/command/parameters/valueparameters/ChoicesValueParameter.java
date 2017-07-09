@@ -26,7 +26,7 @@ package org.spongepowered.common.command.parameters.valueparameters;
 
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.specification.ValueParameter;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 import org.spongepowered.api.text.Text;
@@ -55,13 +55,13 @@ public class ChoicesValueParameter implements ValueParameter {
     }
 
     @Override
-    public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+    public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
         final String nextArg = args.next();
         return Optional.ofNullable(getValue(nextArg, args));
     }
 
     @Nullable
-    public Object getValue(String nextArg, TokenizedArgs args) throws ParameterParseException {
+    public Object getValue(String nextArg, TokenizedArgs args) throws ArgumentParseException {
         Map<String, ?> choices = this.choicesSupplier.get();
         return choices.entrySet().stream().filter(k -> k.getKey().equalsIgnoreCase(nextArg)).findFirst()
                 .orElseThrow(() -> args.createError(t("Argument was not a valid choice. Valid choices: %s",
@@ -71,7 +71,7 @@ public class ChoicesValueParameter implements ValueParameter {
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ParameterParseException {
+    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
         final String nextArg = args.peek();
         return this.choicesSupplier.get().keySet().stream().filter(x -> x.toLowerCase(Locale.ENGLISH)
                 .startsWith(nextArg.toLowerCase(Locale.ENGLISH))).sorted().collect(Collectors.toList());

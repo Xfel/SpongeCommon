@@ -36,7 +36,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import org.spongepowered.api.command.CommandExecutionResult;
-import org.spongepowered.api.command.CommandLowLevel;
+import org.spongepowered.api.command.CallableCommand;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandMessageFormatting;
@@ -115,7 +115,7 @@ public class SpongeDispatcher implements Dispatcher {
      * @return The registered command mapping, unless no aliases could be
      *     registered
      */
-    public Optional<CommandMapping> register(CommandLowLevel callable, String... alias) {
+    public Optional<CommandMapping> register(CallableCommand callable, String... alias) {
         checkNotNull(alias, "alias");
         return register(callable, Arrays.asList(alias));
     }
@@ -136,7 +136,7 @@ public class SpongeDispatcher implements Dispatcher {
      * @return The registered command mapping, unless no aliases could be
      *     registered
      */
-    public Optional<CommandMapping> register(CommandLowLevel callable, List<String> aliases) {
+    public Optional<CommandMapping> register(CallableCommand callable, List<String> aliases) {
         return register(callable, aliases, Function.identity());
     }
 
@@ -160,7 +160,7 @@ public class SpongeDispatcher implements Dispatcher {
      * @return The registered command mapping, unless no aliases could
      *     be registered
      */
-    public synchronized Optional<CommandMapping> register(CommandLowLevel callable, List<String> aliases,
+    public synchronized Optional<CommandMapping> register(CallableCommand callable, List<String> aliases,
             Function<List<String>, List<String>> callback) {
         checkNotNull(aliases, "aliases");
         checkNotNull(callable, "callable");
@@ -328,7 +328,7 @@ public class SpongeDispatcher implements Dispatcher {
             throw new CommandNotFoundException(t("commands.generic.notFound"), argSplit[0]); // TODO: Fix properly to use a SpongeTranslation??
         }
         final String arguments = argSplit.length > 1 ? argSplit[1] : "";
-        final CommandLowLevel spec = cmdOptional.get().getCallable();
+        final CallableCommand spec = cmdOptional.get().getCallable();
         try {
             return spec.process(source, arguments);
         } catch (CommandNotFoundException e) {

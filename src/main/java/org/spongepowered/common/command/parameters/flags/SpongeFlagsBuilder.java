@@ -35,7 +35,7 @@ import org.spongepowered.api.command.CommandMessageFormatting;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.parameters.ParameterParseException;
+import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.flags.Flags;
 import org.spongepowered.api.command.parameters.flags.UnknownFlagBehavior;
 import org.spongepowered.api.command.parameters.flags.UnknownFlagBehaviors;
@@ -203,7 +203,7 @@ public class SpongeFlagsBuilder implements Flags.Builder {
 
         @Override
         public void onParse(Text key, CommandSource source, TokenizedArgs args, CommandExecutionContext context, ParsingContext parsingContext)
-                throws ParameterParseException {
+                throws ArgumentParseException {
             if (source.hasPermission(this.flagPermission)) {
                 parsingContext.next();
             } else {
@@ -231,7 +231,7 @@ public class SpongeFlagsBuilder implements Flags.Builder {
 
         @Override
         public void onParse(Text key, CommandSource source, TokenizedArgs args, CommandExecutionContext context, ParsingContext parsingContext)
-                throws ParameterParseException {
+                throws ArgumentParseException {
             parsingContext.next(); // Not changing anything here.
         }
 
