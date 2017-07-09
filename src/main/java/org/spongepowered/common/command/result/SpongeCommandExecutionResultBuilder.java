@@ -28,7 +28,7 @@ import org.spongepowered.api.command.CommandExecutionResult;
 
 import javax.annotation.Nullable;
 
-public class SpongeResultBuilder implements CommandExecutionResult.Builder {
+public class SpongeCommandExecutionResultBuilder implements CommandExecutionResult.Builder {
 
     @Nullable private Integer successCount;
     @Nullable private Integer affectedBlocks;
@@ -123,7 +123,7 @@ public class SpongeResultBuilder implements CommandExecutionResult.Builder {
      * @return A Result with the specified settings
      */
     public CommandExecutionResult build() {
-        return new SpongeResult(this.successCount, this.affectedBlocks, this.affectedEntities, this.affectedItems, this.queryResult);
+        return new SpongeCommandExecutionResult(this.successCount, this.affectedBlocks, this.affectedEntities, this.affectedItems, this.queryResult);
     }
 
 }

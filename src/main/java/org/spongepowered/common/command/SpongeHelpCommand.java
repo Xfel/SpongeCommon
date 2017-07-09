@@ -39,7 +39,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.common.SpongeImpl;
-import org.spongepowered.common.command.result.SpongeResult;
+import org.spongepowered.common.command.result.SpongeCommandExecutionResult;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -69,7 +69,7 @@ public class SpongeHelpCommand {
                         } else {
                             src.sendMessage(Text.of("Usage: /", command.get(), callable.getUsage(src)));
                         }
-                        return SpongeResult.SUCCESS;
+                        return SpongeCommandExecutionResult.SUCCESS;
                     }
                     throw new CommandException(Text.of("No such command: ", command.get()));
                 }
@@ -83,7 +83,7 @@ public class SpongeHelpCommand {
                     .testPermission(src)));
                 builder.contents(ImmutableList.copyOf(Collections2.transform(commands, input -> getDescription(src, input))));
                 builder.sendTo(src);
-                return SpongeResult.SUCCESS;
+                return SpongeCommandExecutionResult.SUCCESS;
             }).build();
     }
 

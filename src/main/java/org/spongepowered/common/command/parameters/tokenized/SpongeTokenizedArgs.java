@@ -60,20 +60,16 @@ public class SpongeTokenizedArgs implements TokenizedArgs {
 
     @Override
     public String next() throws ArgumentParseException {
-        if (hasNext()) {
-            return this.iterator.next().getArg();
-        }
-
-        throw createError(t("Not enough arguments"));
+        return nextIfPresent().orElseThrow(() -> createError(t("Not enough arguments")));
     }
 
     @Override
     public Optional<String> nextIfPresent() {
-        try {
-            return Optional.of(next());
-        } catch (ArgumentParseException e) {
-            return Optional.empty();
+        if (hasNext()) {
+            return Optional.of(this.iterator.next().getArg());
         }
+
+        return Optional.empty();
     }
 
     @Override

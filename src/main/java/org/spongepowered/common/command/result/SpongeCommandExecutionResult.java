@@ -30,10 +30,10 @@ import java.util.OptionalInt;
 
 import javax.annotation.Nullable;
 
-public class SpongeResult implements CommandExecutionResult {
+public class SpongeCommandExecutionResult implements CommandExecutionResult {
 
-    public static final SpongeResult EMPTY = new SpongeResult(null, null, null, null, null);
-    public static final SpongeResult SUCCESS = new SpongeResult(1, null, null, null, null);
+    public static final SpongeCommandExecutionResult EMPTY = new SpongeCommandExecutionResult(null, null, null, null, null);
+    public static final SpongeCommandExecutionResult SUCCESS = new SpongeCommandExecutionResult(1, null, null, null, null);
 
     @Nullable private final Integer successCount;
     @Nullable private final Integer affectedBlocks;
@@ -41,7 +41,7 @@ public class SpongeResult implements CommandExecutionResult {
     @Nullable private final Integer affectedItems;
     @Nullable private final Integer queryResult;
 
-    public SpongeResult(@Nullable Integer successCount, @Nullable Integer affectedBlocks, @Nullable Integer affectedEntities,
+    public SpongeCommandExecutionResult(@Nullable Integer successCount, @Nullable Integer affectedBlocks, @Nullable Integer affectedEntities,
             @Nullable Integer affectedItems, @Nullable Integer queryResult) {
         this.successCount = successCount;
         this.affectedBlocks = affectedBlocks;

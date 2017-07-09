@@ -64,9 +64,8 @@ public class SpongeFlagsBuilder implements Flags.Builder {
     public Flags.Builder flag(String... specs) {
         Preconditions.checkArgument(specs.length > 0, "Specs must have at least one entry.");
         List<String> aliases = storeAliases(specs);
-        Text usage = Text.of("[" + getFlag(aliases.get(0)) + "]");
-        Parameter markTrue = Parameter.builder().key(aliases.get(0)).parser(MARK_TRUE)
-                .usage((source, current) -> usage).build();
+        Text usage = Text.of(CommandMessageFormatting.LEFT_SQUARE, getFlag(aliases.get(0)), CommandMessageFormatting.RIGHT_SQUARE);
+        Parameter markTrue = Parameter.builder().key(aliases.get(0)).parser(MARK_TRUE).usage((source, current) -> usage).build();
         this.primaryFlags.add(aliases.get(0));
         for (String alias : aliases) {
             this.flags.put(alias, markTrue);
@@ -95,7 +94,7 @@ public class SpongeFlagsBuilder implements Flags.Builder {
         List<String> aliases = storeAliases(specs);
         this.primaryFlags.add(aliases.get(0));
         for (String alias : aliases) {
-            this.flags.put(alias, value);
+            this.flags.put(alias, new UsageWrapper(value));
         }
         return this;
     }
@@ -195,7 +194,7 @@ public class SpongeFlagsBuilder implements Flags.Builder {
         private final String flagPermission;
         private final Text usage;
 
-        private PermissionModifier(String flag, String flagPermission, Text usage) {
+        PermissionModifier(String flag, String flagPermission, Text usage) {
             this.flag = flag;
             this.flagPermission = flagPermission;
             this.usage = usage;
@@ -221,28 +220,38 @@ public class SpongeFlagsBuilder implements Flags.Builder {
         }
     }
 
-    private static class UsageModifier implements ValueParameterModifier {
+    private static class UsageWrapper implements Parameter {
 
-        private final Text flag;
+        private final Parameter wrapped;
 
-        private UsageModifier(Text flag) {
-            this.flag = flag;
+        UsageWrapper(Parameter wrapped) {
+            this.wrapped = wrapped;
         }
 
         @Override
-        public void onParse(Text key, CommandSource source, TokenizedArgs args, CommandExecutionContext context, ParsingContext parsingContext)
+        public Text getKey() {
+            return this.wrapped.getKey();
+        }
+
+        @Override
+        public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+            this.wrapped.parse(source, args, context);
+        }
+
+        @Override
+        public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
                 throws ArgumentParseException {
-            parsingContext.next(); // Not changing anything here.
+            return this.wrapped.complete(source, args, context);
         }
 
         @Override
-        public Text getUsage(Text key, CommandSource source, Text currentUsage) {
-            if (currentUsage.isEmpty()) {
-                return currentUsage;
+        public Text getUsage(CommandSource source) {
+            Text usage = this.wrapped.getUsage(source);
+            if (usage.isEmpty() || usage.toPlain().matches("^\\[.*]$")) {
+                return usage;
             }
 
-            return Text.of(CommandMessageFormatting.LEFT_SQUARE, this.flag, CommandMessageFormatting.SPACE_TEXT, currentUsage,
-                    CommandMessageFormatting.RIGHT_SQUARE);
+            return Text.of(CommandMessageFormatting.LEFT_SQUARE, usage, CommandMessageFormatting.RIGHT_SQUARE);
         }
     }
 }

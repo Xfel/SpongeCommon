@@ -24,6 +24,8 @@
  */
 package org.spongepowered.common.command.parameters.flags;
 
+import static org.spongepowered.common.util.SpongeCommonTranslationHelper.t;
+
 import org.spongepowered.api.command.CommandMessageFormatting;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
@@ -37,6 +39,7 @@ import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SpongeFlags implements Flags {
@@ -62,7 +65,7 @@ public class SpongeFlags implements Flags {
             return; // Nothing to parse, move along.
         }
 
-        // Avoiding PPE
+        // Avoiding APE
         Object tokenizedPreviousState = args.getState();
         Object contextPreviousState = args.getState();
         String next = args.next();
@@ -75,12 +78,21 @@ public class SpongeFlags implements Flags {
 
     private void parseShort(String flag, CommandSource source, TokenizedArgs args, CommandExecutionContext context, Object tokenizedPreviousState,
             Object contextPreviousState) throws ArgumentParseException {
-        String shortFlag = flag.substring(1, 2).toLowerCase(Locale.ENGLISH);
-        Parameter param = this.flags.get(shortFlag);
-        if (param == null) {
-            this.shortUnknown.parse(source, args, context, tokenizedPreviousState, contextPreviousState);
-        } else {
-            param.parse(source, args, context);
+        char[] shortFlags = flag.substring(1).toLowerCase(Locale.ENGLISH).toCharArray();
+
+        // -abc is parsed as -a -b -c
+        // Note that if we have -abc [blah], a and b MUST NOT try to parse the next value. This is why we have the
+        // PreventIteratorMovementTokenizedArgs class, which will throw an error in those scenarioes.
+        // -c is allowed to have a value.
+        PreventIteratorMovementTokenizedArgs nonMoving = new PreventIteratorMovementTokenizedArgs(args);
+        for (int i = 0; i < shortFlags.length; i++) {
+            TokenizedArgs argsToUse = i == shortFlags.length - 1 ? args : nonMoving;
+            Parameter param = this.flags.get(String.valueOf(shortFlags[i]));
+            if (param == null) {
+                this.shortUnknown.parse(source, argsToUse, context, tokenizedPreviousState, contextPreviousState);
+            } else {
+                param.parse(source, argsToUse, context);
+            }
         }
     }
 
@@ -97,10 +109,8 @@ public class SpongeFlags implements Flags {
 
     @Override
     public Text getUsage(CommandSource src) {
-        return Text.joinWith(CommandMessageFormatting.SPACE_TEXT, this.primaryFlags
-                .stream().map(this.flags::get).map(x -> x.getUsage(src)).filter
-                (x -> !x.isEmpty())
-                .collect(Collectors.toList()));
+        return Text.joinWith(CommandMessageFormatting.SPACE_TEXT, this.primaryFlags.stream()
+                .map(this.flags::get).map(x -> x.getUsage(src)).filter(x -> !x.isEmpty()).collect(Collectors.toList()));
     }
 
     @Override
@@ -115,4 +125,81 @@ public class SpongeFlags implements Flags {
                 .setAnchorFlags(this.anchorFlags);
     }
 
+    private class PreventIteratorMovementTokenizedArgs implements TokenizedArgs {
+
+        private final TokenizedArgs args;
+
+        PreventIteratorMovementTokenizedArgs(TokenizedArgs args) {
+            this.args = args;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return this.args.hasNext();
+        }
+
+        @Override
+        public String next() throws ArgumentParseException {
+            throw createValueError();
+        }
+
+        @Override
+        public Optional<String> nextIfPresent() {
+            return Optional.empty();
+        }
+
+        @Override
+        public String peek() throws ArgumentParseException {
+            return this.args.peek();
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return this.args.hasPrevious();
+        }
+
+        @Override
+        public String previous() throws ArgumentParseException {
+            throw createValueError();
+        }
+
+        @Override
+        public List<String> getAll() {
+            return this.args.getAll();
+        }
+
+        @Override
+        public int getCurrentRawPosition() {
+            return this.args.getCurrentRawPosition();
+        }
+
+        @Override
+        public String getRaw() {
+            return this.args.getRaw();
+        }
+
+        @Override
+        public Object getState() {
+            return this.args.getState();
+        }
+
+        @Override
+        public void setState(Object state) {
+            // noop
+        }
+
+        @Override
+        public ArgumentParseException createError(Text message) {
+            return this.args.createError(message);
+        }
+
+        @Override
+        public ArgumentParseException createError(Text message, Throwable inner) {
+            return this.args.createError(message, inner);
+        }
+
+        private ArgumentParseException createValueError() {
+            return createError(t("Short flags that are not at the end of a group cannot have a value."));
+        }
+    }
 }

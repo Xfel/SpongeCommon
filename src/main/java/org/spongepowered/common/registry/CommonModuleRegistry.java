@@ -150,7 +150,7 @@ import org.spongepowered.common.boss.ServerBossBarBuilder;
 import org.spongepowered.common.command.parameters.SpongeParameterBuilder;
 import org.spongepowered.common.command.parameters.SpongeParameterSequenceBuilder;
 import org.spongepowered.common.command.parameters.flags.SpongeFlagsBuilder;
-import org.spongepowered.common.command.result.SpongeResultBuilder;
+import org.spongepowered.common.command.result.SpongeCommandExecutionResultBuilder;
 import org.spongepowered.common.data.SpongeDataRegistrationBuilder;
 import org.spongepowered.common.data.builder.data.meta.SpongePatternLayerBuilder;
 import org.spongepowered.common.effect.particle.SpongeParticleEffectBuilder;
@@ -364,7 +364,7 @@ public final class CommonModuleRegistry {
             .registerBuilderSupplier(Parameter.Builder.class, SpongeParameterBuilder::new)
             .registerBuilderSupplier(Parameter.SequenceBuilder.class, SpongeParameterSequenceBuilder::new)
             .registerBuilderSupplier(Flags.Builder.class, SpongeFlagsBuilder::new)
-            .registerBuilderSupplier(CommandExecutionResult.Builder.class, SpongeResultBuilder::new)
+            .registerBuilderSupplier(CommandExecutionResult.Builder.class, SpongeCommandExecutionResultBuilder::new)
         ;
     }
 
