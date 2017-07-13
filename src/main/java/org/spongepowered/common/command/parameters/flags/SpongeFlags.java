@@ -67,7 +67,7 @@ public class SpongeFlags implements Flags {
 
         // Avoiding APE
         Object tokenizedPreviousState = args.getState();
-        Object contextPreviousState = args.getState();
+        Object contextPreviousState = context.getState();
         String next = args.next();
         if (next.startsWith("--")) {
             parseLong(next, source, args, context, tokenizedPreviousState, contextPreviousState);
@@ -82,14 +82,14 @@ public class SpongeFlags implements Flags {
 
         // -abc is parsed as -a -b -c
         // Note that if we have -abc [blah], a and b MUST NOT try to parse the next value. This is why we have the
-        // PreventIteratorMovementTokenizedArgs class, which will throw an error in those scenarioes.
+        // PreventIteratorMovementTokenizedArgs class, which will throw an error in those scenarios.
         // -c is allowed to have a value.
         PreventIteratorMovementTokenizedArgs nonMoving = new PreventIteratorMovementTokenizedArgs(args);
         for (int i = 0; i < shortFlags.length; i++) {
             TokenizedArgs argsToUse = i == shortFlags.length - 1 ? args : nonMoving;
             Parameter param = this.flags.get(String.valueOf(shortFlags[i]));
             if (param == null) {
-                this.shortUnknown.parse(source, argsToUse, context, tokenizedPreviousState, contextPreviousState);
+                this.shortUnknown.parse(source, argsToUse, context, tokenizedPreviousState, contextPreviousState, String.valueOf(shortFlags[i]));
             } else {
                 param.parse(source, argsToUse, context);
             }
@@ -101,7 +101,7 @@ public class SpongeFlags implements Flags {
         String longFlag = flag.substring(2).toLowerCase(Locale.ENGLISH);
         Parameter param = this.flags.get(longFlag);
         if (param == null) {
-            this.longUnknown.parse(source, args, context, tokenizedPreviousState, contextPreviousState);
+            this.longUnknown.parse(source, args, context, tokenizedPreviousState, contextPreviousState, longFlag);
         } else {
             param.parse(source, args, context);
         }

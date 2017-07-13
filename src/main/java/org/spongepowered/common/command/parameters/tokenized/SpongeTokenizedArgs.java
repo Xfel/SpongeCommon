@@ -113,6 +113,17 @@ public class SpongeTokenizedArgs implements TokenizedArgs {
         return this.raw.length();
     }
 
+    private int getLastArgStartPosition() {
+        if (hasPrevious()) {
+            SingleArg previous = this.iterator.previous();
+            this.iterator.next();
+
+            return previous.getStartIndex();
+        }
+
+        return 0;
+    }
+
     @Override
     public String getRaw() {
         return this.raw;
@@ -130,18 +141,17 @@ public class SpongeTokenizedArgs implements TokenizedArgs {
         State toRestore = (State) state;
         Preconditions.checkArgument(toRestore.internalIdentifier.equals(this.internalIdentifier), "This is not a state from this object");
 
-        this.iterator = this.args.listIterator(toRestore.index);
+        this.iterator = this.args.listIterator(toRestore.index + 1);
     }
 
-    // TODO
     @Override
     public ArgumentParseException createError(Text message) {
-        return null;
+        return new ArgumentParseException(message, getRaw(), getLastArgStartPosition());
     }
 
     @Override
     public ArgumentParseException createError(Text message, Throwable inner) {
-        return null;
+        return new ArgumentParseException(message, inner, getRaw(), getLastArgStartPosition());
     }
 
     public String rawArgsFromCurrentPosition() {

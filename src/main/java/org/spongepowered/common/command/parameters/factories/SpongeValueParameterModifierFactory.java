@@ -24,12 +24,17 @@
  */
 package org.spongepowered.common.command.parameters.factories;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import org.spongepowered.api.command.parameters.specification.ValueParameterModifier;
 import org.spongepowered.api.command.parameters.specification.factories.ValueParameterModifierFactory;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.common.command.parameters.modifiers.DefaultValueModifier;
 import org.spongepowered.common.command.parameters.modifiers.DefaultValueSuppplierModifier;
 import org.spongepowered.common.command.parameters.modifiers.RepeatedModifier;
+import org.spongepowered.common.command.parameters.modifiers.SelectorModifier;
 
+import java.util.Collection;
 import java.util.function.Supplier;
 
 public class SpongeValueParameterModifierFactory implements ValueParameterModifierFactory {
@@ -39,11 +44,20 @@ public class SpongeValueParameterModifierFactory implements ValueParameterModifi
         return new RepeatedModifier(times);
     }
 
-    @Override public ValueParameterModifier defaultValue(Object defaultValue) {
+    @Override
+    public ValueParameterModifier selector(Collection<Class<? extends Entity>> supportedEntities, boolean requireOne, boolean strict) {
+        Preconditions.checkNotNull(supportedEntities, "supportedEntities");
+        Preconditions.checkArgument(!supportedEntities.isEmpty(), "supportedEntities must not be zero length");
+        return new SelectorModifier(Lists.newArrayList(supportedEntities), requireOne, strict);
+    }
+
+    @Override
+    public ValueParameterModifier defaultValue(Object defaultValue) {
         return new DefaultValueModifier(defaultValue);
     }
 
-    @Override public ValueParameterModifier defaultValueSupplier(Supplier<Object> defaultValueSupplier) {
+    @Override
+    public ValueParameterModifier defaultValueSupplier(Supplier<Object> defaultValueSupplier) {
         return new DefaultValueSuppplierModifier(defaultValueSupplier);
     }
 

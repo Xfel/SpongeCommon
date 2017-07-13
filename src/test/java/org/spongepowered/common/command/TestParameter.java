@@ -22,29 +22,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.common.command.parameters.flags.behaviors;
+package org.spongepowered.common.command;
 
+import com.google.common.collect.Lists;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.flags.UnknownFlagBehavior;
+import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.text.Text;
 
-public class SkipBehavior implements UnknownFlagBehavior {
+import java.util.List;
+
+public class TestParameter implements Parameter {
+
+    private final Text key = Text.of("test");
 
     @Override
-    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context, Object tokenizedArgsPreviousState,
-            Object contextPreviousState, String flag) throws ArgumentParseException {
-        // Just skip the element
+    public Text getKey() {
+        return this.key;
     }
 
     @Override
-    public String getId() {
-        return "sponge:skip";
+    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+        context.putEntry("test", args.next());
     }
 
     @Override
-    public String getName() {
-        return "Skip unknown flag";
+    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+        return Lists.newArrayList();
+    }
+
+    @Override
+    public Text getUsage(CommandSource source) {
+        return Text.EMPTY;
     }
 }

@@ -44,6 +44,7 @@ import org.spongepowered.api.command.parameters.specification.ValueParameterModi
 import org.spongepowered.api.command.parameters.specification.ValueParser;
 import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.common.command.parameters.SpongeSequenceParameter;
 
 import java.util.List;
 import java.util.Locale;
@@ -93,8 +94,10 @@ public class SpongeFlagsBuilder implements Flags.Builder {
         Preconditions.checkArgument(specs.length > 0, "Specs must have at least one entry.");
         List<String> aliases = storeAliases(specs);
         this.primaryFlags.add(aliases.get(0));
+        Parameter element = new UsageWrapper(new SpongeSequenceParameter(
+                Parameter.builder().key(aliases.get(0)).parser(MARK_TRUE).usage((source, current) -> Text.EMPTY).build(), value));
         for (String alias : aliases) {
-            this.flags.put(alias, new UsageWrapper(value));
+            this.flags.put(alias, element);
         }
         return this;
     }
@@ -102,14 +105,14 @@ public class SpongeFlagsBuilder implements Flags.Builder {
     @Override
     public Flags.Builder setUnknownLongFlagBehavior(UnknownFlagBehavior behavior) {
         Preconditions.checkNotNull(behavior);
-        this.shortUnknown = behavior;
+        this.longUnknown = behavior;
         return this;
     }
 
     @Override
     public Flags.Builder setUnknownShortFlagBehavior(UnknownFlagBehavior behavior) {
         Preconditions.checkNotNull(behavior);
-        this.longUnknown = behavior;
+        this.shortUnknown = behavior;
         return this;
     }
 

@@ -34,25 +34,8 @@ public class AcceptValueBehavior implements UnknownFlagBehavior {
 
     @Override
     public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context, Object tokenizedArgsPreviousState,
-                      Object contextPreviousState) throws ArgumentParseException {
-        // Rewind, parse it.
-        args.setState(tokenizedArgsPreviousState);
-        String arg = args.next();
-        if (arg.startsWith("--")) {
-            // --flag [arg]
-            context.putEntry(arg.substring(2), args.nextIfPresent().orElse(arg.substring(2)));
-            return;
-        }
-
-        // Short flag
-        if (arg.length() != 2) {
-            // -p<arg>
-            context.putEntry(String.valueOf(arg.charAt(1)), arg.substring(2));
-        } else {
-            // -p <arg>
-            context.putEntry(arg.substring(1), args.nextIfPresent().orElse(arg.substring(1)));
-        }
-
+            Object contextPreviousState, String flag) throws ArgumentParseException {
+        context.putEntry(flag, args.nextIfPresent().map(x -> (Object) x).orElse(true));
     }
 
     @Override

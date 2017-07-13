@@ -34,7 +34,7 @@ public class IgnoreBehavior implements UnknownFlagBehavior {
 
     @Override
     public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context, Object tokenizedArgsPreviousState,
-                      Object contextPreviousState) throws ArgumentParseException {
+            Object contextPreviousState, String flag) throws ArgumentParseException {
         args.setState(tokenizedArgsPreviousState);
         context.setState(contextPreviousState);
     }

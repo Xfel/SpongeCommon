@@ -36,21 +36,8 @@ public class AcceptNonValueBehavior implements UnknownFlagBehavior {
 
     @Override
     public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context, Object tokenizedArgsPreviousState,
-                      Object contextPreviousState) throws ArgumentParseException {
-        // Rewind, parse it.
-        args.setState(tokenizedArgsPreviousState);
-        String arg = args.next();
-        if (arg.startsWith("--")) {
-            context.putEntry(arg.substring(2), true);
-            return;
-        }
-
-        if (arg.length() != 2) {
-            // The length of the argument is incorrect.
-            throw args.createError(t("The unknown short flag %s cannot have a value (%s).", arg.substring(0, 2), arg.substring(2)));
-        }
-
-        context.putEntry(String.valueOf(arg.charAt(1)), true);
+            Object contextPreviousState, String flag) throws ArgumentParseException {
+        context.putEntry(flag, true);
     }
 
     @Override
