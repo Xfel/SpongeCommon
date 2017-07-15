@@ -41,6 +41,7 @@ public abstract class ItemStackQueryOperation<T> extends SpongeQueryOperation {
     @Override
     public <TInventory, TStack> boolean matches(Lens<TInventory, TStack> lens, Lens<TInventory, TStack> parent, Fabric<TInventory> inventory) {
         if (lens instanceof SlotLens) {
+            @SuppressWarnings("unchecked")
             ItemStack stack = ((SlotLens<TInventory, ItemStack>) lens).getStack(inventory);
             if (stack == null) {
                 return false;
