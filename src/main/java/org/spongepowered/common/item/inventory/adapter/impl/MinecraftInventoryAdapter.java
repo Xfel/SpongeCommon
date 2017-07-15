@@ -31,6 +31,7 @@ import org.spongepowered.api.item.inventory.InventoryArchetype;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.InventoryProperty;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.query.QueryOperation;
 import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult;
 import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.common.item.inventory.InventoryIterator;
@@ -168,50 +169,8 @@ public interface MinecraftInventoryAdapter extends InventoryAdapter<IInventory, 
 
     @SuppressWarnings("unchecked")
     @Override
-    default <T extends Inventory> T query(Class<?>... types) {
-        return (T) Query.compile(this, types).execute();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <T extends Inventory> T query(ItemType... types) {
-        return (T) Query.compile(this, types).execute();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <T extends Inventory> T query(ItemStack... types) {
-        return (T) Query.compileExact(this, types).execute();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <T extends Inventory> T queryAny(ItemStack... types) {
-        return (T) Query.compile(this, types).execute();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <T extends Inventory> T query(InventoryProperty<?, ?>... props) {
-        return (T) Query.compile(this, props).execute();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <T extends Inventory> T query(Translation... names) {
-        return (T) Query.compile(this, names).execute();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <T extends Inventory> T query(String... args) {
-        return (T) Query.compile(this, args).execute();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <T extends Inventory> T query(Object... args) {
-        return (T) Query.compile(this, args).execute();
+    default <T extends Inventory> T query(QueryOperation... queries) {
+        return (T) Query.compile(this, queries).execute();
     }
 
     @Override
