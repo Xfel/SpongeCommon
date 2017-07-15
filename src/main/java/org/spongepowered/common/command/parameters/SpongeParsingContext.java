@@ -55,7 +55,8 @@ public class SpongeParsingContext implements ParsingContext {
         this.valueParameter = valueParameter;
     }
 
-    @Override public void next() throws ArgumentParseException {
+    @Override
+    public void next() throws ArgumentParseException {
         if (this.modifierListIterator.hasNext()) {
             try {
                 this.modifierListIterator.next().onParse(this.key, this.source, this.args, this.context, this);
