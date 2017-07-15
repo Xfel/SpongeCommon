@@ -22,28 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.common.item.inventory.query;
+package org.spongepowered.common.item.inventory.query.operation;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.spongepowered.api.text.translation.Translation;
+import org.spongepowered.common.item.inventory.lens.Fabric;
+import org.spongepowered.common.item.inventory.lens.Lens;
+import org.spongepowered.common.item.inventory.query.SpongeQueryOperation;
 
-import org.spongepowered.api.item.inventory.query.QueryOperation;
-import org.spongepowered.api.item.inventory.query.QueryOperationType;
-import org.spongepowered.common.SpongeCatalogType;
+import java.util.Objects;
 
-import java.util.function.Function;
+public final class InventoryTitleQueryOperation extends SpongeQueryOperation {
 
-public final class SpongeQueryOperationType<T> extends SpongeCatalogType implements QueryOperationType<T> {
+    private final Translation translation;
 
-    private final Function<T, SpongeQueryOperation> newInstance;
-
-    public SpongeQueryOperationType(String id, Function<T, SpongeQueryOperation> newInstance) {
-        super(id);
-        this.newInstance = newInstance;
+    public InventoryTitleQueryOperation(Translation translation) {
+        this.translation = translation;
     }
 
     @Override
-    public QueryOperation of(T arg) {
-        checkNotNull(arg);
-        return this.newInstance.apply(arg);
+    public <TInventory, TStack> boolean matches(Lens<TInventory, TStack> lens, Lens<TInventory, TStack> parent, Fabric<TInventory> inventory) {
+        return Objects.equals(lens.getName(inventory), translation);
     }
 }
