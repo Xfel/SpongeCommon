@@ -41,18 +41,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public final class QueryOperationRegistryModule implements CatalogRegistryModule<QueryOperationType<?>> {
+@SuppressWarnings("unchecked")
+public final class QueryOperationRegistryModule implements CatalogRegistryModule<QueryOperationType> {
 
     @RegisterCatalog(QueryOperationTypes.class)
-    private final Map<String, QueryOperationType<?>> types = new HashMap<>();
+    private final Map<String, QueryOperationType> types = new HashMap<>();
 
     @Override
-    public Optional<QueryOperationType<?>> getById(String id) {
+    public Optional<QueryOperationType> getById(String id) {
         return Optional.ofNullable(this.types.get(id));
     }
 
     @Override
-    public Collection<QueryOperationType<?>> getAll() {
+    public Collection<QueryOperationType> getAll() {
         return this.types.values();
     }
 
