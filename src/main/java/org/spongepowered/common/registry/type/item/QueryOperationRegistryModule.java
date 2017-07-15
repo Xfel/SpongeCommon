@@ -33,7 +33,7 @@ import org.spongepowered.common.item.inventory.query.operation.InventoryProperty
 import org.spongepowered.common.item.inventory.query.operation.InventoryTypeQueryOperation;
 import org.spongepowered.common.item.inventory.query.operation.ItemStackCustomOperation;
 import org.spongepowered.common.item.inventory.query.operation.ItemStackExactQueryOperation;
-import org.spongepowered.common.item.inventory.query.operation.ItemStackIgnoreCountQueryOperation;
+import org.spongepowered.common.item.inventory.query.operation.ItemStackIgnoreQuantityOperation;
 import org.spongepowered.common.item.inventory.query.operation.ItemTypeQueryOperation;
 
 import java.util.Collection;
@@ -60,7 +60,7 @@ public final class QueryOperationRegistryModule implements CatalogRegistryModule
     public void registerDefaults() {
         register(new SpongeQueryOperationType<>("inventory_type", InventoryTypeQueryOperation::new));
         register(new SpongeQueryOperationType<>("item_type", ItemTypeQueryOperation::new));
-        register(new SpongeQueryOperationType<>("item_stack_ignore_count", ItemStackIgnoreCountQueryOperation::new));
+        register(new SpongeQueryOperationType<>("item_stack_ignore_quantity", ItemStackIgnoreQuantityOperation::new));
         register(new SpongeQueryOperationType<>("item_stack_exact", ItemStackExactQueryOperation::new));
         register(new SpongeQueryOperationType<>("item_stack_custom", ItemStackCustomOperation::new));
         register(new SpongeQueryOperationType<>("inventory_property", InventoryPropertyQueryOperation::new));

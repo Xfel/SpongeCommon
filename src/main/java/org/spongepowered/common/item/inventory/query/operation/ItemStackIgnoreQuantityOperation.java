@@ -27,9 +27,9 @@ package org.spongepowered.common.item.inventory.query.operation;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.common.item.inventory.util.ItemStackUtil;
 
-public final class ItemStackIgnoreCountQueryOperation extends ItemStackQueryOperation<ItemStack> {
+public final class ItemStackIgnoreQuantityOperation extends ItemStackQueryOperation<ItemStack> {
 
-    public ItemStackIgnoreCountQueryOperation(ItemStack itemStack) {
+    public ItemStackIgnoreQuantityOperation(ItemStack itemStack) {
         super(itemStack.copy());
     }
 

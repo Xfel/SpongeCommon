@@ -71,7 +71,7 @@ public class InventoryQueryTest {
                     Inventory inventory = getPlayerInventory(src);
                     ItemStack lapis = ItemStack.of(ItemTypes.DYE, 4);
                     lapis.offer(Keys.DYE_COLOR, DyeColors.BLUE);
-                    Inventory lapisItems = inventory.query(QueryOperationTypes.ITEM_STACK_IGNORE_COUNT.of(lapis));
+                    Inventory lapisItems = inventory.query(QueryOperationTypes.ITEM_STACK_IGNORE_QUANTITY.of(lapis));
                     src.sendMessage(Text.of("You have ", lapisItems.totalItems(), " lapis lazuli in your inventory."));
                     return CommandResult.success();
                 }).build();
