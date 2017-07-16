@@ -117,8 +117,28 @@ public class ParameterTest {
 
     }
 
+    @Test(expected = ArgumentParseException.class)
+    public void testThatCustomParserBreaksIfNothingIsReturned() throws Exception {
+
+        // With this parameter (it's optional for a reason!)
+        Parameter parameter = Parameter.builder().key("test").parser((s, a, c) -> Optional.empty()).build();
+
+        // This tokenized args
+        SpongeTokenizedArgs args = new SpongeTokenizedArgs(Lists.newArrayList(new SpongeSingleArg("a1", 0, 1)), "a1");
+
+        // This context
+        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+
+        // And this source
+        CommandSource source = Mockito.mock(CommandSource.class);
+
+        // Parse
+        parameter.parse(source, args, context);
+
+    }
+
     @Test
-    public void testThatCustomParserCanReturnNothing() throws Exception {
+    public void testThatCustomParserCanReturnNothingIfOptional() throws Exception {
 
         // With this parameter (it's optional for a reason!)
         Parameter parameter = Parameter.builder().key("test").optionalWeak().parser((s, a, c) -> Optional.empty()).build();
