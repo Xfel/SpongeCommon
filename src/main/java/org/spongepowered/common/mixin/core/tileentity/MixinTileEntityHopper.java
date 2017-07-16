@@ -144,9 +144,8 @@ public abstract class MixinTileEntityHopper extends MixinTileEntityLockableLoot 
             this.capturedTransactions.add(trans);
             Cause.Builder builder = Cause.source(this);
 
-            // TODO problem: Transfer affects 2 inventories!
-            ChangeInventoryEvent.Transfer event =
-                    SpongeEventFactory.createChangeInventoryEventTransfer(builder.build(), ((Inventory) this), this.capturedTransactions);
+            ChangeInventoryEvent.Transfer.Post event =
+                    SpongeEventFactory.createChangeInventoryEventTransferPost(builder.build(), ((Inventory) this), ((Inventory) iInventory), this.capturedTransactions);
 
             SpongeImpl.postEvent(event);
             if (event.isCancelled()) {
@@ -172,26 +171,20 @@ public abstract class MixinTileEntityHopper extends MixinTileEntityLockableLoot 
 
         if (source instanceof IMixinInventory) {
             ((IMixinInventory) source).getCapturedTransactions()
-                    .add(new SlotTransaction(slot, from, to));;
+                    .add(new SlotTransaction(slot, from, to));
         }
         return remaining;
     }
 
-    /*
-    private static boolean pullItemFromSlot(IHopper hopper, IInventory inventoryIn, int index, EnumFacing direction) {
-        // TODO after putStackInInventoryAllSlots
-        // get slot
-        // itemstack1 is before, after one less
-        // Build SlotTransaction and add it to a list for the event later
-        // Additionally we need the slottransaction in the remote inventory
-        return false;
+    @Inject(method = "transferItemsOut", cancellable = true, locals = LocalCapture.CAPTURE_FAILEXCEPTION, at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockHopper;getFacing(I)Lnet/minecraft/util/EnumFacing;"))
+    public void onTransferItemsOut(CallbackInfoReturnable<Boolean> cir, IInventory iInventory) {
+        Cause.Builder builder = Cause.source(this);
+        ChangeInventoryEvent.Transfer.Pre event =
+                SpongeEventFactory.createChangeInventoryEventTransferPre(builder.build(), ((Inventory) this), ((Inventory) iInventory));
+        SpongeImpl.postEvent(event);
+        if (event.isCancelled()) {
+            cir.setReturnValue(false);
+        }
     }
 
-    private static boolean putDropInInventoryAllSlots(IInventory source, IInventory destination, EntityItem entity) {
-        // TODO after putStackInInventoryAllSlots
-        // entity?
-        // Additionally we need the slottransaction in the remote inventory
-        return false;
-    }
-    */
 }
