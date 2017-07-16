@@ -104,11 +104,11 @@ public class InventoryQueryTest {
                     return CommandResult.success();
                 }).build();
 
-        CommandSpec inventoryTitle = CommandSpec.builder()
+        CommandSpec inventoryTranslation = CommandSpec.builder()
                 .executor((src, args) -> {
                     Inventory inventory = getPlayerInventory(src);
                     Inventory slots = ((PlayerInventory) inventory).getHotbar()
-                            .query(QueryOperationTypes.INVENTORY_TITLE.of(Sponge.getRegistry().getTranslationById("slot.name").get()));
+                            .query(QueryOperationTypes.INVENTORY_TRANSLATION.of(Sponge.getRegistry().getTranslationById("slot.name").get()));
                     src.sendMessage(Text.of("You have ", slots.totalItems(), " items in your hotbar."));
                     return CommandResult.success();
                 }).build();
@@ -120,7 +120,7 @@ public class InventoryQueryTest {
                 .child(itemStackSpecific, "itemstackspecific")
                 .child(itemStackCustom, "itemstackcustom")
                 .child(inventoryProperty, "inventoryproperty")
-                .child(inventoryTitle, "inventorytitle")
+                .child(inventoryTranslation, "inventorytranslation")
                 .build(), "invquery");
     }
 

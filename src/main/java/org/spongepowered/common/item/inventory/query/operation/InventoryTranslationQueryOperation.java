@@ -31,11 +31,11 @@ import org.spongepowered.common.item.inventory.query.SpongeQueryOperation;
 
 import java.util.Objects;
 
-public final class InventoryTitleQueryOperation extends SpongeQueryOperation {
+public final class InventoryTranslationQueryOperation extends SpongeQueryOperation {
 
     private final Translation translation;
 
-    public InventoryTitleQueryOperation(Translation translation) {
+    public InventoryTranslationQueryOperation(Translation translation) {
         this.translation = translation;
     }
 

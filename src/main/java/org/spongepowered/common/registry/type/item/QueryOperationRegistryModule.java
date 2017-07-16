@@ -30,7 +30,7 @@ import org.spongepowered.api.registry.CatalogRegistryModule;
 import org.spongepowered.api.registry.util.RegisterCatalog;
 import org.spongepowered.common.item.inventory.query.SpongeQueryOperationType;
 import org.spongepowered.common.item.inventory.query.operation.InventoryPropertyQueryOperation;
-import org.spongepowered.common.item.inventory.query.operation.InventoryTitleQueryOperation;
+import org.spongepowered.common.item.inventory.query.operation.InventoryTranslationQueryOperation;
 import org.spongepowered.common.item.inventory.query.operation.InventoryTypeQueryOperation;
 import org.spongepowered.common.item.inventory.query.operation.ItemStackCustomOperation;
 import org.spongepowered.common.item.inventory.query.operation.ItemStackExactQueryOperation;
@@ -66,7 +66,7 @@ public final class QueryOperationRegistryModule implements CatalogRegistryModule
         register(new SpongeQueryOperationType<>("item_stack_exact", ItemStackExactQueryOperation::new));
         register(new SpongeQueryOperationType<>("item_stack_custom", ItemStackCustomOperation::new));
         register(new SpongeQueryOperationType<>("inventory_property", InventoryPropertyQueryOperation::new));
-        register(new SpongeQueryOperationType<>("inventory_title", InventoryTitleQueryOperation::new));
+        register(new SpongeQueryOperationType<>("inventory_translation", InventoryTranslationQueryOperation::new));
     }
 
     private void register(QueryOperationType<?> type) {
