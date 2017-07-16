@@ -104,6 +104,15 @@ public class InventoryQueryTest {
                     return CommandResult.success();
                 }).build();
 
+        CommandSpec inventoryTitle = CommandSpec.builder()
+                .executor((src, args) -> {
+                    Inventory inventory = getPlayerInventory(src);
+                    Inventory slots = ((PlayerInventory) inventory).getHotbar()
+                            .query(QueryOperationTypes.INVENTORY_TITLE.of(Sponge.getRegistry().getTranslationById("slot.name").get()));
+                    src.sendMessage(Text.of("You have ", slots.totalItems(), " items in your hotbar."));
+                    return CommandResult.success();
+                }).build();
+
         Sponge.getCommandManager().register(this, CommandSpec.builder()
                 .child(inventoryType, "inventorytype")
                 .child(itemType, "itemtype")
@@ -111,6 +120,7 @@ public class InventoryQueryTest {
                 .child(itemStackSpecific, "itemstackspecific")
                 .child(itemStackCustom, "itemstackcustom")
                 .child(inventoryProperty, "inventoryproperty")
+                .child(inventoryTitle, "inventorytitle")
                 .build(), "invquery");
     }
 
