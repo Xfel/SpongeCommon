@@ -75,8 +75,8 @@ import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.event.CauseStackManager.CauseStackFrame;
 import org.spongepowered.api.event.SpongeEventFactory;
-import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.event.cause.entity.dismount.DismountType;
 import org.spongepowered.api.event.cause.entity.dismount.DismountTypes;
@@ -310,14 +310,14 @@ public abstract class MixinEntity implements IMixinEntity {
     @Override
     public boolean dismountRidingEntity(DismountType type) {
         if (!this.world.isRemote && ShouldFire.RIDE_ENTITY_EVENT_DISMOUNT) {
-            Object frame = Sponge.getCauseStackManager().pushCauseFrame();
-            Sponge.getCauseStackManager().pushCause(this);
-            Sponge.getCauseStackManager().addContext(EventContextKeys.DISMOUNT_TYPE, type);
-            if (SpongeImpl.postEvent(SpongeEventFactory.
-                    createRideEntityEventDismount(Sponge.getCauseStackManager().getCurrentCause(), type, (Entity) this.getRidingEntity()))) {
-                return false;
+            try (CauseStackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                Sponge.getCauseStackManager().pushCause(this);
+                Sponge.getCauseStackManager().addContext(EventContextKeys.DISMOUNT_TYPE, type);
+                if (SpongeImpl.postEvent(SpongeEventFactory.
+                        createRideEntityEventDismount(Sponge.getCauseStackManager().getCurrentCause(), type, (Entity) this.getRidingEntity()))) {
+                    return false;
+                }
             }
-            Sponge.getCauseStackManager().popCauseFrame(frame);
         }
 
         if (this.ridingEntity != null) {

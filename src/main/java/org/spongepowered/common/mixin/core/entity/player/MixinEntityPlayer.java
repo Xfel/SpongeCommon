@@ -65,6 +65,7 @@ import net.minecraft.world.LockCode;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.event.CauseStackManager.CauseStackFrame;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
@@ -86,7 +87,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.common.SpongeImpl;
 import org.spongepowered.common.SpongeImplHooks;
 import org.spongepowered.common.data.manipulator.mutable.entity.SpongeHealthData;
@@ -593,28 +593,28 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
                                     // entitylivingbase.knockBack(this, 0.4F, (double)MathHelper.sin(this.rotationYaw * 0.017453292F), (double)(-MathHelper.cos(this.rotationYaw * 0.017453292F)));
                                     // entitylivingbase.attackEntityFrom(DamageSource.causePlayerDamage(this), 1.0F);
                                     final EntityDamageSource sweepingAttackSource = EntityDamageSource.builder().entity(this).type(DamageTypes.SWEEPING_ATTACK).build();
-                                    Object frame = Sponge.getCauseStackManager().pushCauseFrame();
-                                    Sponge.getCauseStackManager().pushCause(sweepingAttackSource);
-                                    final ItemStackSnapshot heldSnapshot = ItemStackUtil.snapshotOf(heldItem);
-                                    Sponge.getCauseStackManager().addContext(EventContextKeys.WEAPON, heldSnapshot);
-                                    final DamageFunction sweapingFunction = DamageFunction.of(DamageModifier.builder()
-                                                    .cause(Cause.of(EventContext.empty(), heldSnapshot))
-                                                    .item(heldSnapshot)
-                                                    .type(DamageModifierTypes.SWEAPING)
-                                                    .build(),
-                                            (incoming) -> EnchantmentHelper.getSweepingDamageRatio((EntityPlayer) (Object) this) * attackDamage);
-                                    final List<DamageFunction> sweapingFunctions = new ArrayList<>();
-                                    sweapingFunctions.add(sweapingFunction);
-                                    AttackEntityEvent sweepingAttackEvent = SpongeEventFactory.createAttackEntityEvent(Sponge.getCauseStackManager().getCurrentCause(),
-                                            sweapingFunctions, EntityUtil.fromNative(entitylivingbase), 1, 1.0D);
-                                    SpongeImpl.postEvent(sweepingAttackEvent);
-                                    if (!sweepingAttackEvent.isCancelled()) {
-                                        entitylivingbase.knockBack((EntityPlayer) (Object) this, sweepingAttackEvent.getKnockbackModifier() * 0.4F,
-                                                (double) MathHelper.sin(this.rotationYaw * 0.017453292F),
-                                                (double) (-MathHelper.cos(this.rotationYaw * 0.017453292F)));
-                                        entitylivingbase.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) (Object) this), (float) sweepingAttackEvent.getFinalOutputDamage());
+                                    try (CauseStackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                                        Sponge.getCauseStackManager().pushCause(sweepingAttackSource);
+                                        final ItemStackSnapshot heldSnapshot = ItemStackUtil.snapshotOf(heldItem);
+                                        Sponge.getCauseStackManager().addContext(EventContextKeys.WEAPON, heldSnapshot);
+                                        final DamageFunction sweapingFunction = DamageFunction.of(DamageModifier.builder()
+                                                        .cause(Cause.of(EventContext.empty(), heldSnapshot))
+                                                        .item(heldSnapshot)
+                                                        .type(DamageModifierTypes.SWEAPING)
+                                                        .build(),
+                                                (incoming) -> EnchantmentHelper.getSweepingDamageRatio((EntityPlayer) (Object) this) * attackDamage);
+                                        final List<DamageFunction> sweapingFunctions = new ArrayList<>();
+                                        sweapingFunctions.add(sweapingFunction);
+                                        AttackEntityEvent sweepingAttackEvent = SpongeEventFactory.createAttackEntityEvent(Sponge.getCauseStackManager().getCurrentCause(),
+                                                sweapingFunctions, EntityUtil.fromNative(entitylivingbase), 1, 1.0D);
+                                        SpongeImpl.postEvent(sweepingAttackEvent);
+                                        if (!sweepingAttackEvent.isCancelled()) {
+                                            entitylivingbase.knockBack((EntityPlayer) (Object) this, sweepingAttackEvent.getKnockbackModifier() * 0.4F,
+                                                    (double) MathHelper.sin(this.rotationYaw * 0.017453292F),
+                                                    (double) (-MathHelper.cos(this.rotationYaw * 0.017453292F)));
+                                            entitylivingbase.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) (Object) this), (float) sweepingAttackEvent.getFinalOutputDamage());
+                                        }
                                     }
-                                    Sponge.getCauseStackManager().popCauseFrame(frame);
                                     // Sponge End
                                 }
                             }
