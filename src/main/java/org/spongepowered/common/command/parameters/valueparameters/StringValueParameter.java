@@ -26,10 +26,10 @@ package org.spongepowered.common.command.parameters.valueparameters;
 
 import com.google.common.collect.Lists;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.CommandContext;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameter;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,12 +37,12 @@ import java.util.Optional;
 public class StringValueParameter implements CatalogedValueParameter {
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         return Lists.newArrayList();
     }
 
     @Override
-    public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
+    public Optional<Object> getValue(CommandSource source, CommandArgs args, CommandContext context)
             throws ArgumentParseException {
         return Optional.of(args.next());
     }

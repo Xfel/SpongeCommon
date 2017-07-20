@@ -27,10 +27,10 @@ package org.spongepowered.test;
 import com.google.common.collect.Lists;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandExecutionResult;
+import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.specification.ChildExceptionBehaviors;
-import org.spongepowered.api.command.specification.CommandSpec;
+import org.spongepowered.api.command.spec.ChildExceptionBehaviors;
+import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -52,14 +52,14 @@ public class StandardCommandsTest {
     public void onInit(GameInitializationEvent event) {
         Sponge.getCommandManager().register(this, CommandSpec.builder().executor((source, context) -> {
             source.sendMessage(Text.of("No parameter command."));
-            return CommandExecutionResult.success();
+            return CommandResult.success();
         }).build(), "noparam");
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
                 .permission("sponge.test.permission")
                 .executor((source, context) -> {
                     source.sendMessage(Text.of("You have the permission \"sponge.test.permission\"."));
-                    return CommandExecutionResult.success();
+                    return CommandResult.success();
         }).build(), "permission");
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
@@ -67,7 +67,7 @@ public class StandardCommandsTest {
                 .description(Text.of("Repeats what you say to the command."))
                 .executor((source, context) -> {
                     source.sendMessage(Text.of("Simon says: ", context.getOneUnchecked(textKey)));
-                    return CommandExecutionResult.success();
+                    return CommandResult.success();
                 }).build(), "simonsays");
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
@@ -75,7 +75,7 @@ public class StandardCommandsTest {
                 .description(Text.of("Repeats what you say to the command, from a choice of \"wisely\" and \"poorly\"."))
                 .executor((source, context) -> {
                     source.sendMessage(Text.of("You chose ", context.getOneUnchecked(textKey)));
-                    return CommandExecutionResult.success();
+                    return CommandResult.success();
                 }).build(), "choose");
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
@@ -83,7 +83,7 @@ public class StandardCommandsTest {
                 .description(Text.of("Repeats the one word you say to the command, if you add that parameter."))
                 .executor((source, context) -> {
                     source.sendMessage(Text.of("You chose ", context.<String>getOne(textKey).orElse("nothing")));
-                    return CommandExecutionResult.success();
+                    return CommandResult.success();
                 }).build(), "chooseoptional");
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
@@ -91,7 +91,7 @@ public class StandardCommandsTest {
                 .description(Text.of("Repeats the words you say to the command, one at a time."))
                 .executor((source, context) -> {
                     context.getAll(textKey).forEach(x -> source.sendMessage(Text.of("You chose ", x)));
-                    return CommandExecutionResult.success();
+                    return CommandResult.success();
                 }).build(), "chooseall");
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
@@ -107,25 +107,25 @@ public class StandardCommandsTest {
                 .executor((source, context) -> {
                     Player player = context.<Player>getOne(playerKey).orElseThrow(() -> new CommandException(Text.of("No player was specified")));
                     context.getAll(textKey).forEach(x -> player.sendMessage(Text.of(source.getName(), " chose ", x)));
-                    return CommandExecutionResult.success();
+                    return CommandResult.success();
                 }).build(), "chooseplayer");
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
                 .description(Text.of("A command that only has a subcommand"))
                 .addChild(CommandSpec.builder().executor((source, context) -> {
                     source.sendMessage(Text.of("Child executed"));
-                    return CommandExecutionResult.success();
+                    return CommandResult.success();
                 }).build(), "child").build(), "subwithchildonly");
 
         Sponge.getCommandManager().register(this, CommandSpec.builder()
                 .description(Text.of("A command that has a subcommand as well as a base command"))
                 .addChild(CommandSpec.builder().executor((source, context) -> {
                     source.sendMessage(Text.of("Child executed"));
-                    return CommandExecutionResult.success();
+                    return CommandResult.success();
                 })
                 .executor(((source, context) -> {
                     source.sendMessage(Text.of("Base executed"));
-                    return CommandExecutionResult.success();
+                    return CommandResult.success();
                 }))
                 .build(), "child").build(), "subwithchildandbase");
 

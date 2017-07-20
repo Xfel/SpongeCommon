@@ -25,14 +25,14 @@
 package org.spongepowered.common.command.parameters;
 
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.CommandContext;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.ParsingContext;
-import org.spongepowered.api.command.parameters.specification.ValueParameter;
-import org.spongepowered.api.command.parameters.specification.ValueParameterModifier;
+import org.spongepowered.api.command.parameters.spec.ParsingContext;
+import org.spongepowered.api.command.parameters.spec.ValueParameter;
+import org.spongepowered.api.command.parameters.spec.ValueParameterModifier;
 
 import java.util.ListIterator;
 
@@ -40,12 +40,12 @@ public class SpongeParsingContext implements ParsingContext {
 
     private final Text key;
     private final CommandSource source;
-    private final TokenizedArgs args;
-    private final CommandExecutionContext context;
+    private final CommandArgs args;
+    private final CommandContext context;
     private final ListIterator<ValueParameterModifier> modifierListIterator;
     private final ValueParameter valueParameter;
 
-    public SpongeParsingContext(Text key, CommandSource source, TokenizedArgs args, CommandExecutionContext context,
+    public SpongeParsingContext(Text key, CommandSource source, CommandArgs args, CommandContext context,
                                 ListIterator<ValueParameterModifier> modifierListIterator, ValueParameter valueParameter) {
         this.key = key;
         this.source = source;

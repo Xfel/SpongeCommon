@@ -26,10 +26,10 @@ package org.spongepowered.common.command.parameters.tokenized;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.tokens.SingleArg;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 
 import static org.spongepowered.api.util.SpongeApiTranslationHelper.t;
 
-public class SpongeTokenizedArgs implements TokenizedArgs {
+public class SpongeCommandArgs implements CommandArgs {
 
     private final UUID internalIdentifier = UUID.randomUUID();
 
@@ -47,7 +47,7 @@ public class SpongeTokenizedArgs implements TokenizedArgs {
     private final String raw;
     private ListIterator<SingleArg> iterator;
 
-    public SpongeTokenizedArgs(List<SingleArg> args, String raw) {
+    public SpongeCommandArgs(List<SingleArg> args, String raw) {
         this.args = args;
         this.iterator = args.listIterator();
         this.raw = raw;
@@ -154,6 +154,7 @@ public class SpongeTokenizedArgs implements TokenizedArgs {
         return new ArgumentParseException(message, inner, getRaw(), getLastArgStartPosition());
     }
 
+    @Override
     public String rawArgsFromCurrentPosition() {
         if (hasNext()) {
             this.iterator.next();

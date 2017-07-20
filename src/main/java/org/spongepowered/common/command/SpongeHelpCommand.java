@@ -26,12 +26,12 @@ package org.spongepowered.common.command;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import org.spongepowered.api.command.CallableCommand;
+import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.specification.CommandSpec;
+import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
@@ -39,7 +39,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.common.SpongeImpl;
-import org.spongepowered.common.command.result.SpongeCommandExecutionResult;
+import org.spongepowered.common.command.result.SpongeCommandResult;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -62,14 +62,14 @@ public class SpongeHelpCommand {
                 if (command.isPresent()) {
                     Optional<? extends CommandMapping> mapping = SpongeImpl.getGame().getCommandManager().get(command.get(), src);
                     if (mapping.isPresent()) {
-                        CallableCommand callable = mapping.get().getCallable();
+                        CommandCallable callable = mapping.get().getCallable();
                         Optional<? extends Text> desc = callable.getHelp(src);
                         if (desc.isPresent()) {
                             src.sendMessage(desc.get());
                         } else {
                             src.sendMessage(Text.of("Usage: /", command.get(), callable.getUsage(src)));
                         }
-                        return SpongeCommandExecutionResult.SUCCESS;
+                        return SpongeCommandResult.SUCCESS;
                     }
                     throw new CommandException(Text.of("No such command: ", command.get()));
                 }
@@ -83,7 +83,7 @@ public class SpongeHelpCommand {
                     .testPermission(src)));
                 builder.contents(ImmutableList.copyOf(Collections2.transform(commands, input -> getDescription(src, input))));
                 builder.sendTo(src);
-                return SpongeCommandExecutionResult.SUCCESS;
+                return SpongeCommandResult.SUCCESS;
             }).build();
     }
 

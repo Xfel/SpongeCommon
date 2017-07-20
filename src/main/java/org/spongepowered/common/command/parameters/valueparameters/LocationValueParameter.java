@@ -28,16 +28,16 @@ import com.flowpowered.math.vector.Vector3d;
 import com.google.common.collect.ImmutableSet;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameters.CommandContext;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.text.selector.Selector;
 import org.spongepowered.api.world.Locatable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameter;
 
 import java.util.Collection;
 import java.util.List;
@@ -67,7 +67,7 @@ public class LocationValueParameter implements CatalogedValueParameter {
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         Object state = args.getState();
         Optional<String> nextPossibility = args.nextIfPresent();
         if (nextPossibility.isPresent() && nextPossibility.get().startsWith("@")) {
@@ -83,7 +83,7 @@ public class LocationValueParameter implements CatalogedValueParameter {
     }
 
     @Override
-    public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
+    public Optional<Object> getValue(CommandSource source, CommandArgs args, CommandContext context)
             throws ArgumentParseException {
         Object state = args.getState();
         if (args.peek().startsWith("@")) { // We are a selector

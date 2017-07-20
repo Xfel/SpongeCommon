@@ -31,7 +31,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.service.user.UserStorageService;
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameter;
 
 import java.util.Optional;
 

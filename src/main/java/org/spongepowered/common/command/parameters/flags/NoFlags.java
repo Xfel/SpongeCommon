@@ -25,10 +25,10 @@
 package org.spongepowered.common.command.parameters.flags;
 
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.CommandContext;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.flags.Flags;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
 
 /**
@@ -41,7 +41,7 @@ public class NoFlags implements Flags {
     private NoFlags() {}
 
     @Override
-    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
 
     }
 

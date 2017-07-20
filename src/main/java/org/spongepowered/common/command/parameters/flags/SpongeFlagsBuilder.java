@@ -33,16 +33,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.spongepowered.api.command.CommandMessageFormatting;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.CommandContext;
 import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.flags.Flags;
 import org.spongepowered.api.command.parameters.flags.UnknownFlagBehavior;
 import org.spongepowered.api.command.parameters.flags.UnknownFlagBehaviors;
-import org.spongepowered.api.command.parameters.specification.ParsingContext;
-import org.spongepowered.api.command.parameters.specification.ValueParameterModifier;
-import org.spongepowered.api.command.parameters.specification.ValueParser;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.spec.ParsingContext;
+import org.spongepowered.api.command.parameters.spec.ValueParameterModifier;
+import org.spongepowered.api.command.parameters.spec.ValueParser;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.common.command.parameters.SpongeSequenceParameter;
 
@@ -204,7 +204,7 @@ public class SpongeFlagsBuilder implements Flags.Builder {
         }
 
         @Override
-        public void onParse(Text key, CommandSource source, TokenizedArgs args, CommandExecutionContext context, ParsingContext parsingContext)
+        public void onParse(Text key, CommandSource source, CommandArgs args, CommandContext context, ParsingContext parsingContext)
                 throws ArgumentParseException {
             if (source.hasPermission(this.flagPermission)) {
                 parsingContext.next();
@@ -237,12 +237,12 @@ public class SpongeFlagsBuilder implements Flags.Builder {
         }
 
         @Override
-        public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+        public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
             this.wrapped.parse(source, args, context);
         }
 
         @Override
-        public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
+        public List<String> complete(CommandSource source, CommandArgs args, CommandContext context)
                 throws ArgumentParseException {
             return this.wrapped.complete(source, args, context);
         }

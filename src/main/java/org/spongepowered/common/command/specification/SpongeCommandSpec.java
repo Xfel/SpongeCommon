@@ -34,30 +34,30 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandExecutionResult;
-import org.spongepowered.api.command.CallableCommand;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandMessageFormatting;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.dispatcher.Dispatcher;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.CommandContext;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
 import org.spongepowered.api.command.parameters.tokens.InputTokenizer;
-import org.spongepowered.api.command.specification.ChildExceptionBehavior;
-import org.spongepowered.api.command.specification.CommandExecutor;
-import org.spongepowered.api.command.specification.CommandSpec;
+import org.spongepowered.api.command.spec.ChildExceptionBehavior;
+import org.spongepowered.api.command.spec.CommandExecutor;
+import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.flags.Flags;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.common.command.SpongeCommandMapping;
 import org.spongepowered.common.command.parameters.flags.NoFlags;
-import org.spongepowered.common.command.parameters.tokenized.SpongeTokenizedArgs;
+import org.spongepowered.common.command.parameters.tokenized.SpongeCommandArgs;
 import org.spongepowered.common.command.specification.childexception.ChildCommandException;
 
 import javax.annotation.Nullable;
@@ -85,7 +85,7 @@ public class SpongeCommandSpec implements CommandSpec, Dispatcher {
     private final boolean requirePermissionForChildren;
 
     SpongeCommandSpec(Iterable<Parameter> parameters,
-            Map<String, CallableCommand> children,
+            Map<String, CommandCallable> children,
             ChildExceptionBehavior childExceptionBehavior,
             InputTokenizer inputTokenizer,
             Flags flags,
@@ -105,7 +105,7 @@ public class SpongeCommandSpec implements CommandSpec, Dispatcher {
 
         if (!children.isEmpty()) {
             // Register the commands
-            Map<CallableCommand, List<String>> intermediate = children.entrySet().stream()
+            Map<CommandCallable, List<String>> intermediate = children.entrySet().stream()
                     .collect(Collectors.groupingBy(Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
             intermediate.forEach((lowLevel, aliases) -> {
                 SpongeCommandMapping spongeCommandMapping;
@@ -122,14 +122,14 @@ public class SpongeCommandSpec implements CommandSpec, Dispatcher {
     }
 
     @Override
-    public CommandExecutionResult process(CommandSource source, String arguments) throws CommandException {
-        // Step one, create the TokenizedArgs and CommandExecutionContext
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(this.inputTokenizer.tokenize(arguments, true), arguments);
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+    public CommandResult process(CommandSource source, String arguments) throws CommandException {
+        // Step one, create the CommandArgs and CommandContext
+        SpongeCommandArgs args = new SpongeCommandArgs(this.inputTokenizer.tokenize(arguments, true), arguments);
+        SpongeCommandContext context = new SpongeCommandContext();
         return processInternal(source, args, context);
     }
 
-    private CommandExecutionResult processInternal(CommandSource source, SpongeTokenizedArgs args, SpongeCommandExecutionContext context)
+    public CommandResult processInternal(CommandSource source, CommandArgs args, SpongeCommandContext context)
             throws CommandException {
         if (this.requirePermissionForChildren) {
             checkPermission(source);
@@ -145,7 +145,7 @@ public class SpongeCommandSpec implements CommandSpec, Dispatcher {
             Optional<? extends CommandMapping> optionalChild = get(subCommand.toLowerCase(Locale.ENGLISH));
             if (optionalChild.isPresent()) {
                 // Get the command
-                CallableCommand cmd = optionalChild.get().getCallable();
+                CommandCallable cmd = optionalChild.get().getCallable();
                 context.setCurrentCommand(subCommand);
                 try {
                     if (cmd instanceof SpongeCommandSpec) {
@@ -196,8 +196,8 @@ public class SpongeCommandSpec implements CommandSpec, Dispatcher {
     public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition)
             throws CommandException {
         checkNotNull(source, "source");
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(this.inputTokenizer.tokenize(arguments, true), arguments);
-        CommandExecutionContext context = new SpongeCommandExecutionContext(null, true, targetPosition);
+        SpongeCommandArgs args = new SpongeCommandArgs(this.inputTokenizer.tokenize(arguments, true), arguments);
+        CommandContext context = new SpongeCommandContext(null, true, targetPosition);
         return ImmutableList.copyOf(this.parameters.complete(source, args, context));
     }
 
@@ -250,7 +250,7 @@ public class SpongeCommandSpec implements CommandSpec, Dispatcher {
 
     private Optional<Text> subcommandUsageText(CommandSource source) {
         List<String> aliasesToDisplay = this.primaryAliases.stream().filter(x -> {
-            CallableCommand child = this.mappings.get(x).getCallable();
+            CommandCallable child = this.mappings.get(x).getCallable();
             return child instanceof SpongeCommandSpec && ((SpongeCommandSpec) child).requirePermissionForChildren || child.testPermission(source);
         }).collect(Collectors.toList());
 
@@ -289,10 +289,14 @@ public class SpongeCommandSpec implements CommandSpec, Dispatcher {
      * @param context The context to put data in
      * @throws ArgumentParseException if an invalid argument is provided
      */
-    private void populateContext(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public void populateContext(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         // First, the flags.
         this.flags.parse(source, args, context);
         this.parameters.parse(source, args, context);
+    }
+
+    public CommandExecutor getExecutor() {
+        return this.executor;
     }
 
     @Override

@@ -25,14 +25,14 @@
 package org.spongepowered.common.command.parameters;
 
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.CommandContext;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
 
 import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.ValueParameter;
-import org.spongepowered.api.command.parameters.specification.ValueParameterModifier;
+import org.spongepowered.api.command.parameters.spec.ValueParameter;
+import org.spongepowered.api.command.parameters.spec.ValueParameterModifier;
 
 import java.util.List;
 
@@ -54,12 +54,12 @@ class SpongeParameter implements Parameter {
     }
 
     @Override
-    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         new SpongeParsingContext(this.key, source, args, context, this.modifiers.listIterator(), this.valueParameter).next();
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         List<String> completions = this.valueParameter.complete(source, args, context);
         for (ValueParameterModifier modifier : this.modifiers) {
             completions = modifier.complete(source, args, context, completions);

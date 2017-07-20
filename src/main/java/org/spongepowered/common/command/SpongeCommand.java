@@ -25,17 +25,6 @@
 package org.spongepowered.common.command;
 
 import static org.spongepowered.api.Platform.Component.IMPLEMENTATION;
-import static org.spongepowered.api.command.args.GenericArguments.choices;
-import static org.spongepowered.api.command.args.GenericArguments.dimension;
-import static org.spongepowered.api.command.args.GenericArguments.firstParsing;
-import static org.spongepowered.api.command.args.GenericArguments.flags;
-import static org.spongepowered.api.command.args.GenericArguments.literal;
-import static org.spongepowered.api.command.args.GenericArguments.optional;
-import static org.spongepowered.api.command.args.GenericArguments.optionalWeak;
-import static org.spongepowered.api.command.args.GenericArguments.plugin;
-import static org.spongepowered.api.command.args.GenericArguments.seq;
-import static org.spongepowered.api.command.args.GenericArguments.string;
-import static org.spongepowered.api.command.args.GenericArguments.world;
 
 import co.aikar.timings.SpongeTimingsFactory;
 import co.aikar.timings.Timings;
@@ -47,14 +36,14 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.ChildCommandElementExecutor;
-import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.parameters.CommandContext;
+import org.spongepowered.api.command.parameters.Parameter;
+import org.spongepowered.api.command.parameters.flags.Flags;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
@@ -112,28 +101,31 @@ public class SpongeCommand {
     static final Text UNKNOWN = Text.of("UNKNOWN");
 
     private static final DecimalFormat THREE_DECIMAL_DIGITS_FORMATTER = new DecimalFormat("########0.000");
+    private static final Flags FLAGS = Flags.builder().flag("-global", "g")
+            .valueFlag(Parameter.builder().worldProperties().key(Text.of("world")).build(), "-world", "w")
+            .valueFlag(Parameter.builder().dimension().key(Text.of("dimension")).build(), "-dimension", "d")
+            .build();
     /**
      * Create a new instance of the Sponge command structure.
      *
      * @return The newly created command
      */
     public static CommandSpec getCommand() {
-        final ChildCommandElementExecutor flagChildren = new ChildCommandElementExecutor(null);
-        final ChildCommandElementExecutor nonFlagChildren = new ChildCommandElementExecutor(flagChildren);
-        nonFlagChildren.register(getVersionCommand(), "version");
-        nonFlagChildren.register(getBlockInfoCommand(), "blockInfo");
-        nonFlagChildren.register(getEntityInfoCommand(), "entityInfo");
-        nonFlagChildren.register(getAuditCommand(), "audit");
-        nonFlagChildren.register(getHeapCommand(), "heap");
-        nonFlagChildren.register(getPluginsCommand(), "plugins");
-        nonFlagChildren.register(getTimingsCommand(), "timings");
-        nonFlagChildren.register(getWhichCommand(), "which");
-        flagChildren.register(getChunksCommand(), "chunks");
-        flagChildren.register(getConfigCommand(), "config");
-        flagChildren.register(getReloadCommand(), "reload"); // TODO: Should these two be subcommands of config, and what is now config be set?
-        flagChildren.register(getSaveCommand(), "save");
-        flagChildren.register(getTpsCommand(), "tps");
+
         return CommandSpec.builder()
+                .addChild(getVersionCommand(), "version")
+                .addChild(getBlockInfoCommand(), "blockInfo")
+                .addChild(getEntityInfoCommand(), "entityInfo")
+                .addChild(getAuditCommand(), "audit")
+                .addChild(getHeapCommand(), "heap")
+                .addChild(getPluginsCommand(), "plugins")
+                .addChild(getTimingsCommand(), "timings")
+                .addChild(getWhichCommand(), "which")
+                .addChild(getChunksCommand(), "chunks")
+                .addChild(getConfigCommand(), "config")
+                .addChild(getReloadCommand(), "reload") // TODO: Should these two be subcommands of config, and what is now config be set?
+                .addChild(getSaveCommand(), "save")
+                .addChild(getTpsCommand(), "tps")
                 .description(Text.of("General Sponge command"))
                 .extendedDescription(Text.of("commands:\n", // TODO: Automatically generate from child executors (wait for help system on this)
                         INDENT, title("chunks"), LONG_INDENT, "Prints chunk data for a specific dimension or world(s)\n",
@@ -146,12 +138,6 @@ public class SpongeCommand {
                         INDENT, title("plugins"), LONG_INDENT, "List currently installed plugins\n",
                         INDENT, title("which"), LONG_INDENT, "List plugins that own a specific command\n",
                         INDENT, title("tps"), LONG_INDENT, "Provides TPS (ticks per second) data for loaded worlds"))
-                .arguments(firstParsing(nonFlagChildren, flags()
-                        .flag("-global", "g")
-                        .valueFlag(world(Text.of("world")), "-world", "w")
-                        .valueFlag(dimension(Text.of("dimension")), "-dimension", "d")
-                        .buildWith(flagChildren)))
-                .executor(nonFlagChildren)
                 .build();
     }
 
@@ -219,8 +205,12 @@ public class SpongeCommand {
 
     private static CommandSpec getChunksCommand() {
         return CommandSpec.builder()
+                .parameters(
+                        Parameter.builder().optional().key("dump").literal("dump").build(),
+                        Parameter.builder().optional().key("dump-all").literal("all").build()
+                )
+                .flags(FLAGS)
                 .description(Text.of("Print chunk information, optionally dump"))
-                .arguments(optional(seq(literal(Text.of("dump"), "dump"), optional(literal(Text.of("dump-all"), "all")))))
                 .permission("sponge.command.chunks")
                 .executor(new ConfigUsingExecutor(true) {
                     @Override
@@ -287,7 +277,11 @@ public class SpongeCommand {
     private static CommandSpec getConfigCommand() {
         return CommandSpec.builder()
                 .description(Text.of("Inspect the Sponge config"))
-                .arguments(seq(string(Text.of("key")), optional(string(Text.of("value")))))
+                .flags(FLAGS)
+                .parameters(
+                        Parameter.builder().key("key").string().build(),
+                        Parameter.builder().optional().key("value").string().build()
+                )
                 .permission("sponge.command.config")
                 .executor(new ConfigUsingExecutor(false) {
                     @Override
@@ -314,6 +308,7 @@ public class SpongeCommand {
 
     private static CommandSpec getReloadCommand() {
         return CommandSpec.builder()
+                .flags(FLAGS)
                 .description(Text.of("Reload the Sponge game"))
                 .permission("sponge.command.reload")
                 .executor(new ConfigUsingExecutor(false) {
@@ -329,6 +324,7 @@ public class SpongeCommand {
 
     private static CommandSpec getSaveCommand() {
         return CommandSpec.builder()
+                .flags(FLAGS)
                 .description(Text.of("Save the configuration"))
                 .permission("sponge.command.save")
                 .executor(new ConfigUsingExecutor(false) {
@@ -340,6 +336,37 @@ public class SpongeCommand {
                 })
                 .build();
     }
+
+
+    private static CommandSpec getTpsCommand() {
+        return CommandSpec.builder()
+                .flags(FLAGS)
+                .permission("sponge.command.tps")
+                .description(Text.of("Provides TPS (ticks per second) data for loaded worlds."))
+                .parameters(Parameter.builder().optional().worldProperties().key("world").build())
+                .executor((src, args) -> {
+                    if (args.hasAny("world")) {
+                        for (WorldProperties properties : args.<WorldProperties>getAll("world")) {
+                            final Optional<World> optWorld = Sponge.getServer().getWorld(properties.getWorldName());
+                            if (!optWorld.isPresent()) {
+                                src.sendMessage(Text.of(properties.getWorldName() + " has no TPS as it is offline!"));
+                            } else {
+                                printWorldTickTime(src, optWorld.get());
+                            }
+                        }
+                    } else {
+                        Sponge.getServer().getWorlds().forEach(world -> printWorldTickTime(src, world));
+                    }
+                    final double serverMeanTickTime = mean(SpongeImpl.getServer().tickTimeArray) * 1.0e-6d;
+                    src.sendMessage(Text.of("Overall TPS: ", TextColors.LIGHT_PURPLE,
+                            THREE_DECIMAL_DIGITS_FORMATTER.format(Math.min(1000.0 / (serverMeanTickTime), 20)),
+                            TextColors.RESET, ", Mean: ", TextColors.RED, THREE_DECIMAL_DIGITS_FORMATTER.
+                                    format(serverMeanTickTime), "ms"));
+                    return CommandResult.success();
+                })
+                .build();
+    }
+
 
     // Non-flag children
 
@@ -465,7 +492,10 @@ public class SpongeCommand {
         return CommandSpec.builder()
                 .description(Text.of("List currently installed plugins"))
                 .permission("sponge.command.plugins")
-                .arguments(optionalWeak(literal(Text.of("reload"), "reload")), optional(plugin(Text.of("plugin"))))
+                .parameters(
+                        Parameter.builder().optionalWeak().literal("reload").key("reload").build(),
+                        Parameter.builder().optionalWeak().plugin().key("plugin").build()
+                )
                 .executor((src, args) -> {
                     if (args.hasAny("reload") && src.hasPermission("sponge.command.plugins.reload")) {
                         src.sendMessage(Text.of("Sending reload event to all plugins. Please wait."));
@@ -531,11 +561,11 @@ public class SpongeCommand {
     }
 
 
-    private static CommandCallable getTimingsCommand() {
+    private static CommandSpec getTimingsCommand() {
         return CommandSpec.builder()
                 .permission("sponge.command.timings")
                 .description(Text.of("Manages Sponge Timings data to see performance of the server."))
-                .child(CommandSpec.builder()
+                .addChild(CommandSpec.builder()
                         .executor((src, args) -> {
                             if (!Timings.isTimingsEnabled()) {
                                 src.sendMessage(Text.of("Please enable timings by typing /sponge timings on"));
@@ -546,7 +576,7 @@ public class SpongeCommand {
                             return CommandResult.success();
                         })
                         .build(), "reset")
-                .child(CommandSpec.builder()
+                .addChild(CommandSpec.builder()
                         .executor((src, args) -> {
                             if (!Timings.isTimingsEnabled()) {
                                 src.sendMessage(Text.of("Please enable timings by typing /sponge timings on"));
@@ -556,21 +586,21 @@ public class SpongeCommand {
                             return CommandResult.success();
                         })
                         .build(), "report", "paste")
-                .child(CommandSpec.builder()
+                .addChild(CommandSpec.builder()
                         .executor((src, args) -> {
                             Timings.setTimingsEnabled(true);
                             src.sendMessage(Text.of("Enabled Timings & Reset"));
                             return CommandResult.success();
                         })
                         .build(), "on")
-                .child(CommandSpec.builder()
+                .addChild(CommandSpec.builder()
                         .executor((src, args) -> {
                             Timings.setTimingsEnabled(false);
                             src.sendMessage(Text.of("Disabled Timings"));
                             return CommandResult.success();
                         })
                         .build(), "off")
-                .child(CommandSpec.builder()
+                .addChild(CommandSpec.builder()
                         .executor((src, args) -> {
                             if (!Timings.isTimingsEnabled()) {
                                 src.sendMessage(Text.of("Please enable timings by typing /sponge timings on"));
@@ -581,7 +611,7 @@ public class SpongeCommand {
                             return CommandResult.success();
                         })
                         .build(), "verbon")
-                .child(CommandSpec.builder()
+                .addChild(CommandSpec.builder()
                         .executor((src, args) -> {
                             if (!Timings.isTimingsEnabled()) {
                                 src.sendMessage(Text.of("Please enable timings by typing /sponge timings on"));
@@ -592,7 +622,7 @@ public class SpongeCommand {
                             return CommandResult.success();
                         })
                         .build(), "verboff")
-                .child(CommandSpec.builder()
+                .addChild(CommandSpec.builder()
                         .executor((src, args) -> {
                             if (!Timings.isTimingsEnabled()) {
                                 src.sendMessage(Text.of("Please enable timings by typing /sponge timings on"));
@@ -609,7 +639,9 @@ public class SpongeCommand {
         return CommandSpec.builder()
                 .permission("sponge.command.which")
                 .description(Text.of("List plugins that own a specific command"))
-                .arguments(choices(Text.of("command"), () -> Sponge.getCommandManager().getAll().keySet(), Function.identity()))
+                .parameters(
+                        Parameter.builder().key("command").choices(() -> Sponge.getCommandManager().getAll().keySet(), Function.identity()).build()
+                )
                 .executor((src, args) -> {
                     CommandManager mgr = Sponge.getCommandManager();
                     String commandName = args.<String>getOne("command").get();
@@ -628,34 +660,6 @@ public class SpongeCommand {
                                 });
                     }
 
-                    return CommandResult.success();
-                })
-                .build();
-    }
-
-    private static CommandSpec getTpsCommand() {
-        return CommandSpec.builder()
-                .permission("sponge.command.tps")
-                .description(Text.of("Provides TPS (ticks per second) data for loaded worlds."))
-                .arguments(optional(world(Text.of("world"))))
-                .executor((src, args) -> {
-                    if (args.hasAny("world")) {
-                        for (WorldProperties properties : args.<WorldProperties>getAll("world")) {
-                            final Optional<World> optWorld = Sponge.getServer().getWorld(properties.getWorldName());
-                            if (!optWorld.isPresent()) {
-                                src.sendMessage(Text.of(properties.getWorldName() + " has no TPS as it is offline!"));
-                            } else {
-                                printWorldTickTime(src, optWorld.get());
-                            }
-                        }
-                    } else {
-                        Sponge.getServer().getWorlds().forEach(world -> printWorldTickTime(src, world));
-                    }
-                    final double serverMeanTickTime = mean(SpongeImpl.getServer().tickTimeArray) * 1.0e-6d;
-                    src.sendMessage(Text.of("Overall TPS: ", TextColors.LIGHT_PURPLE,
-                            THREE_DECIMAL_DIGITS_FORMATTER.format(Math.min(1000.0 / (serverMeanTickTime), 20)),
-                            TextColors.RESET, ", Mean: ", TextColors.RED, THREE_DECIMAL_DIGITS_FORMATTER.
-                                    format(serverMeanTickTime), "ms"));
                     return CommandResult.success();
                 })
                 .build();

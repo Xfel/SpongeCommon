@@ -24,16 +24,16 @@
  */
 package org.spongepowered.common.command.result;
 
-import org.spongepowered.api.command.CommandExecutionResult;
+import org.spongepowered.api.command.CommandResult;
 
 import java.util.OptionalInt;
 
 import javax.annotation.Nullable;
 
-public class SpongeCommandExecutionResult implements CommandExecutionResult {
+public class SpongeCommandResult implements CommandResult {
 
-    public static final SpongeCommandExecutionResult EMPTY = new SpongeCommandExecutionResult(null, null, null, null, null);
-    public static final SpongeCommandExecutionResult SUCCESS = new SpongeCommandExecutionResult(1, null, null, null, null);
+    public static final SpongeCommandResult EMPTY = new SpongeCommandResult(null, null, null, null, null);
+    public static final SpongeCommandResult SUCCESS = new SpongeCommandResult(1, null, null, null, null);
 
     @Nullable private final Integer successCount;
     @Nullable private final Integer affectedBlocks;
@@ -41,7 +41,7 @@ public class SpongeCommandExecutionResult implements CommandExecutionResult {
     @Nullable private final Integer affectedItems;
     @Nullable private final Integer queryResult;
 
-    public SpongeCommandExecutionResult(@Nullable Integer successCount, @Nullable Integer affectedBlocks, @Nullable Integer affectedEntities,
+    public SpongeCommandResult(@Nullable Integer successCount, @Nullable Integer affectedBlocks, @Nullable Integer affectedEntities,
             @Nullable Integer affectedItems, @Nullable Integer queryResult) {
         this.successCount = successCount;
         this.affectedBlocks = affectedBlocks;

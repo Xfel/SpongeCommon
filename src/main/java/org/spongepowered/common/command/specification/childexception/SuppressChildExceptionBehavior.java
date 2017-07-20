@@ -25,7 +25,7 @@
 package org.spongepowered.common.command.specification.childexception;
 
 import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.specification.ChildExceptionBehavior;
+import org.spongepowered.api.command.spec.ChildExceptionBehavior;
 
 import java.util.Optional;
 

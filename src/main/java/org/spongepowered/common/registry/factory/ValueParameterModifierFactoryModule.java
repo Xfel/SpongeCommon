@@ -24,8 +24,8 @@
  */
 package org.spongepowered.common.registry.factory;
 
-import org.spongepowered.api.command.parameters.specification.ValueParameterModifiers;
-import org.spongepowered.api.command.parameters.specification.factories.ValueParameterModifierFactory;
+import org.spongepowered.api.command.parameters.spec.ValueParameterModifiers;
+import org.spongepowered.api.command.parameters.spec.factories.ValueParameterModifierFactory;
 import org.spongepowered.api.registry.FactoryRegistry;
 import org.spongepowered.common.command.parameters.factories.SpongeValueParameterModifierFactory;
 

@@ -28,16 +28,16 @@ import com.flowpowered.math.vector.Vector3d;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.util.StartsWithPredicate;
 import org.spongepowered.api.util.blockray.BlockRay;
 import org.spongepowered.api.util.blockray.BlockRayHit;
 import org.spongepowered.api.world.Locatable;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.CommandContext;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameter;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -60,7 +60,7 @@ public class Vector3dValueParameter implements CatalogedValueParameter {
     }
 
     @Override
-    public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
+    public Optional<Object> getValue(CommandSource source, CommandArgs args, CommandContext context)
             throws ArgumentParseException {
         String xStr;
         String yStr;
@@ -98,7 +98,7 @@ public class Vector3dValueParameter implements CatalogedValueParameter {
     }
 
     @Override
-    public List<String> complete(CommandSource src, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) throws ArgumentParseException {
         Optional<String> arg = args.nextIfPresent();
         // Traverse through the possible arguments. We can't really complete arbitrary integers
         if (arg.isPresent()) {
@@ -117,7 +117,7 @@ public class Vector3dValueParameter implements CatalogedValueParameter {
         return ImmutableList.of();
     }
 
-    private double parseRelativeDouble(TokenizedArgs args, String arg, @Nullable Double relativeTo) throws ArgumentParseException {
+    private double parseRelativeDouble(CommandArgs args, String arg, @Nullable Double relativeTo) throws ArgumentParseException {
         boolean relative = arg.startsWith("~");
         if (relative) {
             if (relativeTo == null) {

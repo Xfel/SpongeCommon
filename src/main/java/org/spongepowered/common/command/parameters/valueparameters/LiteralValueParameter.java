@@ -26,11 +26,11 @@ package org.spongepowered.common.command.parameters.valueparameters;
 
 import com.google.common.collect.ImmutableList;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameters.CommandContext;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.ValueParameter;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.spec.ValueParameter;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -50,7 +50,7 @@ public class LiteralValueParameter implements ValueParameter {
     }
 
     @Override
-    public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public Optional<Object> getValue(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         Iterable<String> supplier = literalSupplier.get();
         for (String literal : supplier) {
             String current = args.next();
@@ -63,7 +63,7 @@ public class LiteralValueParameter implements ValueParameter {
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         for (String arg : this.literalSupplier.get()) {
             final Optional<String> next = args.nextIfPresent();
             if (!next.isPresent()) {

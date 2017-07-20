@@ -25,12 +25,12 @@
 package org.spongepowered.common.command.parameters.valueparameters;
 
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.CommandContext;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.impl.SelectorValueParameter;
+import org.spongepowered.api.command.parameters.spec.impl.SelectorValueParameter;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -45,7 +45,7 @@ public abstract class ReturnSourceParameter extends SelectorValueParameter {
     }
 
     @Override
-    public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
+    public Optional<Object> getValue(CommandSource source, CommandArgs args, CommandContext context)
             throws ArgumentParseException {
         try {
             return super.getValue(source, args, context);

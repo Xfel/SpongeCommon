@@ -26,8 +26,8 @@ package org.spongepowered.common.registry.type.command;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import org.spongepowered.api.command.specification.ChildExceptionBehavior;
-import org.spongepowered.api.command.specification.ChildExceptionBehaviors;
+import org.spongepowered.api.command.spec.ChildExceptionBehavior;
+import org.spongepowered.api.command.spec.ChildExceptionBehaviors;
 import org.spongepowered.api.registry.CatalogRegistryModule;
 import org.spongepowered.api.registry.util.RegisterCatalog;
 import org.spongepowered.common.command.specification.childexception.RethrowChildExceptionBehavior;

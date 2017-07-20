@@ -26,8 +26,8 @@ package org.spongepowered.common.command.parameters.factories;
 
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.util.Tristate;
-import org.spongepowered.api.command.parameters.specification.ValueParameter;
-import org.spongepowered.api.command.parameters.specification.factories.ValueParameterFactory;
+import org.spongepowered.api.command.parameters.spec.ValueParameter;
+import org.spongepowered.api.command.parameters.spec.factories.ValueParameterFactory;
 import org.spongepowered.common.command.parameters.valueparameters.CatalogTypeValueParameter;
 import org.spongepowered.common.command.parameters.valueparameters.ChoicesValueParameter;
 import org.spongepowered.common.command.parameters.valueparameters.LiteralValueParameter;

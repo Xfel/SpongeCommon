@@ -29,7 +29,7 @@ import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.specification.impl.PatternMatchingValueParameter;
+import org.spongepowered.api.command.parameters.spec.impl.PatternMatchingValueParameter;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -25,7 +25,7 @@
 package org.spongepowered.common.command.parameters.valueparameters;
 
 import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameter;
 
 public class CatalogableCatalogTypeValueParameter<T extends CatalogType> extends CatalogTypeValueParameter<T>
     implements CatalogedValueParameter {

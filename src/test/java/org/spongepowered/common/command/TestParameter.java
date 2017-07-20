@@ -27,9 +27,9 @@ package org.spongepowered.common.command;
 import com.google.common.collect.Lists;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.CommandContext;
 import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
 
 import java.util.List;
@@ -44,12 +44,12 @@ public class TestParameter implements Parameter {
     }
 
     @Override
-    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         context.putEntry("test", args.next());
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         return Lists.newArrayList();
     }
 

@@ -24,7 +24,7 @@
  */
 package org.spongepowered.common.command.parameters.valueparameters;
 
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameter;
 import org.spongepowered.api.util.Tristate;
 
 import java.util.Map;

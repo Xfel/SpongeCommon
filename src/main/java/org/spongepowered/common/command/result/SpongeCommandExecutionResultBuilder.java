@@ -24,11 +24,11 @@
  */
 package org.spongepowered.common.command.result;
 
-import org.spongepowered.api.command.CommandExecutionResult;
+import org.spongepowered.api.command.CommandResult;
 
 import javax.annotation.Nullable;
 
-public class SpongeCommandExecutionResultBuilder implements CommandExecutionResult.Builder {
+public class SpongeCommandExecutionResultBuilder implements CommandResult.Builder {
 
     @Nullable private Integer successCount;
     @Nullable private Integer affectedBlocks;
@@ -37,7 +37,7 @@ public class SpongeCommandExecutionResultBuilder implements CommandExecutionResu
     @Nullable private Integer queryResult;
 
     @Override
-    public CommandExecutionResult.Builder from(CommandExecutionResult value) {
+    public CommandResult.Builder from(CommandResult value) {
         reset();
 
         value.successCount().ifPresent(x -> this.successCount = x);
@@ -50,7 +50,7 @@ public class SpongeCommandExecutionResultBuilder implements CommandExecutionResu
     }
 
     @Override
-    public CommandExecutionResult.Builder reset() {
+    public CommandResult.Builder reset() {
         this.successCount = null;
         this.affectedBlocks = null;
         this.affectedEntities = null;
@@ -66,7 +66,7 @@ public class SpongeCommandExecutionResultBuilder implements CommandExecutionResu
      * @param successCount If the command has been processed
      * @return This builder, for chaining
      */
-    public CommandExecutionResult.Builder successCount(@Nullable Integer successCount) {
+    public CommandResult.Builder successCount(@Nullable Integer successCount) {
         this.successCount = successCount;
         return this;
     }
@@ -77,7 +77,7 @@ public class SpongeCommandExecutionResultBuilder implements CommandExecutionResu
      * @param affectedBlocks The amount of blocks affected by the command
      * @return This builder, for chaining
      */
-    public CommandExecutionResult.Builder affectedBlocks(@Nullable Integer affectedBlocks) {
+    public CommandResult.Builder affectedBlocks(@Nullable Integer affectedBlocks) {
         this.affectedBlocks = affectedBlocks;
         return this;
     }
@@ -89,7 +89,7 @@ public class SpongeCommandExecutionResultBuilder implements CommandExecutionResu
      *     command
      * @return This builder, for chaining
      */
-    public CommandExecutionResult.Builder affectedEntities(@Nullable Integer affectedEntities) {
+    public CommandResult.Builder affectedEntities(@Nullable Integer affectedEntities) {
         this.affectedEntities = affectedEntities;
         return this;
     }
@@ -100,7 +100,7 @@ public class SpongeCommandExecutionResultBuilder implements CommandExecutionResu
      * @param affectedItems The amount of items affected by the command
      * @return This builder, for chaining
      */
-    public CommandExecutionResult.Builder affectedItems(@Nullable Integer affectedItems) {
+    public CommandResult.Builder affectedItems(@Nullable Integer affectedItems) {
         this.affectedItems = affectedItems;
         return this;
     }
@@ -112,18 +112,18 @@ public class SpongeCommandExecutionResultBuilder implements CommandExecutionResu
      * @param queryResult The query result of the command
      * @return This builder, for chaining
      */
-    public CommandExecutionResult.Builder queryResult(@Nullable Integer queryResult) {
+    public CommandResult.Builder queryResult(@Nullable Integer queryResult) {
         this.queryResult = queryResult;
         return this;
     }
 
     /**
-     * Builds the {@link CommandExecutionResult}.
+     * Builds the {@link CommandResult}.
      *
      * @return A Result with the specified settings
      */
-    public CommandExecutionResult build() {
-        return new SpongeCommandExecutionResult(this.successCount, this.affectedBlocks, this.affectedEntities, this.affectedItems, this.queryResult);
+    public CommandResult build() {
+        return new SpongeCommandResult(this.successCount, this.affectedBlocks, this.affectedEntities, this.affectedItems, this.queryResult);
     }
 
 }

@@ -27,11 +27,11 @@ package org.spongepowered.common.command.parameters;
 import com.google.common.base.Preconditions;
 import org.spongepowered.api.command.CommandMessageFormatting;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.CommandContext;
 import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,12 +67,11 @@ public class SpongeParameterSequenceBuilder implements Parameter.SequenceBuilder
 
     @Override
     public Parameter build() {
-        Preconditions.checkState(!this.parameters.isEmpty(), "There must be at least one parameter.");
         if (this.parameters.size() == 1) {
             return this.parameters.get(0);
         }
 
-        if (this.requireAll) {
+        if (this.parameters.isEmpty() || this.requireAll) {
             return new SpongeSequenceParameter(this.parameters);
         } else {
             return new SpongeFirstOfParameter(this.parameters);
@@ -105,25 +104,26 @@ public class SpongeParameterSequenceBuilder implements Parameter.SequenceBuilder
         }
 
         @Override
-        public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+        public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
             List<ArgumentParseException> exceptions = new ArrayList<>();
             for (Parameter parameter : this.parameters) {
-                Object state = context.getState();
+                Object argsState = args.getState();
+                Object contextState = context.getState();
                 try {
                     parameter.parse(source, args, context);
                     return;
                 } catch (ArgumentParseException ex) {
-                    context.setState(state);
+                    args.setState(argsState);
+                    context.setState(contextState);
                 }
             }
 
             // If we get here, nothing parsed, so we throw an exception.
-            // TODO: Exception
-            throw args.createError(t("Could not parse the parameter.", exceptions));
+            throw args.createError(t("Could not parse the arguments.", exceptions));
         }
 
         @Override
-        public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+        public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
             List<String> completions = new ArrayList<>();
             for (Parameter parameter : this.parameters) {
                 Object state = context.getState();

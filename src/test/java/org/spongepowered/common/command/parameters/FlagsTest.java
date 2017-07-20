@@ -37,9 +37,9 @@ import org.spongepowered.common.command.parameters.flags.behaviors.AcceptNonValu
 import org.spongepowered.common.command.parameters.flags.behaviors.AcceptValueBehavior;
 import org.spongepowered.common.command.parameters.flags.behaviors.IgnoreBehavior;
 import org.spongepowered.common.command.parameters.flags.behaviors.SkipBehavior;
-import org.spongepowered.common.command.parameters.tokenized.SpongeTokenizedArgs;
+import org.spongepowered.common.command.parameters.tokenized.SpongeCommandArgs;
 import org.spongepowered.common.command.parameters.tokenized.tokenizers.SpaceSplitInputTokenizer;
-import org.spongepowered.common.command.specification.SpongeCommandExecutionContext;
+import org.spongepowered.common.command.specification.SpongeCommandContext;
 import org.spongepowered.lwts.runner.LaunchWrapperTestRunner;
 
 @RunWith(LaunchWrapperTestRunner.class)
@@ -52,8 +52,8 @@ public class FlagsTest {
 
         Flags flags = new SpongeFlagsBuilder().flag("a").build();
 
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(new SpaceSplitInputTokenizer().tokenize("-a", false), "-a");
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+        SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("-a", false), "-a");
+        SpongeCommandContext context = new SpongeCommandContext();
         CommandSource source = Mockito.mock(CommandSource.class);
 
         flags.parse(source, args, context);
@@ -65,8 +65,8 @@ public class FlagsTest {
 
         Flags flags = new SpongeFlagsBuilder().flag("a").flag("b").build();
 
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(new SpaceSplitInputTokenizer().tokenize("-ab", false), "-ab");
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+        SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("-ab", false), "-ab");
+        SpongeCommandContext context = new SpongeCommandContext();
         CommandSource source = Mockito.mock(CommandSource.class);
 
         flags.parse(source, args, context);
@@ -79,8 +79,8 @@ public class FlagsTest {
 
         Flags flags = new SpongeFlagsBuilder().flag("a").flag("b").setUnknownShortFlagBehavior(new AcceptValueBehavior()).build();
 
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(new SpaceSplitInputTokenizer().tokenize("-c hello", false), "-c hello");
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+        SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("-c hello", false), "-c hello");
+        SpongeCommandContext context = new SpongeCommandContext();
         CommandSource source = Mockito.mock(CommandSource.class);
 
         flags.parse(source, args, context);
@@ -92,8 +92,8 @@ public class FlagsTest {
 
         Flags flags = new SpongeFlagsBuilder().flag("a").flag("b").setUnknownShortFlagBehavior(new SkipBehavior()).build();
 
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(new SpaceSplitInputTokenizer().tokenize("-ca hello", false), "-ca hello");
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+        SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("-ca hello", false), "-ca hello");
+        SpongeCommandContext context = new SpongeCommandContext();
         CommandSource source = Mockito.mock(CommandSource.class);
 
         flags.parse(source, args, context);
@@ -106,8 +106,8 @@ public class FlagsTest {
 
         Flags flags = new SpongeFlagsBuilder().flag("a").flag("b").setUnknownShortFlagBehavior(new IgnoreBehavior()).build();
 
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(new SpaceSplitInputTokenizer().tokenize("-c hello", false), "-c hello");
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+        SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("-c hello", false), "-c hello");
+        SpongeCommandContext context = new SpongeCommandContext();
         CommandSource source = Mockito.mock(CommandSource.class);
 
         flags.parse(source, args, context);
@@ -119,8 +119,8 @@ public class FlagsTest {
 
         Flags flags = new SpongeFlagsBuilder().flag("a").flag("b").setUnknownShortFlagBehavior(new AcceptValueBehavior()).build();
 
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(new SpaceSplitInputTokenizer().tokenize("-ca hello", false), "-ca hello");
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+        SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("-ca hello", false), "-ca hello");
+        SpongeCommandContext context = new SpongeCommandContext();
         CommandSource source = Mockito.mock(CommandSource.class);
 
         flags.parse(source, args, context);
@@ -133,8 +133,8 @@ public class FlagsTest {
 
         Flags flags = new SpongeFlagsBuilder().flag("a").flag("b").setUnknownShortFlagBehavior(new AcceptValueBehavior()).build();
 
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(new SpaceSplitInputTokenizer().tokenize("-c hello", false), "-c hello");
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+        SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("-c hello", false), "-c hello");
+        SpongeCommandContext context = new SpongeCommandContext();
         CommandSource source = Mockito.mock(CommandSource.class);
 
         flags.parse(source, args, context);
@@ -147,8 +147,8 @@ public class FlagsTest {
 
         Flags flags = new SpongeFlagsBuilder().flag("a").flag("b").setUnknownShortFlagBehavior(new AcceptNonValueBehavior()).build();
 
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(new SpaceSplitInputTokenizer().tokenize("-c hello", false), "-c hello");
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+        SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("-c hello", false), "-c hello");
+        SpongeCommandContext context = new SpongeCommandContext();
         CommandSource source = Mockito.mock(CommandSource.class);
 
         flags.parse(source, args, context);
@@ -160,8 +160,8 @@ public class FlagsTest {
 
         Flags flags = new SpongeFlagsBuilder().flag("a").flag("b").flag("-ab").build();
 
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(new SpaceSplitInputTokenizer().tokenize("--ab", false), "--ab");
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+        SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("--ab", false), "--ab");
+        SpongeCommandContext context = new SpongeCommandContext();
         CommandSource source = Mockito.mock(CommandSource.class);
 
         flags.parse(source, args, context);
@@ -176,8 +176,8 @@ public class FlagsTest {
         // Prepare the parameter
         Flags flags = new SpongeFlagsBuilder().valueFlag(this.DUMMY, "-ab").build();
 
-        SpongeTokenizedArgs args = new SpongeTokenizedArgs(new SpaceSplitInputTokenizer().tokenize("--ab hello", false), "--ab hello");
-        SpongeCommandExecutionContext context = new SpongeCommandExecutionContext();
+        SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("--ab hello", false), "--ab hello");
+        SpongeCommandContext context = new SpongeCommandContext();
         CommandSource source = Mockito.mock(CommandSource.class);
 
         flags.parse(source, args, context);

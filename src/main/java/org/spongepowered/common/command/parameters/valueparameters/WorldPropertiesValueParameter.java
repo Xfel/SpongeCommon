@@ -29,14 +29,14 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.CommandContext;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.world.DimensionType;
 import org.spongepowered.api.world.Locatable;
 import org.spongepowered.api.world.storage.WorldProperties;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
-import org.spongepowered.api.command.parameters.specification.impl.PatternMatchingValueParameter;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameter;
+import org.spongepowered.api.command.parameters.spec.impl.PatternMatchingValueParameter;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +62,7 @@ public class WorldPropertiesValueParameter extends PatternMatchingValueParameter
     }
 
     @Override
-    public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
+    public Optional<Object> getValue(CommandSource source, CommandArgs args, CommandContext context)
             throws ArgumentParseException {
         final String next = args.peek();
         if (next.startsWith("#")) {
@@ -94,7 +94,7 @@ public class WorldPropertiesValueParameter extends PatternMatchingValueParameter
     }
 
     @Override
-    public List<String> complete(CommandSource src, TokenizedArgs args, CommandExecutionContext context) {
+    public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
         Iterable<String> choices = getCompletionChoices(src);
         final Optional<String> nextArg = args.nextIfPresent();
         if (nextArg.isPresent()) {

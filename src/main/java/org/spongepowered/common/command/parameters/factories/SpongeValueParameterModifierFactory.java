@@ -26,8 +26,8 @@ package org.spongepowered.common.command.parameters.factories;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.spongepowered.api.command.parameters.specification.ValueParameterModifier;
-import org.spongepowered.api.command.parameters.specification.factories.ValueParameterModifierFactory;
+import org.spongepowered.api.command.parameters.spec.ValueParameterModifier;
+import org.spongepowered.api.command.parameters.spec.factories.ValueParameterModifierFactory;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.common.command.parameters.modifiers.DefaultValueModifier;
 import org.spongepowered.common.command.parameters.modifiers.DefaultValueSuppplierModifier;

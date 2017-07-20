@@ -35,7 +35,6 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.dispatcher.Disambiguator;
-import org.spongepowered.api.command.dispatcher.SimpleDispatcher;
 import org.spongepowered.common.SpongeImpl;
 
 import java.util.List;
@@ -48,7 +47,7 @@ public class SpongeCommandDisambiguator implements Disambiguator {
     private final Game game;
 
     /**
-     * Disambiguator that takes preferences from the global configuration, falling back to {@link SimpleDispatcher#FIRST_DISAMBIGUATOR}.
+     * Disambiguator that takes preferences from the global configuration, falling back to {@link SpongeDispatcher#FIRST_DISAMBIGUATOR}.
      *
      * @param game The game instance to be used
      */
@@ -69,8 +68,8 @@ public class SpongeCommandDisambiguator implements Disambiguator {
                                                                           + "', falling back to default"));
                 } else {
                     final Set<CommandMapping> ownedCommands = this.game.getCommandManager().getOwnedBy(container.get());
-                    final List<CommandMapping> ownedMatchingCommands = ImmutableList.copyOf(Iterables.filter(availableOptions,
-                            Predicates.in(ownedCommands)));
+                    final List<CommandMapping> ownedMatchingCommands =
+                            ImmutableList.copyOf(Iterables.filter(availableOptions, Predicates.in(ownedCommands)));
                     if (ownedMatchingCommands.isEmpty()) {
                         SpongeImpl.getGame().getServer().getConsole().sendMessage(t("Plugin " + container.get().getName() + " was specified as the "
                                                                                     + "preferred owner for " + aliasUsed + ", but does not have any such command!"));
@@ -84,6 +83,6 @@ public class SpongeCommandDisambiguator implements Disambiguator {
                 }
             }
         }
-        return SimpleDispatcher.FIRST_DISAMBIGUATOR.disambiguate(source, aliasUsed, availableOptions);
+        return SpongeDispatcher.FIRST_DISAMBIGUATOR.disambiguate(source, aliasUsed, availableOptions);
     }
 }

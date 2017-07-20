@@ -26,11 +26,11 @@ package org.spongepowered.common.command.parameters.modifiers;
 
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.CommandContext;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.ParsingContext;
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameterModifier;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.spec.ParsingContext;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameterModifier;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 
 public class OptionalModifier implements CatalogedValueParameterModifier {
 
@@ -45,7 +45,7 @@ public class OptionalModifier implements CatalogedValueParameterModifier {
     }
 
     @Override
-    public void onParse(Text key, CommandSource source, TokenizedArgs args, CommandExecutionContext context, ParsingContext parsingContext)
+    public void onParse(Text key, CommandSource source, CommandArgs args, CommandContext context, ParsingContext parsingContext)
             throws ArgumentParseException {
         if (args.hasNext()) {
             parsingContext.next();

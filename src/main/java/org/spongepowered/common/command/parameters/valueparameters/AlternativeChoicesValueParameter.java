@@ -25,12 +25,12 @@
 package org.spongepowered.common.command.parameters.valueparameters;
 
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameters.CommandContext;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.Tristate;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.ValueParameter;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.spec.ValueParameter;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -59,13 +59,13 @@ public class AlternativeChoicesValueParameter implements ValueParameter {
     }
 
     @Override
-    public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public Optional<Object> getValue(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         final String nextArg = args.next();
         return Optional.ofNullable(getValue(nextArg, args));
     }
 
     @Nullable
-    public Object getValue(String nextArg, TokenizedArgs args) throws ArgumentParseException {
+    public Object getValue(String nextArg, CommandArgs args) throws ArgumentParseException {
         Collection<String> choices = this.choicesSupplier.get();
         String result = choices.stream().filter(k -> k.equalsIgnoreCase(nextArg)).findFirst()
                 .orElseThrow(() -> args.createError(t("Argument was not a valid choice. Valid choices: %s",
@@ -75,7 +75,7 @@ public class AlternativeChoicesValueParameter implements ValueParameter {
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         final String nextArg = args.peek();
         return this.choicesSupplier.get().stream().filter(x -> x.toLowerCase(Locale.ENGLISH)
                 .startsWith(nextArg.toLowerCase(Locale.ENGLISH))).sorted().collect(Collectors.toList());

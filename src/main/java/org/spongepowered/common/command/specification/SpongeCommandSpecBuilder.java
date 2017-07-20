@@ -30,14 +30,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import org.spongepowered.api.command.CallableCommand;
+import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.parameters.tokens.InputTokenizer;
 import org.spongepowered.api.command.parameters.tokens.InputTokenizers;
-import org.spongepowered.api.command.specification.ChildExceptionBehavior;
-import org.spongepowered.api.command.specification.ChildExceptionBehaviors;
-import org.spongepowered.api.command.specification.CommandExecutor;
-import org.spongepowered.api.command.specification.CommandSpec;
+import org.spongepowered.api.command.spec.ChildExceptionBehavior;
+import org.spongepowered.api.command.spec.ChildExceptionBehaviors;
+import org.spongepowered.api.command.spec.CommandExecutor;
+import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.flags.Flags;
@@ -56,7 +56,7 @@ public class SpongeCommandSpecBuilder implements CommandSpec.Builder {
     };
 
     private Iterable<Parameter> parameters = ImmutableList.of();
-    private final Map<String, CallableCommand> children = Maps.newHashMap();
+    private final Map<String, CommandCallable> children = Maps.newHashMap();
     private ChildExceptionBehavior behavior = ChildExceptionBehaviors.SUPPRESS;
     private InputTokenizer inputTokenizer = InputTokenizers.LENIENT_QUOTED_STRING;
     @Nullable private CommandExecutor executor = null;
@@ -67,18 +67,18 @@ public class SpongeCommandSpecBuilder implements CommandSpec.Builder {
     private boolean requirePermissionForChildren = true;
 
     @Override
-    public CommandSpec.Builder addChild(CallableCommand child, String... keys) {
+    public CommandSpec.Builder addChild(CommandCallable child, String... keys) {
         return addChild(child, Arrays.asList(keys));
     }
 
     @Override
-    public CommandSpec.Builder addChild(CallableCommand child, Iterable<String> keys) {
+    public CommandSpec.Builder addChild(CommandCallable child, Iterable<String> keys) {
         return addChildren(ImmutableMap.of(keys, child));
     }
 
     @Override
-    public CommandSpec.Builder addChildren(Map<? extends Iterable<String>, CallableCommand> children) {
-        Map<String, CallableCommand> stage = Maps.newHashMap();
+    public CommandSpec.Builder addChildren(Map<? extends Iterable<String>, ? extends CommandCallable> children) {
+        Map<String, CommandCallable> stage = Maps.newHashMap();
         children.forEach((key, value) ->
                 key.forEach(x -> Preconditions.checkArgument(stage.put(x.toLowerCase(Locale.ENGLISH), value) == null,
                 "No two children can have the same key. Keys are case insensitive.")));

@@ -36,14 +36,15 @@ import org.spongepowered.api.block.trait.IntegerTrait;
 import org.spongepowered.api.boss.BossBarColor;
 import org.spongepowered.api.boss.BossBarOverlay;
 import org.spongepowered.api.boss.ServerBossBar;
-import org.spongepowered.api.command.CommandExecutionResult;
+import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.flags.Flags;
 import org.spongepowered.api.command.parameters.flags.UnknownFlagBehavior;
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameterModifier;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameter;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameterModifier;
 import org.spongepowered.api.command.parameters.tokens.InputTokenizer;
-import org.spongepowered.api.command.specification.ChildExceptionBehavior;
+import org.spongepowered.api.command.spec.ChildExceptionBehavior;
+import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.meta.PatternLayer;
@@ -151,6 +152,7 @@ import org.spongepowered.common.command.parameters.SpongeParameterBuilder;
 import org.spongepowered.common.command.parameters.SpongeParameterSequenceBuilder;
 import org.spongepowered.common.command.parameters.flags.SpongeFlagsBuilder;
 import org.spongepowered.common.command.result.SpongeCommandExecutionResultBuilder;
+import org.spongepowered.common.command.specification.SpongeCommandSpecBuilder;
 import org.spongepowered.common.data.SpongeDataRegistrationBuilder;
 import org.spongepowered.common.data.builder.data.meta.SpongePatternLayerBuilder;
 import org.spongepowered.common.effect.particle.SpongeParticleEffectBuilder;
@@ -182,6 +184,8 @@ import org.spongepowered.common.item.recipe.crafting.SpongeShapelessCraftingReci
 import org.spongepowered.common.item.recipe.smelting.SpongeSmeltingRecipeBuilder;
 import org.spongepowered.common.registry.factory.ResourcePackFactoryModule;
 import org.spongepowered.common.registry.factory.TimingsFactoryModule;
+import org.spongepowered.common.registry.factory.ValueParameterFactoryModule;
+import org.spongepowered.common.registry.factory.ValueParameterModifierFactoryModule;
 import org.spongepowered.common.registry.type.*;
 import org.spongepowered.common.registry.type.block.*;
 import org.spongepowered.common.registry.type.boss.BossBarColorRegistryModule;
@@ -258,6 +262,8 @@ public final class CommonModuleRegistry {
         final List<FactoryRegistry<?, ?>> factoryRegistries = new ArrayList<>();
         factoryRegistries.add(new ResourcePackFactoryModule());
         factoryRegistries.add(new TimingsFactoryModule());
+        factoryRegistries.add(new ValueParameterFactoryModule());
+        factoryRegistries.add(new ValueParameterModifierFactoryModule());
 
         try {
             Field modifierField = Field.class.getDeclaredField("modifiers");
@@ -364,7 +370,8 @@ public final class CommonModuleRegistry {
             .registerBuilderSupplier(Parameter.Builder.class, SpongeParameterBuilder::new)
             .registerBuilderSupplier(Parameter.SequenceBuilder.class, SpongeParameterSequenceBuilder::new)
             .registerBuilderSupplier(Flags.Builder.class, SpongeFlagsBuilder::new)
-            .registerBuilderSupplier(CommandExecutionResult.Builder.class, SpongeCommandExecutionResultBuilder::new)
+            .registerBuilderSupplier(CommandResult.Builder.class, SpongeCommandExecutionResultBuilder::new)
+            .registerBuilderSupplier(CommandSpec.Builder.class, SpongeCommandSpecBuilder::new)
         ;
     }
 

@@ -26,11 +26,11 @@ package org.spongepowered.common.command.parameters.modifiers;
 
 import com.google.common.base.Preconditions;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.CommandContext;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.ParsingContext;
-import org.spongepowered.api.command.parameters.specification.ValueParameterModifier;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.spec.ParsingContext;
+import org.spongepowered.api.command.parameters.spec.ValueParameterModifier;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
 
 public class DefaultValueModifier implements ValueParameterModifier {
@@ -43,7 +43,7 @@ public class DefaultValueModifier implements ValueParameterModifier {
     }
 
     @Override
-    public void onParse(Text key, CommandSource source, TokenizedArgs args, CommandExecutionContext context, ParsingContext parsingContext)
+    public void onParse(Text key, CommandSource source, CommandArgs args, CommandContext context, ParsingContext parsingContext)
             throws ArgumentParseException {
         parsingContext.next();
 

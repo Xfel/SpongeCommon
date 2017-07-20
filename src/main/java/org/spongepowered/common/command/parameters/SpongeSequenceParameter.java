@@ -25,12 +25,12 @@
 package org.spongepowered.common.command.parameters;
 
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.CommandContext;
 import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
-import org.spongepowered.common.command.specification.SpongeCommandExecutionContext;
+import org.spongepowered.common.command.specification.SpongeCommandContext;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,18 +56,18 @@ public class SpongeSequenceParameter implements Parameter {
     }
 
     @Override
-    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
-        boolean parseFlags = context instanceof SpongeCommandExecutionContext && !((SpongeCommandExecutionContext) context).getFlags().isAnchored();
+    public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
+        boolean parseFlags = context instanceof SpongeCommandContext && !((SpongeCommandContext) context).getFlags().isAnchored();
         for (Parameter parameter : this.parameters) {
             parameter.parse(source, args, context);
             if (parseFlags) {
-                ((SpongeCommandExecutionContext) context).getFlags().parse(source, args, context);
+                ((SpongeCommandContext) context).getFlags().parse(source, args, context);
             }
         }
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         for (Iterator<Parameter> it = this.parameters.iterator(); it.hasNext(); ) {
             Parameter element = it.next();
             Object startState = args.getState();

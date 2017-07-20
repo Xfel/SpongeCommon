@@ -30,7 +30,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameter;
 
 import java.util.Optional;
 import java.util.Set;

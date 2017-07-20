@@ -27,14 +27,13 @@ package org.spongepowered.common.command.specification;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import org.spongepowered.api.command.parameters.flags.Flags;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TranslatableText;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
+import org.spongepowered.api.command.parameters.CommandContext;
 import org.spongepowered.common.command.parameters.flags.NoFlags;
 
 import javax.annotation.Nullable;
@@ -45,7 +44,7 @@ import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class SpongeCommandExecutionContext implements CommandExecutionContext {
+public class SpongeCommandContext implements CommandContext {
 
     private final UUID internalIdentifier = UUID.randomUUID();
     private final boolean isCompletion;
@@ -63,11 +62,11 @@ public class SpongeCommandExecutionContext implements CommandExecutionContext {
 
     private final ArrayListMultimap<String, Object> parsedArgs;
 
-    public SpongeCommandExecutionContext() {
+    public SpongeCommandContext() {
         this(null, false, null);
     }
 
-    public SpongeCommandExecutionContext(@Nullable ArrayListMultimap<String, Object> parsedArgs, boolean isCompletion,
+    public SpongeCommandContext(@Nullable ArrayListMultimap<String, Object> parsedArgs, boolean isCompletion,
             @Nullable Location<World> targetBlock) {
         this.targetBlock = targetBlock;
         this.isCompletion = isCompletion;
@@ -140,7 +139,8 @@ public class SpongeCommandExecutionContext implements CommandExecutionContext {
         return Collections.unmodifiableCollection((Collection<T>) this.parsedArgs.get(key));
     }
 
-    @Override public void putEntry(Text key, Object value) {
+    @Override
+    public void putEntry(Text key, Object value) {
         putEntry(textToArgKey(key), value);
     }
 

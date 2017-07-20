@@ -33,7 +33,7 @@ import net.minecraft.command.ServerCommandManager;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.CommandExecutionResult;
+import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.util.Tristate;
@@ -81,7 +81,7 @@ public abstract class MixinServerCommandManager extends CommandHandler implement
         }
 
         CommandSource source = WrapperCommandSource.of(sender);
-        CommandExecutionResult result = SpongeImpl.getGame().getCommandManager().process(source, command);
+        CommandResult result = SpongeImpl.getGame().getCommandManager().process(source, command);
         updateStat(sender, CommandResultStats.Type.AFFECTED_BLOCKS, result.affectedBlocks());
         updateStat(sender, CommandResultStats.Type.AFFECTED_ENTITIES, result.affectedEntities());
         updateStat(sender, CommandResultStats.Type.AFFECTED_ITEMS, result.affectedEntities());

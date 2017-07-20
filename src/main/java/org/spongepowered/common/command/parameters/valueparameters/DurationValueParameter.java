@@ -26,11 +26,11 @@ package org.spongepowered.common.command.parameters.valueparameters;
 
 import com.google.common.collect.Lists;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
+import org.spongepowered.api.command.parameters.CommandContext;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.specification.CatalogedValueParameter;
+import org.spongepowered.api.command.parameters.spec.CatalogedValueParameter;
 
 import javax.annotation.Nullable;
 import java.time.Duration;
@@ -62,12 +62,12 @@ public class DurationValueParameter implements CatalogedValueParameter {
     }
 
     @Override
-    public List<String> complete(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         return Lists.newArrayList();
     }
 
     @Override
-    public Optional<Object> getValue(CommandSource source, TokenizedArgs args, CommandExecutionContext context)
+    public Optional<Object> getValue(CommandSource source, CommandArgs args, CommandContext context)
             throws ArgumentParseException {
         String arg = args.next();
         if (arg.contains(":")) {

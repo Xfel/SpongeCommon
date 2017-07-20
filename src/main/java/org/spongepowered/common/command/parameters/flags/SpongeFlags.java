@@ -29,12 +29,12 @@ import static org.spongepowered.common.util.SpongeCommonTranslationHelper.t;
 import org.spongepowered.api.command.CommandMessageFormatting;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameters.ArgumentParseException;
+import org.spongepowered.api.command.parameters.CommandContext;
+import org.spongepowered.api.command.parameters.tokens.CommandArgs;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.command.parameters.CommandExecutionContext;
 import org.spongepowered.api.command.parameters.Parameter;
 import org.spongepowered.api.command.parameters.flags.Flags;
 import org.spongepowered.api.command.parameters.flags.UnknownFlagBehavior;
-import org.spongepowered.api.command.parameters.tokens.TokenizedArgs;
 
 import java.util.List;
 import java.util.Locale;
@@ -60,7 +60,7 @@ public class SpongeFlags implements Flags {
     }
 
     @Override
-    public void parse(CommandSource source, TokenizedArgs args, CommandExecutionContext context) throws ArgumentParseException {
+    public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         if (args.hasPrevious() && !this.anchorFlags || !args.hasNext() || !args.peek().startsWith("-")) {
             return; // Nothing to parse, move along.
         }
@@ -76,17 +76,17 @@ public class SpongeFlags implements Flags {
         }
     }
 
-    private void parseShort(String flag, CommandSource source, TokenizedArgs args, CommandExecutionContext context, Object tokenizedPreviousState,
+    private void parseShort(String flag, CommandSource source, CommandArgs args, CommandContext context, Object tokenizedPreviousState,
             Object contextPreviousState) throws ArgumentParseException {
         char[] shortFlags = flag.substring(1).toLowerCase(Locale.ENGLISH).toCharArray();
 
         // -abc is parsed as -a -b -c
         // Note that if we have -abc [blah], a and b MUST NOT try to parse the next value. This is why we have the
-        // PreventIteratorMovementTokenizedArgs class, which will throw an error in those scenarios.
+        // PreventIteratorMovementCommandArgs class, which will throw an error in those scenarios.
         // -c is allowed to have a value.
-        PreventIteratorMovementTokenizedArgs nonMoving = new PreventIteratorMovementTokenizedArgs(args);
+        PreventIteratorMovementCommandArgs nonMoving = new PreventIteratorMovementCommandArgs(args);
         for (int i = 0; i < shortFlags.length; i++) {
-            TokenizedArgs argsToUse = i == shortFlags.length - 1 ? args : nonMoving;
+            CommandArgs argsToUse = i == shortFlags.length - 1 ? args : nonMoving;
             Parameter param = this.flags.get(String.valueOf(shortFlags[i]));
             if (param == null) {
                 this.shortUnknown.parse(source, argsToUse, context, tokenizedPreviousState, contextPreviousState, String.valueOf(shortFlags[i]));
@@ -96,7 +96,7 @@ public class SpongeFlags implements Flags {
         }
     }
 
-    private void parseLong(String flag, CommandSource source, TokenizedArgs args, CommandExecutionContext context, Object tokenizedPreviousState,
+    private void parseLong(String flag, CommandSource source, CommandArgs args, CommandContext context, Object tokenizedPreviousState,
             Object contextPreviousState) throws ArgumentParseException {
         String longFlag = flag.substring(2).toLowerCase(Locale.ENGLISH);
         Parameter param = this.flags.get(longFlag);
@@ -125,11 +125,11 @@ public class SpongeFlags implements Flags {
                 .setAnchorFlags(this.anchorFlags);
     }
 
-    private class PreventIteratorMovementTokenizedArgs implements TokenizedArgs {
+    private class PreventIteratorMovementCommandArgs implements CommandArgs {
 
-        private final TokenizedArgs args;
+        private final CommandArgs args;
 
-        PreventIteratorMovementTokenizedArgs(TokenizedArgs args) {
+        PreventIteratorMovementCommandArgs(CommandArgs args) {
             this.args = args;
         }
 
@@ -196,6 +196,11 @@ public class SpongeFlags implements Flags {
         @Override
         public ArgumentParseException createError(Text message, Throwable inner) {
             return this.args.createError(message, inner);
+        }
+
+        @Override
+        public String rawArgsFromCurrentPosition() {
+            return this.args.rawArgsFromCurrentPosition();
         }
 
         private ArgumentParseException createValueError() {
