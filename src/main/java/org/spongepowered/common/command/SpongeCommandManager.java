@@ -35,7 +35,7 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.command.CommandMapping;
@@ -112,18 +112,12 @@ public class SpongeCommandManager implements CommandManager {
     }
 
     @Override
-    public Optional<CommandMapping> register(Object plugin, CommandCallable callable, String... alias) {
-        return register(plugin, callable, Arrays.asList(alias));
+    public Optional<CommandMapping> register(Object plugin, Command command, String... alias) {
+        return register(plugin, command, Arrays.asList(alias));
     }
 
     @Override
-    public Optional<CommandMapping> register(Object plugin, CommandCallable callable, List<String> aliases) {
-        return register(plugin, callable, aliases, Function.identity());
-    }
-
-    @Override
-    public Optional<CommandMapping> register(Object plugin, CommandCallable callable, List<String> aliases,
-            Function<List<String>, List<String>> callback) {
+    public Optional<CommandMapping> register(Object plugin, Command command, List<String> aliases) {
         checkNotNull(plugin, "plugin");
 
         Optional<PluginContainer> containerOptional = Sponge.getGame().getPluginManager().fromInstance(plugin);
@@ -133,22 +127,16 @@ public class SpongeCommandManager implements CommandManager {
                             + "(in other words, is 'plugin' actually your plugin object?");
         }
 
-        return register(containerOptional.get(), callable, aliases);
+        return register(containerOptional.get(), command, aliases);
     }
 
     @Override
-    public Optional<CommandMapping> register(PluginContainer pluginContainer, CommandCallable callable, String... alias) {
-        return register(pluginContainer, callable, Arrays.asList(alias));
+    public Optional<CommandMapping> register(PluginContainer pluginContainer, Command command, String... alias) {
+        return register(pluginContainer, command, Arrays.asList(alias));
     }
 
     @Override
-    public Optional<CommandMapping> register(PluginContainer pluginContainer, CommandCallable callable, List<String> aliases) {
-        return register(pluginContainer, callable, aliases, Function.identity());
-    }
-
-    @Override
-    public Optional<CommandMapping> register(PluginContainer pluginContainer, CommandCallable callable, List<String> aliases,
-            Function<List<String>, List<String>> callback) {
+    public Optional<CommandMapping> register(PluginContainer pluginContainer, Command command, List<String> aliases) {
         checkNotNull(pluginContainer, "pluginContainer");
         synchronized (this.lock) {
             // <namespace>:<alias> for all commands
@@ -161,8 +149,8 @@ public class SpongeCommandManager implements CommandManager {
                 final Collection<CommandMapping> ownedCommands = this.owners.get(pluginContainer);
                 for (CommandMapping mapping : this.dispatcher.getAll(alias)) {
                     if (ownedCommands.contains(mapping)) {
-                        boolean isWrapper = callable instanceof MinecraftCommandWrapper;
-                        if (!(isWrapper && ((MinecraftCommandWrapper) callable).suppressDuplicateAlias(alias))) {
+                        boolean isWrapper = command instanceof MinecraftCommandWrapper;
+                        if (!(isWrapper && ((MinecraftCommandWrapper) command).suppressDuplicateAlias(alias))) {
                             throw new IllegalArgumentException("A plugin may not register multiple commands for the same alias ('" + alias + "')!");
                         }
                     }
@@ -172,7 +160,7 @@ public class SpongeCommandManager implements CommandManager {
                 aliasesWithPrefix.add(pluginContainer.getId() + ':' + alias);
             }
 
-            Optional<CommandMapping> mapping = this.dispatcher.register(callable, aliasesWithPrefix, callback);
+            Optional<CommandMapping> mapping = this.dispatcher.register(command, aliasesWithPrefix);
 
             if (mapping.isPresent()) {
                 this.owners.put(pluginContainer, mapping.get());
@@ -273,8 +261,8 @@ public class SpongeCommandManager implements CommandManager {
     }
 
     @Override
-    public Optional<String> getPrimaryAlias(CommandCallable command) {
-        return this.reverseOwners.keySet().stream().filter(x -> x.getCallable() == command).findFirst().map(CommandMapping::getPrimaryAlias);
+    public Optional<String> getPrimaryAlias(Command command) {
+        return this.reverseOwners.keySet().stream().filter(x -> x.getCommand() == command).findFirst().map(CommandMapping::getPrimaryAlias);
     }
 
     @Override
@@ -330,7 +318,7 @@ public class SpongeCommandManager implements CommandManager {
                 if (ex.shouldIncludeUsage()) {
                     final Optional<CommandMapping> mapping = this.dispatcher.get(argSplit[0], source);
                     if (mapping.isPresent()) {
-                        source.sendMessage(error(t("Usage: /%s %s", argSplit[0], mapping.get().getCallable().getUsage(source))));
+                        source.sendMessage(error(t("Usage: /%s %s", argSplit[0], mapping.get().getCommand().getUsage(source))));
                     }
                 }
             }

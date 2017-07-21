@@ -25,7 +25,7 @@
 package org.spongepowered.common.command;
 
 import net.minecraft.command.ICommandSender;
-import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.service.permission.MemorySubjectData;
@@ -57,7 +57,7 @@ public final class CommandPermissions {
         }
         Optional<? extends CommandMapping> mapping = SpongeImpl.getGame().getCommandManager().get(commandName);
         if (mapping.isPresent()) {
-            CommandCallable callable = mapping.get().getCallable();
+            Command callable = mapping.get().getCommand();
             if (callable instanceof MinecraftCommandWrapper) {
                 return source.hasPermission(((MinecraftCommandWrapper) callable).getCommandPermission());
             }
@@ -80,8 +80,8 @@ public final class CommandPermissions {
         // get what we can.
         populateNonCommandPermissions(data, sender::canUseCommand);
         for (CommandMapping command : SpongeImpl.getGame().getCommandManager().getCommands()) {
-            if (command.getCallable() instanceof MinecraftCommandWrapper) {
-                MinecraftCommandWrapper wrapper = (MinecraftCommandWrapper) command.getCallable();
+            if (command.getCommand() instanceof MinecraftCommandWrapper) {
+                MinecraftCommandWrapper wrapper = (MinecraftCommandWrapper) command.getCommand();
                 data.setPermission(SubjectData.GLOBAL_CONTEXT, wrapper.getCommandPermission(),
                         Tristate.fromBoolean(wrapper.command.checkPermission(sender.getServer(), sender)));
             }

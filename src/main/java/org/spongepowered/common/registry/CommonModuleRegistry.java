@@ -36,15 +36,15 @@ import org.spongepowered.api.block.trait.IntegerTrait;
 import org.spongepowered.api.boss.BossBarColor;
 import org.spongepowered.api.boss.BossBarOverlay;
 import org.spongepowered.api.boss.ServerBossBar;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.parameters.flags.Flags;
-import org.spongepowered.api.command.parameters.flags.UnknownFlagBehavior;
-import org.spongepowered.api.command.parameters.spec.CatalogedValueParameter;
-import org.spongepowered.api.command.parameters.spec.CatalogedValueParameterModifier;
-import org.spongepowered.api.command.parameters.tokens.InputTokenizer;
-import org.spongepowered.api.command.spec.ChildExceptionBehavior;
-import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.command.parameter.flag.Flags;
+import org.spongepowered.api.command.parameter.flag.UnknownFlagBehavior;
+import org.spongepowered.api.command.parameter.managed.CatalogedValueParameter;
+import org.spongepowered.api.command.parameter.managed.CatalogedValueParameterModifier;
+import org.spongepowered.api.command.parameter.token.InputTokenizer;
+import org.spongepowered.api.command.managed.ChildExceptionBehavior;
 import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.meta.PatternLayer;
@@ -148,11 +148,11 @@ import org.spongepowered.common.block.SpongeBlockSnapshotBuilder;
 import org.spongepowered.common.block.SpongeBlockStateBuilder;
 import org.spongepowered.common.block.SpongeTileEntityArchetypeBuilder;
 import org.spongepowered.common.boss.ServerBossBarBuilder;
-import org.spongepowered.common.command.parameters.SpongeParameterBuilder;
-import org.spongepowered.common.command.parameters.SpongeParameterSequenceBuilder;
-import org.spongepowered.common.command.parameters.flags.SpongeFlagsBuilder;
-import org.spongepowered.common.command.result.SpongeCommandExecutionResultBuilder;
-import org.spongepowered.common.command.specification.SpongeCommandSpecBuilder;
+import org.spongepowered.common.command.parameter.SpongeParameterBuilder;
+import org.spongepowered.common.command.parameter.SpongeParameterSequenceBuilder;
+import org.spongepowered.common.command.parameter.flag.SpongeFlagsBuilder;
+import org.spongepowered.common.command.result.SpongeCommandResultBuilder;
+import org.spongepowered.common.command.managed.SpongeCommandBuilder;
 import org.spongepowered.common.data.SpongeDataRegistrationBuilder;
 import org.spongepowered.common.data.builder.data.meta.SpongePatternLayerBuilder;
 import org.spongepowered.common.effect.particle.SpongeParticleEffectBuilder;
@@ -370,8 +370,8 @@ public final class CommonModuleRegistry {
             .registerBuilderSupplier(Parameter.Builder.class, SpongeParameterBuilder::new)
             .registerBuilderSupplier(Parameter.SequenceBuilder.class, SpongeParameterSequenceBuilder::new)
             .registerBuilderSupplier(Flags.Builder.class, SpongeFlagsBuilder::new)
-            .registerBuilderSupplier(CommandResult.Builder.class, SpongeCommandExecutionResultBuilder::new)
-            .registerBuilderSupplier(CommandSpec.Builder.class, SpongeCommandSpecBuilder::new)
+            .registerBuilderSupplier(CommandResult.Builder.class, SpongeCommandResultBuilder::new)
+            .registerBuilderSupplier(Command.Builder.class, SpongeCommandBuilder::new)
         ;
     }
 

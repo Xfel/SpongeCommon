@@ -33,14 +33,14 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.ImmutableList;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.CommandContext;
-import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.parameters.spec.ValueParameter;
-import org.spongepowered.api.command.parameters.tokens.CommandArgs;
-import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.command.parameter.ArgumentParseException;
+import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.command.parameter.managed.ValueParameter;
+import org.spongepowered.api.command.parameter.token.CommandArgs;
 
 import java.util.List;
 import java.util.Optional;
@@ -87,8 +87,8 @@ public class SpongeCallbackHolder {
         return Optional.of(reverseMap.get(id));
     }
 
-    public CommandSpec createCommand() {
-        return CommandSpec.builder()
+    public Command createCommand() {
+        return Command.builder()
                 .description(t("Execute a callback registered as part of a Text object. Primarily for internal use"))
                 .parameters(Parameter.builder().key(t("callback")).parser(CALLBACK_VALUE_PARAMETER).build())
                 .executor((src, args) -> {

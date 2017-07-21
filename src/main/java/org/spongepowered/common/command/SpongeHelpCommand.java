@@ -26,12 +26,11 @@ package org.spongepowered.common.command;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
@@ -49,9 +48,8 @@ public class SpongeHelpCommand {
 
     private static final Comparator<CommandMapping> COMMAND_COMPARATOR = Comparator.comparing(CommandMapping::getPrimaryAlias);
 
-    public static CommandSpec create() {
-        return CommandSpec
-            .builder()
+    public static Command create() {
+        return Command.builder()
             .parameters(Parameter.builder().key("command").optional().string().build())
             .description(Text.of("View a list of all commands."))
             .extendedDescription(
@@ -62,7 +60,7 @@ public class SpongeHelpCommand {
                 if (command.isPresent()) {
                     Optional<? extends CommandMapping> mapping = SpongeImpl.getGame().getCommandManager().get(command.get(), src);
                     if (mapping.isPresent()) {
-                        CommandCallable callable = mapping.get().getCallable();
+                        Command callable = mapping.get().getCommand();
                         Optional<? extends Text> desc = callable.getHelp(src);
                         if (desc.isPresent()) {
                             src.sendMessage(desc.get());
@@ -79,7 +77,7 @@ public class SpongeHelpCommand {
                 builder.padding(Text.of(TextColors.DARK_GREEN, "="));
 
                 TreeSet<CommandMapping> commands = new TreeSet<>(COMMAND_COMPARATOR);
-                commands.addAll(Collections2.filter(SpongeImpl.getGame().getCommandManager().getAll().values(), input -> input.getCallable()
+                commands.addAll(Collections2.filter(SpongeImpl.getGame().getCommandManager().getAll().values(), input -> input.getCommand()
                     .testPermission(src)));
                 builder.contents(ImmutableList.copyOf(Collections2.transform(commands, input -> getDescription(src, input))));
                 builder.sendTo(src);
@@ -88,17 +86,17 @@ public class SpongeHelpCommand {
     }
 
     private static Text getDescription(CommandSource source, CommandMapping mapping) {
-        final Optional<Text> description = mapping.getCallable().getShortDescription(source);
+        final Optional<Text> description = mapping.getCommand().getShortDescription(source);
         Text.Builder text = Text.builder("/" + mapping.getPrimaryAlias());
         text.color(TextColors.GREEN);
         text.style(TextStyles.UNDERLINE);
         //End with a space, so tab completion works immediately.
         text.onClick(TextActions.suggestCommand("/" + mapping.getPrimaryAlias() + " "));
-        Optional<? extends Text> longDescription = mapping.getCallable().getHelp(source);
+        Optional<? extends Text> longDescription = mapping.getCommand().getHelp(source);
         if (longDescription.isPresent()) {
             text.onHover(TextActions.showText(longDescription.get()));
         }
-        return Text.of(text, " ", description.orElse(mapping.getCallable().getUsage(source)));
+        return Text.of(text, " ", description.orElse(mapping.getCommand().getUsage(source)));
     }
 
 }

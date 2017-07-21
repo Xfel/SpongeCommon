@@ -25,10 +25,9 @@
 package org.spongepowered.test;
 
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -47,9 +46,9 @@ public class ScaledHealthTest {
         Sponge.getCommandManager().register(this, getHealthCommand(), "health");
     }
 
-    private static CommandCallable getHealthCommand() {
+    private static Command getHealthCommand() {
 
-        return CommandSpec.builder()
+        return Command.builder()
             .addChild(getShowHealth(), "show")
             .addChild(getSetHealthScale(), "setScale")
             .addChild(getSetHealth(), "setHealth")
@@ -59,9 +58,9 @@ public class ScaledHealthTest {
             .build();
     }
 
-    private static CommandCallable getSetMaxHealth() {
+    private static Command getSetMaxHealth() {
         final LiteralText health = Text.of("health");
-        return CommandSpec.builder()
+        return Command.builder()
             .parameters(Parameter.builder().onlyOne().key(health).doubleNumber().build())
             .description(Text.of(TextColors.AQUA, "Sets your maximum health"))
             .executor((src, args) -> {
@@ -75,9 +74,9 @@ public class ScaledHealthTest {
             .build();
     }
 
-    private static CommandCallable getSetHealth() {
+    private static Command getSetHealth() {
         final LiteralText health = Text.of("health");
-        return CommandSpec.builder()
+        return Command.builder()
             .parameters(Parameter.builder().onlyOne().key(health).doubleNumber().build())
             .description(Text.of(TextColors.AQUA, "Sets your health"))
             .executor((src, args) -> {
@@ -91,9 +90,9 @@ public class ScaledHealthTest {
             .build();
     }
 
-    private static CommandCallable getSetHealthScale() {
+    private static Command getSetHealthScale() {
         final LiteralText healthText = Text.of("health");
-        return CommandSpec.builder()
+        return Command.builder()
             .parameters(Parameter.builder().onlyOne().key(healthText).doubleNumber().build())
             .description(Text.of(TextColors.AQUA, "Sets your health scale"))
             .executor(((src, args) -> {
@@ -108,8 +107,8 @@ public class ScaledHealthTest {
             .build();
     }
 
-    private static CommandCallable getShowHealth() {
-        return CommandSpec.builder()
+    private static Command getShowHealth() {
+        return Command.builder()
             .description(Text.of(TextColors.AQUA, "Shows your health"))
             .executor(((src, args) -> {
                 if (!(src instanceof Player)) {

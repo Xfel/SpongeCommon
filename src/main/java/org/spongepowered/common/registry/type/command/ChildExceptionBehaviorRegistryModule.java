@@ -26,13 +26,13 @@ package org.spongepowered.common.registry.type.command;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import org.spongepowered.api.command.spec.ChildExceptionBehavior;
-import org.spongepowered.api.command.spec.ChildExceptionBehaviors;
+import org.spongepowered.api.command.managed.ChildExceptionBehavior;
+import org.spongepowered.api.command.managed.ChildExceptionBehaviors;
 import org.spongepowered.api.registry.CatalogRegistryModule;
 import org.spongepowered.api.registry.util.RegisterCatalog;
-import org.spongepowered.common.command.specification.childexception.RethrowChildExceptionBehavior;
-import org.spongepowered.common.command.specification.childexception.StoreChildExceptionBehavior;
-import org.spongepowered.common.command.specification.childexception.SuppressChildExceptionBehavior;
+import org.spongepowered.common.command.managed.childexception.RethrowChildExceptionBehavior;
+import org.spongepowered.common.command.managed.childexception.StoreChildExceptionBehavior;
+import org.spongepowered.common.command.managed.childexception.SuppressChildExceptionBehavior;
 
 import java.util.Collection;
 import java.util.Map;

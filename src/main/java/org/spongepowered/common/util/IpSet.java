@@ -83,7 +83,7 @@ public class IpSet implements Predicate<InetAddress> {
     public static IpSet fromCidr(String spec) {
         String addrString;
         int prefixLen;
-        int slashIndex = checkNotNull(spec, "spec").lastIndexOf("/");
+        int slashIndex = checkNotNull(spec, "managed").lastIndexOf("/");
         if (slashIndex == -1) {
             prefixLen = 32;
             addrString = spec;

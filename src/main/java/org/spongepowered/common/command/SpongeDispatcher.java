@@ -36,7 +36,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandMessageFormatting;
@@ -115,7 +115,7 @@ public class SpongeDispatcher implements Dispatcher {
      * @return The registered command mapping, unless no aliases could be
      *     registered
      */
-    public Optional<CommandMapping> register(CommandCallable callable, String... alias) {
+    public Optional<CommandMapping> register(Command callable, String... alias) {
         checkNotNull(alias, "alias");
         return register(callable, Arrays.asList(alias));
     }
@@ -136,39 +136,10 @@ public class SpongeDispatcher implements Dispatcher {
      * @return The registered command mapping, unless no aliases could be
      *     registered
      */
-    public Optional<CommandMapping> register(CommandCallable callable, List<String> aliases) {
-        return register(callable, aliases, Function.identity());
-    }
-
-    /**
-     * Register a given command using a given list of aliases.
-     *
-     * <p>The provided callback function will be called with a list of aliases
-     * that are not taken (from the list of aliases that were requested) and
-     * it should return a list of aliases to actually register. Aliases may be
-     * removed, and if no aliases remain, then the command will not be
-     * registered. It may be possible that no aliases are available, and thus
-     * the callback would receive an empty list. New aliases should not be added
-     * to the list in the callback as this may cause
-     * {@link IllegalArgumentException} to be thrown.</p>
-     *
-     * <p>The first non-conflicted alias becomes the "primary alias."</p>
-     *
-     * @param callable The command
-     * @param aliases A list of aliases
-     * @param callback The callback
-     * @return The registered command mapping, unless no aliases could
-     *     be registered
-     */
-    public synchronized Optional<CommandMapping> register(CommandCallable callable, List<String> aliases,
-            Function<List<String>, List<String>> callback) {
+    public Optional<CommandMapping> register(Command callable, List<String> aliases) {
         checkNotNull(aliases, "aliases");
         checkNotNull(callable, "callable");
-        checkNotNull(callback, "callback");
 
-        // Invoke the callback with the commands that /can/ be registered
-        // noinspection ConstantConditions
-        aliases = ImmutableList.copyOf(callback.apply(aliases));
         if (!aliases.isEmpty()) {
             String primary = aliases.get(0);
             List<String> secondary = aliases.subList(1, aliases.size());
@@ -328,7 +299,7 @@ public class SpongeDispatcher implements Dispatcher {
             throw new CommandNotFoundException(t("commands.generic.notFound"), argSplit[0]); // TODO: Fix properly to use a SpongeTranslation??
         }
         final String arguments = argSplit.length > 1 ? argSplit[1] : "";
-        final CommandCallable spec = cmdOptional.get().getCallable();
+        final Command spec = cmdOptional.get().getCommand();
         try {
             return spec.process(source, arguments);
         } catch (CommandNotFoundException e) {
@@ -345,13 +316,13 @@ public class SpongeDispatcher implements Dispatcher {
         } else if (!cmdOptional.isPresent()) {
             return ImmutableList.of();
         }
-        return cmdOptional.get().getCallable().getSuggestions(src, argSplit[1], targetPosition);
+        return cmdOptional.get().getCommand().getSuggestions(src, argSplit[1], targetPosition);
     }
 
     @Override
     public boolean testPermission(CommandSource source) {
         for (CommandMapping mapping : this.commands.values()) {
-            if (mapping.getCallable().testPermission(source)) {
+            if (mapping.getCommand().testPermission(source)) {
                 return true;
             }
         }
@@ -375,12 +346,12 @@ public class SpongeDispatcher implements Dispatcher {
                 continue;
             }
             CommandMapping mapping = mappingOpt.get();
-            final Optional<Text> description = mapping.getCallable().getShortDescription(source);
+            final Optional<Text> description = mapping.getCommand().getShortDescription(source);
             build.append(Text.builder(mapping.getPrimaryAlias())
                             .color(TextColors.GREEN)
                             .style(TextStyles.UNDERLINE)
                             .onClick(TextActions.suggestCommand("/" + mapping.getPrimaryAlias())).build(),
-                    SPACE_TEXT, description.orElse(mapping.getCallable().getUsage(source)));
+                    SPACE_TEXT, description.orElse(mapping.getCommand().getUsage(source)));
             if (it.hasNext()) {
                 build.append(Text.NEW_LINE);
             }
@@ -389,7 +360,7 @@ public class SpongeDispatcher implements Dispatcher {
     }
 
     private Set<String> filterCommands(final CommandSource src) {
-        return Multimaps.filterValues(this.commands, input -> input.getCallable().testPermission(src)).keys().elementSet();
+        return Multimaps.filterValues(this.commands, input -> input.getCommand().testPermission(src)).keys().elementSet();
     }
 
     /**

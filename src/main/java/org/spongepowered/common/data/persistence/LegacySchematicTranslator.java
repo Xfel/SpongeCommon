@@ -87,7 +87,7 @@ public class LegacySchematicTranslator implements DataTranslator<Schematic> {
     @Override
     public Schematic translate(DataView view) throws InvalidDataException {
         // We default to sponge as the assumption should be that if this tag
-        // (which is not in the sponge schematic specification) is not present
+        // (which is not in the sponge schematic managed) is not present
         // then it is more likely that its a sponge schematic than a legacy
         // schematic
         String materials = view.getString(DataQueries.Schematic.LEGACY_MATERIALS).orElse("Sponge");

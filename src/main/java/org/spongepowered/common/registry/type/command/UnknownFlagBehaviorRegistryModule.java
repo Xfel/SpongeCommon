@@ -26,15 +26,15 @@ package org.spongepowered.common.registry.type.command;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import org.spongepowered.api.command.parameters.flags.UnknownFlagBehavior;
-import org.spongepowered.api.command.parameters.flags.UnknownFlagBehaviors;
+import org.spongepowered.api.command.parameter.flag.UnknownFlagBehavior;
+import org.spongepowered.api.command.parameter.flag.UnknownFlagBehaviors;
 import org.spongepowered.api.registry.CatalogRegistryModule;
 import org.spongepowered.api.registry.util.RegisterCatalog;
-import org.spongepowered.common.command.parameters.flags.behaviors.AcceptNonValueBehavior;
-import org.spongepowered.common.command.parameters.flags.behaviors.AcceptValueBehavior;
-import org.spongepowered.common.command.parameters.flags.behaviors.ErrorBehavior;
-import org.spongepowered.common.command.parameters.flags.behaviors.IgnoreBehavior;
-import org.spongepowered.common.command.parameters.flags.behaviors.SkipBehavior;
+import org.spongepowered.common.command.parameter.flag.behaviors.AcceptNonValueBehavior;
+import org.spongepowered.common.command.parameter.flag.behaviors.AcceptValueBehavior;
+import org.spongepowered.common.command.parameter.flag.behaviors.ErrorBehavior;
+import org.spongepowered.common.command.parameter.flag.behaviors.IgnoreBehavior;
+import org.spongepowered.common.command.parameter.flag.behaviors.SkipBehavior;
 
 import java.util.Collection;
 import java.util.Map;

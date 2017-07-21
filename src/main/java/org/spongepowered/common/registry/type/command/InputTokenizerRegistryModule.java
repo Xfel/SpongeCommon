@@ -27,13 +27,13 @@ package org.spongepowered.common.registry.type.command;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import org.spongepowered.api.command.parameters.tokens.InputTokenizer;
-import org.spongepowered.api.command.parameters.tokens.InputTokenizers;
+import org.spongepowered.api.command.parameter.token.InputTokenizer;
+import org.spongepowered.api.command.parameter.token.InputTokenizers;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 import org.spongepowered.api.registry.util.RegisterCatalog;
-import org.spongepowered.common.command.parameters.tokenized.tokenizers.QuotedStringTokenizer;
-import org.spongepowered.common.command.parameters.tokenized.tokenizers.RawStringInputTokenizer;
-import org.spongepowered.common.command.parameters.tokenized.tokenizers.SpaceSplitInputTokenizer;
+import org.spongepowered.common.command.parameter.token.tokenizer.QuotedStringTokenizer;
+import org.spongepowered.common.command.parameter.token.tokenizer.RawStringInputTokenizer;
+import org.spongepowered.common.command.parameter.token.tokenizer.SpaceSplitInputTokenizer;
 
 import java.util.Collection;
 import java.util.Locale;

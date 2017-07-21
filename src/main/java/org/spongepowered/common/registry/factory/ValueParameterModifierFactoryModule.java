@@ -24,10 +24,10 @@
  */
 package org.spongepowered.common.registry.factory;
 
-import org.spongepowered.api.command.parameters.spec.ValueParameterModifiers;
-import org.spongepowered.api.command.parameters.spec.factories.ValueParameterModifierFactory;
+import org.spongepowered.api.command.parameter.managed.ValueParameterModifiers;
+import org.spongepowered.api.command.parameter.managed.factories.ValueParameterModifierFactory;
 import org.spongepowered.api.registry.FactoryRegistry;
-import org.spongepowered.common.command.parameters.factories.SpongeValueParameterModifierFactory;
+import org.spongepowered.common.command.parameter.factory.SpongeValueParameterModifierFactory;
 
 public class ValueParameterModifierFactoryModule implements FactoryRegistry<ValueParameterModifierFactory, ValueParameterModifiers> {
 

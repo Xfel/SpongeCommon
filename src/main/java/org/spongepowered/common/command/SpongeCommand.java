@@ -36,16 +36,16 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.CommandContext;
-import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.parameters.flags.Flags;
-import org.spongepowered.api.command.spec.CommandExecutor;
-import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.command.parameter.flag.Flags;
+import org.spongepowered.api.command.managed.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.SpongeEventFactory;
@@ -64,6 +64,7 @@ import org.spongepowered.api.world.storage.WorldProperties;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.common.SpongeImpl;
 import org.spongepowered.common.block.BlockUtil;
+import org.spongepowered.common.command.ChunkSaveHelper;
 import org.spongepowered.common.config.SpongeConfig;
 import org.spongepowered.common.config.type.DimensionConfig;
 import org.spongepowered.common.config.type.GlobalConfig;
@@ -110,9 +111,9 @@ public class SpongeCommand {
      *
      * @return The newly created command
      */
-    public static CommandSpec getCommand() {
+    public static Command getCommand() {
 
-        return CommandSpec.builder()
+        return Command.builder()
                 .addChild(getVersionCommand(), "version")
                 .addChild(getBlockInfoCommand(), "blockInfo")
                 .addChild(getEntityInfoCommand(), "entityInfo")
@@ -203,8 +204,8 @@ public class SpongeCommand {
 
     // Flag children
 
-    private static CommandSpec getChunksCommand() {
-        return CommandSpec.builder()
+    private static Command getChunksCommand() {
+        return Command.builder()
                 .parameters(
                         Parameter.builder().optional().key("dump").literal("dump").build(),
                         Parameter.builder().optional().key("dump-all").literal("all").build()
@@ -274,8 +275,8 @@ public class SpongeCommand {
                 .build();
     }
 
-    private static CommandSpec getConfigCommand() {
-        return CommandSpec.builder()
+    private static Command getConfigCommand() {
+        return Command.builder()
                 .description(Text.of("Inspect the Sponge config"))
                 .flags(FLAGS)
                 .parameters(
@@ -306,8 +307,8 @@ public class SpongeCommand {
                 .build();
     }
 
-    private static CommandSpec getReloadCommand() {
-        return CommandSpec.builder()
+    private static Command getReloadCommand() {
+        return Command.builder()
                 .flags(FLAGS)
                 .description(Text.of("Reload the Sponge game"))
                 .permission("sponge.command.reload")
@@ -322,8 +323,8 @@ public class SpongeCommand {
                 .build();
     }
 
-    private static CommandSpec getSaveCommand() {
-        return CommandSpec.builder()
+    private static Command getSaveCommand() {
+        return Command.builder()
                 .flags(FLAGS)
                 .description(Text.of("Save the configuration"))
                 .permission("sponge.command.save")
@@ -338,8 +339,8 @@ public class SpongeCommand {
     }
 
 
-    private static CommandSpec getTpsCommand() {
-        return CommandSpec.builder()
+    private static Command getTpsCommand() {
+        return Command.builder()
                 .flags(FLAGS)
                 .permission("sponge.command.tps")
                 .description(Text.of("Provides TPS (ticks per second) data for loaded worlds."))
@@ -370,8 +371,8 @@ public class SpongeCommand {
 
     // Non-flag children
 
-    private static CommandSpec getHeapCommand() {
-        return CommandSpec.builder()
+    private static Command getHeapCommand() {
+        return Command.builder()
                 .description(Text.of("Generate a dump of the Sponge heap"))
                 .permission("sponge.command.heap")
                 .executor((src, args) -> {
@@ -389,8 +390,8 @@ public class SpongeCommand {
     private static final Text IMPLEMENTATION_NAME = Text.of(TextColors.YELLOW, TextStyles.BOLD,
             Sponge.getPlatform().getContainer(IMPLEMENTATION).getName());
 
-    private static CommandSpec getVersionCommand() {
-        return CommandSpec.builder()
+    private static Command getVersionCommand() {
+        return Command.builder()
                 .description(Text.of("Display Sponge's current version"))
                 .permission("sponge.command.version")
                 .executor((src, args) -> {
@@ -407,8 +408,8 @@ public class SpongeCommand {
                 .build();
     }
 
-    private static CommandSpec getBlockInfoCommand() {
-        return CommandSpec.builder()
+    private static Command getBlockInfoCommand() {
+        return Command.builder()
                 .description(Text.of("Display the tracked information of the Block you are looking at."))
                 .permission("sponge.command.blockinfo")
                 .executor((src, args) -> {
@@ -436,8 +437,8 @@ public class SpongeCommand {
                 .build();
     }
 
-    private static CommandSpec getEntityInfoCommand() {
-        return CommandSpec.builder()
+    private static Command getEntityInfoCommand() {
+        return Command.builder()
                 .description(Text.of("Display the tracked information of the Entity you are looking at."))
                 .permission("sponge.command.entityinfo")
                 .executor((src, args) -> {
@@ -470,8 +471,8 @@ public class SpongeCommand {
     }
 
 
-    private static CommandSpec getAuditCommand() {
-        return CommandSpec.builder()
+    private static Command getAuditCommand() {
+        return Command.builder()
                 .description(Text.of("Audit Mixin classes for implementation"))
                 .permission("sponge.command.audit")
                 .executor((src, args) -> {
@@ -488,8 +489,8 @@ public class SpongeCommand {
         return Text.of(TextColors.DARK_GREEN, toHighlight);
     }
 
-    private static CommandSpec getPluginsCommand() {
-        return CommandSpec.builder()
+    private static Command getPluginsCommand() {
+        return Command.builder()
                 .description(Text.of("List currently installed plugins"))
                 .permission("sponge.command.plugins")
                 .parameters(
@@ -561,11 +562,11 @@ public class SpongeCommand {
     }
 
 
-    private static CommandSpec getTimingsCommand() {
-        return CommandSpec.builder()
+    private static Command getTimingsCommand() {
+        return Command.builder()
                 .permission("sponge.command.timings")
                 .description(Text.of("Manages Sponge Timings data to see performance of the server."))
-                .addChild(CommandSpec.builder()
+                .addChild(Command.builder()
                         .executor((src, args) -> {
                             if (!Timings.isTimingsEnabled()) {
                                 src.sendMessage(Text.of("Please enable timings by typing /sponge timings on"));
@@ -576,7 +577,7 @@ public class SpongeCommand {
                             return CommandResult.success();
                         })
                         .build(), "reset")
-                .addChild(CommandSpec.builder()
+                .addChild(Command.builder()
                         .executor((src, args) -> {
                             if (!Timings.isTimingsEnabled()) {
                                 src.sendMessage(Text.of("Please enable timings by typing /sponge timings on"));
@@ -586,21 +587,21 @@ public class SpongeCommand {
                             return CommandResult.success();
                         })
                         .build(), "report", "paste")
-                .addChild(CommandSpec.builder()
+                .addChild(Command.builder()
                         .executor((src, args) -> {
                             Timings.setTimingsEnabled(true);
                             src.sendMessage(Text.of("Enabled Timings & Reset"));
                             return CommandResult.success();
                         })
                         .build(), "on")
-                .addChild(CommandSpec.builder()
+                .addChild(Command.builder()
                         .executor((src, args) -> {
                             Timings.setTimingsEnabled(false);
                             src.sendMessage(Text.of("Disabled Timings"));
                             return CommandResult.success();
                         })
                         .build(), "off")
-                .addChild(CommandSpec.builder()
+                .addChild(Command.builder()
                         .executor((src, args) -> {
                             if (!Timings.isTimingsEnabled()) {
                                 src.sendMessage(Text.of("Please enable timings by typing /sponge timings on"));
@@ -611,7 +612,7 @@ public class SpongeCommand {
                             return CommandResult.success();
                         })
                         .build(), "verbon")
-                .addChild(CommandSpec.builder()
+                .addChild(Command.builder()
                         .executor((src, args) -> {
                             if (!Timings.isTimingsEnabled()) {
                                 src.sendMessage(Text.of("Please enable timings by typing /sponge timings on"));
@@ -622,7 +623,7 @@ public class SpongeCommand {
                             return CommandResult.success();
                         })
                         .build(), "verboff")
-                .addChild(CommandSpec.builder()
+                .addChild(Command.builder()
                         .executor((src, args) -> {
                             if (!Timings.isTimingsEnabled()) {
                                 src.sendMessage(Text.of("Please enable timings by typing /sponge timings on"));
@@ -635,8 +636,8 @@ public class SpongeCommand {
                 .build();
     }
 
-    private static CommandSpec getWhichCommand() {
-        return CommandSpec.builder()
+    private static Command getWhichCommand() {
+        return Command.builder()
                 .permission("sponge.command.which")
                 .description(Text.of("List plugins that own a specific command"))
                 .parameters(

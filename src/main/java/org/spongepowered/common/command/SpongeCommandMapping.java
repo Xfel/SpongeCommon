@@ -24,10 +24,9 @@
  */
 package org.spongepowered.common.command;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandMapping;
 
 import java.util.Arrays;
@@ -44,35 +43,35 @@ public final class SpongeCommandMapping implements CommandMapping {
 
     private final String primary;
     private final Set<String> aliases;
-    private final CommandCallable callable;
+    private final Command command;
 
     /**
      * Create a new instance.
      *
-     * @param callable The command callable
+     * @param command The command command
      * @param primary The primary alias
      * @param alias A list of all aliases
      * @throws IllegalArgumentException Thrown if aliases are duplicated
      */
-    public SpongeCommandMapping(CommandCallable callable, String primary, String... alias) {
-        this(callable, primary, Arrays.asList(checkNotNull(alias, "alias")));
+    public SpongeCommandMapping(Command command, String primary, String... alias) {
+        this(command, primary, Arrays.asList(checkNotNull(alias, "alias")));
     }
 
     /**
      * Create a new instance.
      *
-     * @param callable The command callable
+     * @param command The command command
      * @param primary The primary alias
      * @param aliases A collection of all aliases
      * @throws IllegalArgumentException Thrown if aliases are duplicated
      */
-    public SpongeCommandMapping(CommandCallable callable, String primary, Collection<String> aliases) {
+    public SpongeCommandMapping(Command command, String primary, Collection<String> aliases) {
         checkNotNull(primary, "primary");
         checkNotNull(aliases, "aliases");
         this.primary = primary;
         this.aliases = new HashSet<>(aliases);
         this.aliases.add(primary);
-        this.callable = checkNotNull(callable, "callable");
+        this.command = checkNotNull(command, "command");
     }
 
     @Override
@@ -86,8 +85,8 @@ public final class SpongeCommandMapping implements CommandMapping {
     }
 
     @Override
-    public CommandCallable getCallable() {
-        return this.callable;
+    public Command getCommand() {
+        return this.command;
     }
 
     @Override
@@ -95,7 +94,7 @@ public final class SpongeCommandMapping implements CommandMapping {
         return "SpongeCommandMapping{"
                 + "primary='" + this.primary + '\''
                 + ", aliases=" + this.aliases
-                + ", spec=" + this.callable
+                + ", managed=" + this.command
                 + '}';
     }
 }

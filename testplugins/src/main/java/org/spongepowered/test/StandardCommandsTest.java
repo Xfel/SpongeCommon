@@ -26,11 +26,11 @@ package org.spongepowered.test;
 
 import com.google.common.collect.Lists;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.spec.ChildExceptionBehaviors;
-import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.command.managed.ChildExceptionBehaviors;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -40,9 +40,9 @@ import org.spongepowered.api.text.Text;
 /**
  * This adds sample commands that will generally print messages to the executor
  * of the command. It tests various parameters and other functions of the
- * CommandSpec.
+ * SpongeManagedCommand.
  */
-@Plugin(id = "standardcommands", name = "StandardCommands", description = "A plugin to test the function of the CommandSpec")
+@Plugin(id = "standardcommands", name = "StandardCommands", description = "A plugin to test the function of the Command.Builder")
 public class StandardCommandsTest {
 
     private static Text textKey = Text.of("text");
@@ -50,19 +50,19 @@ public class StandardCommandsTest {
 
     @Listener
     public void onInit(GameInitializationEvent event) {
-        Sponge.getCommandManager().register(this, CommandSpec.builder().executor((source, context) -> {
+        Sponge.getCommandManager().register(this, Command.builder().executor((source, context) -> {
             source.sendMessage(Text.of("No parameter command."));
             return CommandResult.success();
         }).build(), "noparam");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        Sponge.getCommandManager().register(this, Command.builder()
                 .permission("sponge.test.permission")
                 .executor((source, context) -> {
                     source.sendMessage(Text.of("You have the permission \"sponge.test.permission\"."));
                     return CommandResult.success();
         }).build(), "permission");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        Sponge.getCommandManager().register(this, Command.builder()
                 .parameters(Parameter.builder().key(textKey).remainingRawJoinedStrings().build())
                 .description(Text.of("Repeats what you say to the command."))
                 .executor((source, context) -> {
@@ -70,7 +70,7 @@ public class StandardCommandsTest {
                     return CommandResult.success();
                 }).build(), "simonsays");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        Sponge.getCommandManager().register(this, Command.builder()
                 .parameters(Parameter.builder().key(textKey).choices("wisely", "poorly").build())
                 .description(Text.of("Repeats what you say to the command, from a choice of \"wisely\" and \"poorly\"."))
                 .executor((source, context) -> {
@@ -78,7 +78,7 @@ public class StandardCommandsTest {
                     return CommandResult.success();
                 }).build(), "choose");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        Sponge.getCommandManager().register(this, Command.builder()
                 .parameters(Parameter.builder().key(textKey).string().optional().build())
                 .description(Text.of("Repeats the one word you say to the command, if you add that parameter."))
                 .executor((source, context) -> {
@@ -86,7 +86,7 @@ public class StandardCommandsTest {
                     return CommandResult.success();
                 }).build(), "chooseoptional");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        Sponge.getCommandManager().register(this, Command.builder()
                 .parameters(Parameter.builder().key(textKey).allOf().string().build())
                 .description(Text.of("Repeats the words you say to the command, one at a time."))
                 .executor((source, context) -> {
@@ -94,7 +94,7 @@ public class StandardCommandsTest {
                     return CommandResult.success();
                 }).build(), "chooseall");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        Sponge.getCommandManager().register(this, Command.builder()
                 .parameters(
                         Parameter.builder().key(playerKey).playerOrSource().string().build(),
                         Parameter.builder().key(textKey).allOf().string()
@@ -110,16 +110,16 @@ public class StandardCommandsTest {
                     return CommandResult.success();
                 }).build(), "chooseplayer");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        Sponge.getCommandManager().register(this, Command.builder()
                 .description(Text.of("A command that only has a subcommand"))
-                .addChild(CommandSpec.builder().executor((source, context) -> {
+                .addChild(Command.builder().executor((source, context) -> {
                     source.sendMessage(Text.of("Child executed"));
                     return CommandResult.success();
                 }).build(), "child").build(), "subwithchildonly");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        Sponge.getCommandManager().register(this, Command.builder()
                 .description(Text.of("A command that has a subcommand as well as a base command"))
-                .addChild(CommandSpec.builder().executor((source, context) -> {
+                .addChild(Command.builder().executor((source, context) -> {
                     source.sendMessage(Text.of("Child executed"));
                     return CommandResult.success();
                 })
@@ -129,10 +129,10 @@ public class StandardCommandsTest {
                 }))
                 .build(), "child").build(), "subwithchildandbase");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        Sponge.getCommandManager().register(this, Command.builder()
                 .description(Text.of("A command that throws exceptions from the child and base, but throws the first one it finds."))
                 .childExceptionBehavior(ChildExceptionBehaviors.RETHROW)
-                .addChild(CommandSpec.builder().executor((source, context) -> {
+                .addChild(Command.builder().executor((source, context) -> {
                     throw new CommandException(Text.of("Child"));
                 })
                 .executor(((source, context) -> {
@@ -140,10 +140,10 @@ public class StandardCommandsTest {
                 }))
                 .build(), "child").build(), "exception1");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        Sponge.getCommandManager().register(this, Command.builder()
                 .description(Text.of("A command that throws exceptions from the child and base, but stacks them."))
                 .childExceptionBehavior(ChildExceptionBehaviors.STORE)
-                .addChild(CommandSpec.builder().executor((source, context) -> {
+                .addChild(Command.builder().executor((source, context) -> {
                     throw new CommandException(Text.of("Child"));
                 })
                 .executor(((source, context) -> {
@@ -151,10 +151,10 @@ public class StandardCommandsTest {
                 }))
                 .build(), "child").build(), "exception2");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        Sponge.getCommandManager().register(this, Command.builder()
                 .description(Text.of("A command that throws exceptions from the child and base, but suppresses child exceptions."))
                 .childExceptionBehavior(ChildExceptionBehaviors.SUPPRESS)
-                .addChild(CommandSpec.builder().executor((source, context) -> {
+                .addChild(Command.builder().executor((source, context) -> {
                     throw new CommandException(Text.of("Child"));
                 })
                 .executor(((source, context) -> {

@@ -26,22 +26,15 @@ package org.spongepowered.common.command;
 
 import com.google.common.collect.Lists;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.parameters.ArgumentParseException;
-import org.spongepowered.api.command.parameters.CommandContext;
-import org.spongepowered.api.command.parameters.Parameter;
-import org.spongepowered.api.command.parameters.tokens.CommandArgs;
+import org.spongepowered.api.command.parameter.ArgumentParseException;
+import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.command.parameter.token.CommandArgs;
 import org.spongepowered.api.text.Text;
 
 import java.util.List;
 
 public class TestParameter implements Parameter {
-
-    private final Text key = Text.of("test");
-
-    @Override
-    public Text getKey() {
-        return this.key;
-    }
 
     @Override
     public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
@@ -57,4 +50,5 @@ public class TestParameter implements Parameter {
     public Text getUsage(CommandSource source) {
         return Text.EMPTY;
     }
+
 }
