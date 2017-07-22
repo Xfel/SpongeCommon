@@ -26,6 +26,12 @@ package org.spongepowered.common.item.inventory.util;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.InventoryLargeChest;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.crafting.CraftingGridInventory;
 import org.spongepowered.common.item.inventory.adapter.impl.comp.CraftingGridInventoryAdapter;
 import org.spongepowered.common.item.inventory.adapter.impl.comp.CraftingInventoryAdapter;
@@ -36,6 +42,7 @@ import org.spongepowered.common.item.inventory.lens.impl.fabric.DefaultInventory
 import org.spongepowered.common.item.inventory.lens.impl.slots.SlotLensImpl;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 public final class InventoryUtil {
 
@@ -60,4 +67,26 @@ public final class InventoryUtil {
         return inventoryCrafting;
     }
 
+    public static Optional<Inventory> getDoubleChestInventory(TileEntityChest chest) {
+        for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL) {
+            BlockPos blockpos = chest.getPos().offset(enumfacing);
+
+            TileEntity tileentity1 = chest.getWorld().getTileEntity(blockpos);
+
+            if (tileentity1 instanceof TileEntityChest && tileentity1.getBlockType() == chest.getBlockType()) {
+
+                InventoryLargeChest inventory;
+
+                if (enumfacing != EnumFacing.WEST && enumfacing != EnumFacing.NORTH)
+                {
+                    inventory = new InventoryLargeChest("container.chestDouble", chest, (TileEntityChest)tileentity1);
+                } else {
+                    inventory = new InventoryLargeChest("container.chestDouble", (TileEntityChest)tileentity1, chest);
+                }
+
+                return Optional.of((Inventory) inventory);
+            }
+        }
+        return Optional.empty();
+    }
 }

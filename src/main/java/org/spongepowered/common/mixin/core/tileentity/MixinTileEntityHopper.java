@@ -29,7 +29,6 @@ import static org.spongepowered.api.data.DataQuery.of;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.IHopper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.EnumFacing;
@@ -38,18 +37,9 @@ import org.spongepowered.api.block.tileentity.carrier.Hopper;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.mutable.tileentity.CooldownData;
-import org.spongepowered.api.event.SpongeEventFactory;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent;
-import org.spongepowered.api.item.inventory.Inventory;
-import org.spongepowered.api.item.inventory.ItemStackSnapshot;
-import org.spongepowered.api.item.inventory.Slot;
-import org.spongepowered.api.item.inventory.property.SlotIndex;
 import org.spongepowered.api.item.inventory.transaction.SlotTransaction;
-import org.spongepowered.api.item.inventory.type.OrderedInventory;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -57,20 +47,18 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import org.spongepowered.common.SpongeImpl;
 import org.spongepowered.common.entity.PlayerTracker;
 import org.spongepowered.common.interfaces.IMixinChunk;
 import org.spongepowered.common.interfaces.IMixinInventory;
 import org.spongepowered.common.interfaces.entity.IMixinEntity;
 import org.spongepowered.common.item.inventory.adapter.InventoryAdapter;
-import org.spongepowered.common.item.inventory.adapter.impl.MinecraftInventoryAdapter;
 import org.spongepowered.common.item.inventory.lens.Lens;
 import org.spongepowered.common.item.inventory.lens.comp.GridInventoryLens;
 import org.spongepowered.common.item.inventory.lens.impl.MinecraftLens;
 import org.spongepowered.common.item.inventory.lens.impl.ReusableLens;
 import org.spongepowered.common.item.inventory.lens.impl.collections.SlotCollection;
 import org.spongepowered.common.item.inventory.lens.impl.comp.GridInventoryLensImpl;
-import org.spongepowered.common.item.inventory.util.ItemStackUtil;
+import org.spongepowered.common.item.inventory.util.EventUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,55 +122,23 @@ public abstract class MixinTileEntityHopper extends MixinTileEntityLockableLoot 
             at = @At(value = "INVOKE",
             target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 1))
     private void afterPutStackInSlots(CallbackInfoReturnable<Boolean> cir, IInventory iInventory, EnumFacing enumFacing, int i, ItemStack itemStack, ItemStack itemStack1) {
-        System.out.println("afterPutStackSlots");
-        // after putStackInInventoryAllSlots
-        // if the transfer worked
-        if (itemStack1.isEmpty()) {
-            Slot slot = ((OrderedInventory) ((MinecraftInventoryAdapter) this).query(OrderedInventory.class)).getSlot(SlotIndex.of(i)).get();
-            SlotTransaction trans = new SlotTransaction(slot, ItemStackUtil.snapshotOf(itemStack), ItemStackUtil.snapshotOf(slot.peek().orElse(
-                            org.spongepowered.api.item.inventory.ItemStack.empty())));
-            this.capturedTransactions.add(trans);
-            Cause.Builder builder = Cause.source(this);
-
-            ChangeInventoryEvent.Transfer.Post event =
-                    SpongeEventFactory.createChangeInventoryEventTransferPost(builder.build(), ((Inventory) this), ((Inventory) iInventory), this.capturedTransactions);
-
-            SpongeImpl.postEvent(event);
-            if (event.isCancelled()) {
-                // restore inventories
-                for (SlotTransaction transaction : event.getTransactions()) {
-                    transaction.getSlot().set(transaction.getOriginal().createStack());
-                }
-                // TODO do we want to try to transfer more items? or just cancel everything
-                itemStack1 = itemStack; // vanilla thinks there was not enough place for item in target
-            }
-
-            this.capturedTransactions.clear();
-        }
+        // after putStackInInventoryAllSlots if the transfer worked
+        itemStack1 = EventUtil.handleTransferPost(((TileEntityHopper)(Object) this), i, itemStack, iInventory, itemStack1);
     }
 
     @Redirect(method = "putStackInInventoryAllSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/tileentity/TileEntityHopper;insertStack(Lnet/minecraft/inventory/IInventory;Lnet/minecraft/inventory/IInventory;Lnet/minecraft/item/ItemStack;ILnet/minecraft/util/EnumFacing;)Lnet/minecraft/item/ItemStack;"))
     private static ItemStack onInsertStack(IInventory source, IInventory destination, ItemStack stack, int index, EnumFacing direction) {
-        Slot slot = ((OrderedInventory) ((MinecraftInventoryAdapter) destination).query(OrderedInventory.class)).getSlot(SlotIndex.of(index)).get();
-        ItemStackSnapshot from = slot.peek().map(ItemStackUtil::snapshotOf).orElse(ItemStackSnapshot.NONE);
-        ItemStack remaining = insertStack(source, destination, stack, index, direction);
-
-        ItemStackSnapshot to = slot.peek().map(ItemStackUtil::snapshotOf).orElse(ItemStackSnapshot.NONE);
-
-        if (source instanceof IMixinInventory) {
-            ((IMixinInventory) source).getCapturedTransactions()
-                    .add(new SlotTransaction(slot, from, to));
+        // capture Transaction
+        if (!(source instanceof IMixinInventory && destination instanceof InventoryAdapter)) {
+            return insertStack(source, destination, stack, index, direction);
         }
-        return remaining;
+
+        return EventUtil.captureInsertRemote(source, ((InventoryAdapter) destination), index, () -> insertStack(source, destination, stack, index, direction));
     }
 
     @Inject(method = "transferItemsOut", cancellable = true, locals = LocalCapture.CAPTURE_FAILEXCEPTION, at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockHopper;getFacing(I)Lnet/minecraft/util/EnumFacing;"))
-    public void onTransferItemsOut(CallbackInfoReturnable<Boolean> cir, IInventory iInventory) {
-        Cause.Builder builder = Cause.source(this);
-        ChangeInventoryEvent.Transfer.Pre event =
-                SpongeEventFactory.createChangeInventoryEventTransferPre(builder.build(), ((Inventory) this), ((Inventory) iInventory));
-        SpongeImpl.postEvent(event);
-        if (event.isCancelled()) {
+    private void onTransferItemsOut(CallbackInfoReturnable<Boolean> cir, IInventory iInventory) {
+        if (EventUtil.handleTransferPre(((TileEntityHopper) ((Object) this)), iInventory).isCancelled()) {
             cir.setReturnValue(false);
         }
     }
