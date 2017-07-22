@@ -68,6 +68,7 @@ public final class InventoryUtil {
     }
 
     public static Optional<Inventory> getDoubleChestInventory(TileEntityChest chest) {
+        // BlockChest#getContainer(World, BlockPos, boolean) without isBlocked() check
         for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL) {
             BlockPos blockpos = chest.getPos().offset(enumfacing);
 
@@ -77,11 +78,10 @@ public final class InventoryUtil {
 
                 InventoryLargeChest inventory;
 
-                if (enumfacing != EnumFacing.WEST && enumfacing != EnumFacing.NORTH)
-                {
-                    inventory = new InventoryLargeChest("container.chestDouble", chest, (TileEntityChest)tileentity1);
+                if (enumfacing != EnumFacing.WEST && enumfacing != EnumFacing.NORTH) {
+                    inventory = new InventoryLargeChest("container.chestDouble", chest, (TileEntityChest) tileentity1);
                 } else {
-                    inventory = new InventoryLargeChest("container.chestDouble", (TileEntityChest)tileentity1, chest);
+                    inventory = new InventoryLargeChest("container.chestDouble", (TileEntityChest) tileentity1, chest);
                 }
 
                 return Optional.of((Inventory) inventory);

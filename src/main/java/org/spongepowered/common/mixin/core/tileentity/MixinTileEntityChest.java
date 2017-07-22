@@ -167,7 +167,6 @@ public abstract class MixinTileEntityChest extends MixinTileEntityLockableLoot i
 
     @Override
     public Optional<Inventory> getDoubleChestInventory() {
-        // BlockChest#getContainer(World, BlockPos, boolean) without isBlocked() check
         return InventoryUtil.getDoubleChestInventory(((TileEntityChest)(Object) this));
     }
 
