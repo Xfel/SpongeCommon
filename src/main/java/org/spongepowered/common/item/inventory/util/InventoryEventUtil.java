@@ -46,8 +46,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class EventUtil {
-    private EventUtil() {}
+public final class InventoryEventUtil {
+    private InventoryEventUtil() {}
 
     public static ChangeInventoryEvent.Transfer.Pre handleTransferPre(TileEntity source, Object destination) {
         Cause.Builder builder = Cause.source(source);

@@ -58,7 +58,7 @@ import org.spongepowered.common.item.inventory.lens.impl.MinecraftLens;
 import org.spongepowered.common.item.inventory.lens.impl.ReusableLens;
 import org.spongepowered.common.item.inventory.lens.impl.collections.SlotCollection;
 import org.spongepowered.common.item.inventory.lens.impl.comp.GridInventoryLensImpl;
-import org.spongepowered.common.item.inventory.util.EventUtil;
+import org.spongepowered.common.item.inventory.util.InventoryEventUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +123,7 @@ public abstract class MixinTileEntityHopper extends MixinTileEntityLockableLoot 
             target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 1))
     private void afterPutStackInSlots(CallbackInfoReturnable<Boolean> cir, IInventory iInventory, EnumFacing enumFacing, int i, ItemStack itemStack, ItemStack itemStack1) {
         // after putStackInInventoryAllSlots if the transfer worked
-        itemStack1 = EventUtil.handleTransferPost(((TileEntityHopper)(Object) this), i, itemStack, iInventory, itemStack1);
+        itemStack1 = InventoryEventUtil.handleTransferPost(((TileEntityHopper)(Object) this), i, itemStack, iInventory, itemStack1);
     }
 
     @Redirect(method = "putStackInInventoryAllSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/tileentity/TileEntityHopper;insertStack(Lnet/minecraft/inventory/IInventory;Lnet/minecraft/inventory/IInventory;Lnet/minecraft/item/ItemStack;ILnet/minecraft/util/EnumFacing;)Lnet/minecraft/item/ItemStack;"))
@@ -133,12 +133,13 @@ public abstract class MixinTileEntityHopper extends MixinTileEntityLockableLoot 
             return insertStack(source, destination, stack, index, direction);
         }
 
-        return EventUtil.captureInsertRemote(source, ((InventoryAdapter) destination), index, () -> insertStack(source, destination, stack, index, direction));
+        return InventoryEventUtil
+                .captureInsertRemote(source, ((InventoryAdapter) destination), index, () -> insertStack(source, destination, stack, index, direction));
     }
 
     @Inject(method = "transferItemsOut", cancellable = true, locals = LocalCapture.CAPTURE_FAILEXCEPTION, at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockHopper;getFacing(I)Lnet/minecraft/util/EnumFacing;"))
     private void onTransferItemsOut(CallbackInfoReturnable<Boolean> cir, IInventory iInventory) {
-        if (EventUtil.handleTransferPre(((TileEntityHopper) ((Object) this)), iInventory).isCancelled()) {
+        if (InventoryEventUtil.handleTransferPre(((TileEntityHopper) ((Object) this)), iInventory).isCancelled()) {
             cir.setReturnValue(false);
         }
     }
