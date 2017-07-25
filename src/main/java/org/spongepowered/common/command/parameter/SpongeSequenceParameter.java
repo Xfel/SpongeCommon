@@ -73,7 +73,8 @@ public class SpongeSequenceParameter implements Parameter {
                     args.setState(startState);
                     List<String> inputs = element.complete(source, args, context);
                     args.previous();
-                    if (!inputs.contains(args.next())) { // Tabcomplete returns results to complete the last word in an argument.
+                    if (!inputs.contains(args.next())) {
+                        // Tabcomplete returns results to complete the last word in an argument.
                         // If the last word is one of the completions, the command is most likely complete
                         return inputs;
                     }

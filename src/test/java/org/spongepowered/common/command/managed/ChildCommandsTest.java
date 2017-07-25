@@ -51,8 +51,8 @@ public class ChildCommandsTest {
     public void testSimpleChildCommand() throws CommandException {
         final AtomicBoolean childExecuted = new AtomicBoolean();
         final Command spec = Command.builder()
-                .addChildren(ImmutableMap.<List<String>, Command>of(ImmutableList.of("child"), Command.builder()
-                        .executor((src, args) -> {
+                .children(ImmutableMap.<List<String>, Command>of(ImmutableList.of("child"), Command.builder()
+                        .setExecutor((src, args) -> {
                             childExecuted.set(true);
                             return CommandResult.builder().successCount(1).build();
                         }).build())).build();

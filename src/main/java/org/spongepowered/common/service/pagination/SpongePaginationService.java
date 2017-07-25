@@ -149,20 +149,20 @@ public class SpongePaginationService implements PaginationService {
     private Command buildPaginationCommand() {
 
         Command next = Command.builder()
-                .description(t("Go to the next page"))
-                .executor((src, args) -> {
+                .setShortDescription(t("Go to the next page"))
+                .setExecutor((src, args) -> {
                     args.<ActivePagination>getOneUnchecked("pagination-id").nextPage();
                     return CommandResult.success();
                 }).build();
 
         Command prev = Command.builder()
-                .description(t("Go to the previous page"))
-                .executor((src, args) -> {
+                .setShortDescription(t("Go to the previous page"))
+                .setExecutor((src, args) -> {
                     args.<ActivePagination>getOneUnchecked("pagination-id").previousPage();
                     return CommandResult.success();
                 }).build();
 
-        Parameter pageArgs = Parameter.builder().key(t("page")).integer().build();
+        Parameter pageArgs = Parameter.builder().setKey(t("page")).integer().build();
 
         CommandExecutor pageExecutor = (src, args) -> {
             args.<ActivePagination>getOneUnchecked("pagination-id").specificPage(args.<Integer>getOneUnchecked("page"));
@@ -170,9 +170,9 @@ public class SpongePaginationService implements PaginationService {
         };
 
         Command page = Command.builder()
-                        .description(t("Go to a specific page"))
+                        .setShortDescription(t("Go to a specific page"))
                         .parameters(pageArgs)
-                        .executor(pageExecutor).build();
+                        .setExecutor(pageExecutor).build();
 
         //Fallback to page arguments
         SpongeDispatcherParameter childDispatcher = new SpongeDispatcherParameter(COMMAND_KEY);
@@ -183,10 +183,10 @@ public class SpongePaginationService implements PaginationService {
         //We create the child manually in order to force that paginationElement is required for all children + fallback
         //https://github.com/SpongePowered/SpongeAPI/issues/1272
         return Command.builder()
-                .parameters(Parameter.builder().key("pagination-id").parser(this.activePaginationValueParameter).build(),
+                .parameters(Parameter.builder().setKey("pagination-id").setParser(this.activePaginationValueParameter).build(),
                         Parameter.firstOf(childDispatcher, pageArgs))
-                .executor(childDispatcher)
-                .description(t("Helper command for paginations occurring"))
+                .setExecutor(childDispatcher)
+                .setShortDescription(t("Helper command for paginations occurring"))
                 .build();
     }
 

@@ -29,6 +29,7 @@ import static org.spongepowered.common.util.SpongeCommonTranslationHelper.t;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandException;
@@ -44,6 +45,7 @@ import org.spongepowered.common.command.parameter.flag.NoFlags;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -54,7 +56,7 @@ public class SpongeCommandBuilder implements Command.Builder {
         throw new CommandException(t("This command requires a subcommand."));
     };
 
-    private Iterable<Parameter> parameters = ImmutableList.of();
+    private List<Parameter> parameters = Lists.newArrayList();
     private final Map<String, Command> children = Maps.newHashMap();
     private ChildExceptionBehavior behavior = ChildExceptionBehaviors.SUPPRESS;
     private InputTokenizer inputTokenizer = InputTokenizers.LENIENT_QUOTED_STRING;
@@ -66,84 +68,67 @@ public class SpongeCommandBuilder implements Command.Builder {
     private boolean requirePermissionForChildren = true;
 
     @Override
-    public Command.Builder addChild(Command child, String... keys) {
-        return addChild(child, Arrays.asList(keys));
-    }
+    public Command.Builder child(Command child, Iterable<String> keys) {
 
-    @Override
-    public Command.Builder addChild(Command child, Iterable<String> keys) {
-        return addChildren(ImmutableMap.of(keys, child));
-    }
+        keys.forEach(x ->
+                Preconditions.checkArgument(!this.children.containsKey(x.toLowerCase(Locale.ENGLISH)),
+                        "No two children can have the same key. Keys are case insensitive."));
 
-    @Override
-    public Command.Builder addChildren(Map<? extends Iterable<String>, ? extends Command> children) {
-        Map<String, Command> stage = Maps.newHashMap();
-        children.forEach((key, value) ->
-                key.forEach(x -> Preconditions.checkArgument(stage.put(x.toLowerCase(Locale.ENGLISH), value) == null,
-                "No two children can have the same key. Keys are case insensitive.")));
-
-        Preconditions.checkArgument(this.children.keySet().stream().noneMatch(stage::containsKey),
-                "No two children can have the same key. Keys are case insensitive.");
-
-        this.children.putAll(stage);
+        // Do this separately so we don't just put a few keys in.
+        keys.forEach(x -> this.children.put(x.toLowerCase(Locale.ENGLISH), child));
         return this;
     }
 
     @Override
-    public Command.Builder requirePermissionForChildren(boolean required) {
+    public Command.Builder setRequirePermissionForChildren(boolean required) {
         this.requirePermissionForChildren = required;
         return this;
     }
 
     @Override
-    public Command.Builder childExceptionBehavior(ChildExceptionBehavior exceptionBehavior) {
+    public Command.Builder setChildExceptionBehavior(ChildExceptionBehavior exceptionBehavior) {
         this.behavior = exceptionBehavior;
         return this;
     }
 
     @Override
-    public Command.Builder description(@Nullable Text description) {
+    public Command.Builder setShortDescription(@Nullable Text description) {
         this.shortDescription = description;
         return this;
     }
 
     @Override
-    public Command.Builder executor(CommandExecutor executor) {
+    public Command.Builder setExecutor(CommandExecutor executor) {
         this.executor = executor;
         return this;
     }
 
     @Override
-    public Command.Builder extendedDescription(@Nullable Text extendedDescription) {
+    public Command.Builder setExtendedDescription(@Nullable Text extendedDescription) {
         this.extendedDescription = extendedDescription;
         return this;
     }
 
     @Override
-    public Command.Builder flags(Flags flags) {
+    public Command.Builder setFlags(Flags flags) {
         this.flags = flags;
         return this;
     }
 
     @Override
-    public Command.Builder parameters(Parameter... parameters) {
-        return parameters(Arrays.asList(parameters));
-    }
-
-    @Override
-    public Command.Builder parameters(Iterable<Parameter> parameters) {
-        this.parameters = ImmutableList.copyOf(parameters);
+    public Command.Builder parameter(Parameter parameter) {
+        this.parameters.add(parameter);
         return this;
     }
 
     @Override
-    public Command.Builder permission(@Nullable String permission) {
+    public Command.Builder setPermission(@Nullable String permission) {
         this.permission = permission;
         return this;
     }
 
     @Override
-    public Command.Builder inputTokenizer(InputTokenizer tokenizer) {
+    public Command.Builder setInputTokenizer(InputTokenizer tokenizer) {
         this.inputTokenizer = tokenizer;
         return this;
     }

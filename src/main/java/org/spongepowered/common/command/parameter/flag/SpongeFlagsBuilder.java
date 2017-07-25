@@ -46,8 +46,8 @@ import org.spongepowered.api.command.parameter.token.CommandArgs;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.common.command.parameter.SpongeSequenceParameter;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -62,12 +62,13 @@ public class SpongeFlagsBuilder implements Flags.Builder {
     private boolean anchorFlags = false;
 
     @Override
-    public Flags.Builder flag(String... specs) {
-        Preconditions.checkArgument(specs.length > 0, "Specs must have at least one entry.");
-        List<String> aliases = storeAliases(specs);
-        Text usage = Text.of(CommandMessageFormatting.LEFT_SQUARE, getFlag(aliases.get(0)), CommandMessageFormatting.RIGHT_SQUARE);
-        Parameter markTrue = Parameter.builder().key(aliases.get(0)).parser(MARK_TRUE).usage((source, current) -> usage).build();
-        this.primaryFlags.add(aliases.get(0));
+    public Flags.Builder flag(String primaryIdentifier, String... secondaryIdentifiers) {
+        Preconditions.checkNotNull(primaryIdentifier, "primaryIdentifier");
+        List<String> aliases = storeAliases(primaryIdentifier, secondaryIdentifiers);
+        Text usage = Text.of(CommandMessageFormatting.LEFT_SQUARE, getFlag(primaryIdentifier), CommandMessageFormatting.RIGHT_SQUARE);
+        Parameter markTrue = Parameter.builder().setKey(primaryIdentifier.toLowerCase()).setParser(MARK_TRUE).setUsage((source, current) -> usage)
+                .build();
+        this.primaryFlags.add(primaryIdentifier.toLowerCase());
         for (String alias : aliases) {
             this.flags.put(alias, markTrue);
         }
@@ -75,14 +76,14 @@ public class SpongeFlagsBuilder implements Flags.Builder {
     }
 
     @Override
-    public Flags.Builder permissionFlag(String flagPermission, String... specs) {
-        Preconditions.checkArgument(specs.length > 0, "Specs must have at least one entry.");
-        List<String> aliases = storeAliases(specs);
-        final String first = getFlag(aliases.get(0));
-        Text usage = Text.of(CommandMessageFormatting.LEFT_SQUARE, getFlag(aliases.get(0)), CommandMessageFormatting.RIGHT_SQUARE);
-        Parameter perm = Parameter.builder().key(aliases.get(0)).parser(MARK_TRUE)
-                .addModifiers(new PermissionModifier(first, flagPermission, usage)).build();
-        this.primaryFlags.add(aliases.get(0));
+    public Flags.Builder permissionFlag(String flagPermission, String primaryIdentifier, String... secondaryIdentifiers) {
+        Preconditions.checkNotNull(primaryIdentifier, "primaryIdentifier");
+        List<String> aliases = storeAliases(primaryIdentifier, secondaryIdentifiers);
+        final String first = getFlag(primaryIdentifier.toLowerCase());
+        Text usage = Text.of(CommandMessageFormatting.LEFT_SQUARE, first, CommandMessageFormatting.RIGHT_SQUARE);
+        Parameter perm = Parameter.builder().setKey(primaryIdentifier.toLowerCase()).setParser(MARK_TRUE)
+                .modifiers(new PermissionModifier(first, flagPermission, usage)).build();
+        this.primaryFlags.add(primaryIdentifier.toLowerCase());
         for (String alias : aliases) {
             this.flags.put(alias, perm);
         }
@@ -90,12 +91,13 @@ public class SpongeFlagsBuilder implements Flags.Builder {
     }
 
     @Override
-    public Flags.Builder valueFlag(Parameter value, String... specs) {
-        Preconditions.checkArgument(specs.length > 0, "Specs must have at least one entry.");
-        List<String> aliases = storeAliases(specs);
-        this.primaryFlags.add(aliases.get(0));
+    public Flags.Builder valueFlag(Parameter value, String primaryIdentifier, String... secondaryIdentifiers) {
+        Preconditions.checkNotNull(primaryIdentifier, "primaryIdentifier");
+        List<String> aliases = storeAliases(primaryIdentifier, secondaryIdentifiers);
+        this.primaryFlags.add(primaryIdentifier.toLowerCase());
         Parameter element = new UsageWrapper(new SpongeSequenceParameter(
-                Parameter.builder().key(aliases.get(0)).parser(MARK_TRUE).usage((source, current) -> Text.EMPTY).build(), value));
+                Parameter.builder().setKey(primaryIdentifier.toLowerCase()).setParser(MARK_TRUE).setUsage((source, current) -> Text.EMPTY).build(),
+                value));
         for (String alias : aliases) {
             this.flags.put(alias, element);
         }
@@ -170,23 +172,13 @@ public class SpongeFlagsBuilder implements Flags.Builder {
         }
     }
 
-    private List<String> storeAliases(String[] specs) {
-        Preconditions.checkNotNull(specs);
-        Preconditions.checkArgument(specs.length > 0);
+    private List<String> storeAliases(String primary, String[] secondary) {
+        Preconditions.checkNotNull(primary);
 
-        List<String> aliases = Lists.newArrayList();
+        List<String> aliases = Lists.newArrayList(primary);
 
         // Put the flag aliases in
-        for (String spec : specs) {
-            if (spec.length() > 2 && spec.startsWith("-")) {
-                aliases.add(spec.substring(1));
-            } else {
-                // Short flags - remove "-" if necessary.
-                for (char c : spec.toLowerCase(Locale.ENGLISH).replaceAll("-", "").toCharArray()) {
-                    aliases.add(String.valueOf(c).toLowerCase(Locale.ENGLISH));
-                }
-            }
-        }
+        aliases.addAll(Arrays.asList(secondary));
 
         return aliases;
     }

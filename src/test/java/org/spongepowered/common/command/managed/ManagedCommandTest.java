@@ -47,7 +47,7 @@ public class ManagedCommandTest {
     @Test
     public void testNoArgsFunctional() throws CommandException {
         Command cmd = new SpongeCommandBuilder()
-                .executor((src, args) -> CommandResult.empty())
+                .setExecutor((src, args) -> CommandResult.empty())
                 .build();
 
         final SpongeDispatcher dispatcher = new SpongeDispatcher();

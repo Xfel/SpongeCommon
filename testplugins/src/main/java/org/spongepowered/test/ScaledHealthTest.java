@@ -49,21 +49,21 @@ public class ScaledHealthTest {
     private static Command getHealthCommand() {
 
         return Command.builder()
-            .addChild(getShowHealth(), "show")
-            .addChild(getSetHealthScale(), "setScale")
-            .addChild(getSetHealth(), "setHealth")
-            .addChild(getSetMaxHealth(), "setMax")
-            .description(Text.of("ScaledHealth command"))
-            .extendedDescription(Text.of("commands:\n", "set a trail to you as a player"))
+            .child(getShowHealth(), "show")
+            .child(getSetHealthScale(), "setScale")
+            .child(getSetHealth(), "setHealth")
+            .child(getSetMaxHealth(), "setMax")
+            .setShortDescription(Text.of("ScaledHealth command"))
+            .setExtendedDescription(Text.of("commands:\n", "set a trail to you as a player"))
             .build();
     }
 
     private static Command getSetMaxHealth() {
         final LiteralText health = Text.of("health");
         return Command.builder()
-            .parameters(Parameter.builder().onlyOne().key(health).doubleNumber().build())
-            .description(Text.of(TextColors.AQUA, "Sets your maximum health"))
-            .executor((src, args) -> {
+            .parameters(Parameter.builder().onlyOne().setKey(health).doubleNumber().build())
+            .setShortDescription(Text.of(TextColors.AQUA, "Sets your maximum health"))
+            .setExecutor((src, args) -> {
                 if (!(src instanceof Player)) {
                     return CommandResult.empty();
                 }
@@ -77,9 +77,9 @@ public class ScaledHealthTest {
     private static Command getSetHealth() {
         final LiteralText health = Text.of("health");
         return Command.builder()
-            .parameters(Parameter.builder().onlyOne().key(health).doubleNumber().build())
-            .description(Text.of(TextColors.AQUA, "Sets your health"))
-            .executor((src, args) -> {
+            .parameters(Parameter.builder().onlyOne().setKey(health).doubleNumber().build())
+            .setShortDescription(Text.of(TextColors.AQUA, "Sets your health"))
+            .setExecutor((src, args) -> {
                 if (!(src instanceof Player)) {
                     return CommandResult.empty();
                 }
@@ -93,13 +93,13 @@ public class ScaledHealthTest {
     private static Command getSetHealthScale() {
         final LiteralText healthText = Text.of("health");
         return Command.builder()
-            .parameters(Parameter.builder().onlyOne().key(healthText).doubleNumber().build())
-            .description(Text.of(TextColors.AQUA, "Sets your health scale"))
-            .executor(((src, args) -> {
+            .parameters(Parameter.builder().onlyOne().setKey(healthText).doubleNumber().build())
+            .setShortDescription(Text.of(TextColors.AQUA, "Sets your health scale"))
+            .setExecutor(((src, args) -> {
                 if (!(src instanceof Player)) {
                     return CommandResult.empty();
                 }
-                final double health = args.<Double>getOne(Text.of(healthText)).get();
+                final double health = args.<Double>getOneUnchecked(Text.of(healthText));
                 ((Player) src).offer(Keys.HEALTH_SCALE, health);
 
                 return CommandResult.success();
@@ -109,8 +109,8 @@ public class ScaledHealthTest {
 
     private static Command getShowHealth() {
         return Command.builder()
-            .description(Text.of(TextColors.AQUA, "Shows your health"))
-            .executor(((src, args) -> {
+            .setShortDescription(Text.of(TextColors.AQUA, "Shows your health"))
+            .setExecutor(((src, args) -> {
                 if (!(src instanceof Player)) {
                     return CommandResult.empty();
                 }

@@ -51,14 +51,14 @@ public class SpongeParameterBuilder implements Parameter.Builder {
     @Nullable private String permission;
 
     @Override
-    public Parameter.Builder key(Text key) {
+    public Parameter.Builder setKey(Text key) {
         Preconditions.checkNotNull(key);
         this.key = key;
         return this;
     }
 
     @Override
-    public Parameter.Builder parser(ValueParser parser) {
+    public Parameter.Builder setParser(ValueParser parser) {
         Preconditions.checkNotNull(parser);
         if (parser instanceof ValueParameter) {
             this.valueParameter = (ValueParameter) parser;
@@ -71,37 +71,24 @@ public class SpongeParameterBuilder implements Parameter.Builder {
     }
 
     @Override
-    public Parameter.Builder suggestions(@Nullable ValueCompleter completer) {
+    public Parameter.Builder setSuggestions(@Nullable ValueCompleter completer) {
         this.completer = completer;
         return this;
     }
 
     @Override
-    public Parameter.Builder usage(@Nullable ValueUsage usage) {
+    public Parameter.Builder setUsage(@Nullable ValueUsage usage) {
         this.usage = usage;
         return this;
     }
 
-    @Override
-    public Parameter.Builder addModifiers(ValueParameterModifier... modifiers) {
-        this.modifiers.addAll(Arrays.asList(modifiers));
+    @Override public Parameter.Builder modifier(ValueParameterModifier modifier) {
+        this.modifiers.add(modifier);
         return this;
     }
 
     @Override
-    public Parameter.Builder addModifiers(List<ValueParameterModifier> modifiers) {
-        this.modifiers.addAll(modifiers);
-        return this;
-    }
-
-    @Override
-    public Parameter.Builder addModifierToBeginning(ValueParameterModifier modifier) {
-        this.modifiers.add(0, modifier);
-        return this;
-    }
-
-    @Override
-    public Parameter.Builder permission(@Nullable String permission) {
+    public Parameter.Builder setRequiredPermission(@Nullable String permission) {
         this.permission = permission;
         return this;
     }

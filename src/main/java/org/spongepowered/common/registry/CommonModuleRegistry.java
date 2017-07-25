@@ -149,6 +149,7 @@ import org.spongepowered.common.block.SpongeBlockStateBuilder;
 import org.spongepowered.common.block.SpongeTileEntityArchetypeBuilder;
 import org.spongepowered.common.boss.ServerBossBarBuilder;
 import org.spongepowered.common.command.parameter.SpongeParameterBuilder;
+import org.spongepowered.common.command.parameter.SpongeParameterFirstOfBuilder;
 import org.spongepowered.common.command.parameter.SpongeParameterSequenceBuilder;
 import org.spongepowered.common.command.parameter.flag.SpongeFlagsBuilder;
 import org.spongepowered.common.command.result.SpongeCommandResultBuilder;
@@ -369,6 +370,7 @@ public final class CommonModuleRegistry {
             .registerBuilderSupplier(SmeltingRecipe.Builder.class, SpongeSmeltingRecipeBuilder::new)
             .registerBuilderSupplier(Parameter.Builder.class, SpongeParameterBuilder::new)
             .registerBuilderSupplier(Parameter.SequenceBuilder.class, SpongeParameterSequenceBuilder::new)
+            .registerBuilderSupplier(Parameter.FirstOfBuilder.class, SpongeParameterFirstOfBuilder::new)
             .registerBuilderSupplier(Flags.Builder.class, SpongeFlagsBuilder::new)
             .registerBuilderSupplier(CommandResult.Builder.class, SpongeCommandResultBuilder::new)
             .registerBuilderSupplier(Command.Builder.class, SpongeCommandBuilder::new)

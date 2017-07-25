@@ -158,7 +158,7 @@ public class FlagsTest {
     @Test
     public void testLongFlag() throws Exception {
 
-        Flags flags = new SpongeFlagsBuilder().flag("a").flag("b").flag("-ab").build();
+        Flags flags = new SpongeFlagsBuilder().flag("a").flag("b").flag("ab").build();
 
         SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("--ab", false), "--ab");
         SpongeCommandContext context = new SpongeCommandContext();
@@ -174,7 +174,7 @@ public class FlagsTest {
     public void testValueFlag() throws Exception {
 
         // Prepare the parameter
-        Flags flags = new SpongeFlagsBuilder().valueFlag(this.DUMMY, "-ab").build();
+        Flags flags = new SpongeFlagsBuilder().valueFlag(this.DUMMY, "ab").build();
 
         SpongeCommandArgs args = new SpongeCommandArgs(new SpaceSplitInputTokenizer().tokenize("--ab hello", false), "--ab hello");
         SpongeCommandContext context = new SpongeCommandContext();

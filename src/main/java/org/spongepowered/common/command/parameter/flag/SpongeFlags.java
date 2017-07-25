@@ -204,7 +204,7 @@ public class SpongeFlags implements Flags {
         }
 
         private ArgumentParseException createValueError() {
-            return createError(t("Short flags that are not at the end of a group cannot have a value."));
+            return createError(t("Short setFlags that are not at the end of a group cannot have a value."));
         }
     }
 }

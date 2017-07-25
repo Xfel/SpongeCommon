@@ -50,114 +50,114 @@ public class StandardCommandsTest {
 
     @Listener
     public void onInit(GameInitializationEvent event) {
-        Sponge.getCommandManager().register(this, Command.builder().executor((source, context) -> {
+        Sponge.getCommandManager().register(this, Command.builder().setExecutor((source, context) -> {
             source.sendMessage(Text.of("No parameter command."));
             return CommandResult.success();
         }).build(), "noparam");
 
         Sponge.getCommandManager().register(this, Command.builder()
-                .permission("sponge.test.permission")
-                .executor((source, context) -> {
+                .setPermission("sponge.test.permission")
+                .setExecutor((source, context) -> {
                     source.sendMessage(Text.of("You have the permission \"sponge.test.permission\"."));
                     return CommandResult.success();
         }).build(), "permission");
 
         Sponge.getCommandManager().register(this, Command.builder()
-                .parameters(Parameter.builder().key(textKey).remainingRawJoinedStrings().build())
-                .description(Text.of("Repeats what you say to the command."))
-                .executor((source, context) -> {
+                .parameters(Parameter.builder().setKey(textKey).remainingRawJoinedStrings().build())
+                .setShortDescription(Text.of("Repeats what you say to the command."))
+                .setExecutor((source, context) -> {
                     source.sendMessage(Text.of("Simon says: ", context.getOneUnchecked(textKey)));
                     return CommandResult.success();
                 }).build(), "simonsays");
 
         Sponge.getCommandManager().register(this, Command.builder()
-                .parameters(Parameter.builder().key(textKey).choices("wisely", "poorly").build())
-                .description(Text.of("Repeats what you say to the command, from a choice of \"wisely\" and \"poorly\"."))
-                .executor((source, context) -> {
+                .parameters(Parameter.builder().setKey(textKey).choices("wisely", "poorly").build())
+                .setShortDescription(Text.of("Repeats what you say to the command, from a choice of \"wisely\" and \"poorly\"."))
+                .setExecutor((source, context) -> {
                     source.sendMessage(Text.of("You chose ", context.getOneUnchecked(textKey)));
                     return CommandResult.success();
                 }).build(), "choose");
 
         Sponge.getCommandManager().register(this, Command.builder()
-                .parameters(Parameter.builder().key(textKey).string().optional().build())
-                .description(Text.of("Repeats the one word you say to the command, if you add that parameter."))
-                .executor((source, context) -> {
+                .parameters(Parameter.builder().setKey(textKey).string().optional().build())
+                .setShortDescription(Text.of("Repeats the one word you say to the command, if you add that parameter."))
+                .setExecutor((source, context) -> {
                     source.sendMessage(Text.of("You chose ", context.<String>getOne(textKey).orElse("nothing")));
                     return CommandResult.success();
                 }).build(), "chooseoptional");
 
         Sponge.getCommandManager().register(this, Command.builder()
-                .parameters(Parameter.builder().key(textKey).allOf().string().build())
-                .description(Text.of("Repeats the words you say to the command, one at a time."))
-                .executor((source, context) -> {
+                .parameters(Parameter.builder().setKey(textKey).allOf().string().build())
+                .setShortDescription(Text.of("Repeats the words you say to the command, one at a time."))
+                .setExecutor((source, context) -> {
                     context.getAll(textKey).forEach(x -> source.sendMessage(Text.of("You chose ", x)));
                     return CommandResult.success();
                 }).build(), "chooseall");
 
         Sponge.getCommandManager().register(this, Command.builder()
                 .parameters(
-                        Parameter.builder().key(playerKey).playerOrSource().string().build(),
-                        Parameter.builder().key(textKey).allOf().string()
-                                .suggestions(((source, args, context) -> Lists.newArrayList("spam", "bacon", "eggs")))
-                                .usage(((key, source) -> Text.of("Words to send")))
+                        Parameter.builder().setKey(playerKey).playerOrSource().string().build(),
+                        Parameter.builder().setKey(textKey).allOf().string()
+                                .setSuggestions(((source, args, context) -> Lists.newArrayList("spam", "bacon", "eggs")))
+                                .setUsage(((key, source) -> Text.of("Words to send")))
                                 .build()
                 )
-                .description(Text.of("Repeats the words you say to the command, one at a time, to the specified player, but with helpful "
+                .setShortDescription(Text.of("Repeats the words you say to the command, one at a time, to the specified player, but with helpful "
                         + "suggestions and a custom usage text."))
-                .executor((source, context) -> {
+                .setExecutor((source, context) -> {
                     Player player = context.<Player>getOne(playerKey).orElseThrow(() -> new CommandException(Text.of("No player was specified")));
                     context.getAll(textKey).forEach(x -> player.sendMessage(Text.of(source.getName(), " chose ", x)));
                     return CommandResult.success();
                 }).build(), "chooseplayer");
 
         Sponge.getCommandManager().register(this, Command.builder()
-                .description(Text.of("A command that only has a subcommand"))
-                .addChild(Command.builder().executor((source, context) -> {
+                .setShortDescription(Text.of("A command that only has a subcommand"))
+                .child(Command.builder().setExecutor((source, context) -> {
                     source.sendMessage(Text.of("Child executed"));
                     return CommandResult.success();
                 }).build(), "child").build(), "subwithchildonly");
 
         Sponge.getCommandManager().register(this, Command.builder()
-                .description(Text.of("A command that has a subcommand as well as a base command"))
-                .addChild(Command.builder().executor((source, context) -> {
+                .setShortDescription(Text.of("A command that has a subcommand as well as a base command"))
+                .child(Command.builder().setExecutor((source, context) -> {
                     source.sendMessage(Text.of("Child executed"));
                     return CommandResult.success();
                 })
-                .executor(((source, context) -> {
+                .setExecutor(((source, context) -> {
                     source.sendMessage(Text.of("Base executed"));
                     return CommandResult.success();
                 }))
                 .build(), "child").build(), "subwithchildandbase");
 
         Sponge.getCommandManager().register(this, Command.builder()
-                .description(Text.of("A command that throws exceptions from the child and base, but throws the first one it finds."))
-                .childExceptionBehavior(ChildExceptionBehaviors.RETHROW)
-                .addChild(Command.builder().executor((source, context) -> {
+                .setShortDescription(Text.of("A command that throws exceptions from the child and base, but throws the first one it finds."))
+                .setChildExceptionBehavior(ChildExceptionBehaviors.RETHROW)
+                .child(Command.builder().setExecutor((source, context) -> {
                     throw new CommandException(Text.of("Child"));
                 })
-                .executor(((source, context) -> {
+                .setExecutor(((source, context) -> {
                     throw new CommandException(Text.of("Base"));
                 }))
                 .build(), "child").build(), "exception1");
 
         Sponge.getCommandManager().register(this, Command.builder()
-                .description(Text.of("A command that throws exceptions from the child and base, but stacks them."))
-                .childExceptionBehavior(ChildExceptionBehaviors.STORE)
-                .addChild(Command.builder().executor((source, context) -> {
+                .setShortDescription(Text.of("A command that throws exceptions from the child and base, but stacks them."))
+                .setChildExceptionBehavior(ChildExceptionBehaviors.STORE)
+                .child(Command.builder().setExecutor((source, context) -> {
                     throw new CommandException(Text.of("Child"));
                 })
-                .executor(((source, context) -> {
+                .setExecutor(((source, context) -> {
                     throw new CommandException(Text.of("Base"));
                 }))
                 .build(), "child").build(), "exception2");
 
         Sponge.getCommandManager().register(this, Command.builder()
-                .description(Text.of("A command that throws exceptions from the child and base, but suppresses child exceptions."))
-                .childExceptionBehavior(ChildExceptionBehaviors.SUPPRESS)
-                .addChild(Command.builder().executor((source, context) -> {
+                .setShortDescription(Text.of("A command that throws exceptions from the child and base, but suppresses child exceptions."))
+                .setChildExceptionBehavior(ChildExceptionBehaviors.SUPPRESS)
+                .child(Command.builder().setExecutor((source, context) -> {
                     throw new CommandException(Text.of("Child"));
                 })
-                .executor(((source, context) -> {
+                .setExecutor(((source, context) -> {
                     throw new CommandException(Text.of("Base"));
                 }))
                 .build(), "child").build(), "exception3");

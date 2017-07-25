@@ -50,12 +50,12 @@ public class SpongeHelpCommand {
 
     public static Command create() {
         return Command.builder()
-            .parameters(Parameter.builder().key("command").optional().string().build())
-            .description(Text.of("View a list of all commands."))
-            .extendedDescription(
+            .parameters(Parameter.builder().setKey("command").optional().string().build())
+            .setShortDescription(Text.of("View a list of all commands."))
+            .setExtendedDescription(
                 Text.of("View a list of all commands. Hover over\n" + " a command to view its description. Click\n"
                          + " a command to insert it into your chat bar."))
-            .executor((src, args) -> {
+            .setExecutor((src, args) -> {
                 Optional<String> command = args.getOne("command");
                 if (command.isPresent()) {
                     Optional<? extends CommandMapping> mapping = SpongeImpl.getGame().getCommandManager().get(command.get(), src);

@@ -27,15 +27,14 @@ package org.spongepowered.common.command.parameter;
 import org.spongepowered.api.command.parameter.Parameter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class SpongeParameterSequenceBuilder implements Parameter.SequenceBuilder {
+public class SpongeParameterFirstOfBuilder implements Parameter.FirstOfBuilder {
 
     private final List<Parameter> parameters = new ArrayList<>();
 
     @Override
-    public Parameter.SequenceBuilder then(Parameter parameter) {
+    public Parameter.FirstOfBuilder or(Parameter parameter) {
         this.parameters.add(parameter);
         return this;
     }
@@ -46,17 +45,17 @@ public class SpongeParameterSequenceBuilder implements Parameter.SequenceBuilder
             return this.parameters.get(0);
         }
 
-        return new SpongeSequenceParameter(this.parameters);
+        return new SpongeFirstOfParameter(this.parameters);
     }
 
     @Override
-    public Parameter.SequenceBuilder from(Parameter value) {
+    public Parameter.FirstOfBuilder from(Parameter value) {
         // TODO: From
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Parameter.SequenceBuilder reset() {
+    public Parameter.FirstOfBuilder reset() {
         this.parameters.clear();
         return this;
     }

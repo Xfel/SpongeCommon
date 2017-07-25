@@ -260,17 +260,17 @@ public class SpongeManagedCommand implements Command, Dispatcher {
     }
 
     void populateBuilder(SpongeCommandBuilder builder) {
-        builder.childExceptionBehavior(this.childExceptionBehavior)
-               .description(this.shortDescription)
-               .extendedDescription(this.extendedDescription)
-               .executor(this.executor)
-               .flags(this.flags)
-               .inputTokenizer(this.inputTokenizer)
+        builder.setChildExceptionBehavior(this.childExceptionBehavior)
+               .setShortDescription(this.shortDescription)
+               .setExtendedDescription(this.extendedDescription)
+               .setExecutor(this.executor)
+               .setFlags(this.flags)
+               .setInputTokenizer(this.inputTokenizer)
                .parameters(this.parameters)
-               .permission(this.permission)
-               .requirePermissionForChildren(this.requirePermissionForChildren);
+               .setPermission(this.permission)
+               .setRequirePermissionForChildren(this.requirePermissionForChildren);
 
-        this.mappings.forEach((alias, mapping) -> builder.addChild(mapping.getCommand(), mapping.getAllAliases()));
+        this.mappings.forEach((alias, mapping) -> builder.child(mapping.getCommand(), mapping.getAllAliases()));
     }
 
     private void checkPermission(CommandSource source) throws CommandPermissionException {

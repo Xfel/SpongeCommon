@@ -89,10 +89,10 @@ public class SpongeCallbackHolder {
 
     public Command createCommand() {
         return Command.builder()
-                .description(t("Execute a callback registered as part of a Text object. Primarily for internal use"))
-                .parameters(Parameter.builder().key(t("callback")).parser(CALLBACK_VALUE_PARAMETER).build())
-                .executor((src, args) -> {
-                    args.<Consumer<CommandSource>>getOne("callback").get().accept(src);
+                .setShortDescription(t("Execute a callback registered as part of a Text object. Primarily for internal use"))
+                .parameters(Parameter.builder().setKey(t("callback")).setParser(CALLBACK_VALUE_PARAMETER).build())
+                .setExecutor((src, args) -> {
+                    args.<Consumer<CommandSource>>getOneUnchecked("callback").accept(src);
                     return CommandResult.success();
                 }).build();
     }
