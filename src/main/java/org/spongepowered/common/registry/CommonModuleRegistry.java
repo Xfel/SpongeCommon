@@ -38,6 +38,7 @@ import org.spongepowered.api.boss.BossBarOverlay;
 import org.spongepowered.api.boss.ServerBossBar;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.format.CommandMessageFormat;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.flag.Flags;
 import org.spongepowered.api.command.parameter.flag.UnknownFlagBehavior;
@@ -194,6 +195,7 @@ import org.spongepowered.common.registry.type.boss.BossBarOverlayRegistryModule;
 import org.spongepowered.common.registry.type.command.CatalogedValueParameterModifiersRegistryModule;
 import org.spongepowered.common.registry.type.command.CatalogedValueParametersRegistryModule;
 import org.spongepowered.common.registry.type.command.ChildExceptionBehaviorRegistryModule;
+import org.spongepowered.common.registry.type.command.CommandMessageFormatRegistryModule;
 import org.spongepowered.common.registry.type.command.InputTokenizerRegistryModule;
 import org.spongepowered.common.registry.type.command.UnknownFlagBehaviorRegistryModule;
 import org.spongepowered.common.registry.type.data.DataFormatRegistryModule;
@@ -399,6 +401,7 @@ public final class CommonModuleRegistry {
             .registerModule(new ChatTypeRegistryModule())
             .registerModule(ChildExceptionBehavior.class, new ChildExceptionBehaviorRegistryModule())
             .registerModule(CoalType.class, new CoalTypeRegistryModule())
+            .registerModule(CommandMessageFormat.class, new CommandMessageFormatRegistryModule())
             .registerModule(ComparatorType.class, new ComparatorTypeRegistryModule())
             .registerModule(CookedFish.class, new CookedFishRegistryModule())
             .registerModule(Criterion.class, new CriteriaRegistryModule())

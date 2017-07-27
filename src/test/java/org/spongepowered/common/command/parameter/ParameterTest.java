@@ -79,7 +79,7 @@ public class ParameterTest {
     public void testThatIntegerCanBeParsed() throws Exception {
 
         // With this parameter
-        Parameter parameter = Parameter.builder().setKey("test").integer().build();
+        Parameter parameter = Parameter.builder().setKey("test").integerNumber().build();
 
         // This tokenized args
         SpongeCommandArgs args = new SpongeCommandArgs(Lists.newArrayList(new SpongeSingleArg("1", 0, 1)), "1");
@@ -105,7 +105,7 @@ public class ParameterTest {
     public void testThatIntegerWillThrowIfTheInputIsntAnInteger() throws Exception {
 
         // With this parameter
-        Parameter parameter = Parameter.builder().setKey("test").integer().build();
+        Parameter parameter = Parameter.builder().setKey("test").integerNumber().build();
 
         // This tokenized args
         SpongeCommandArgs args = new SpongeCommandArgs(Lists.newArrayList(new SpongeSingleArg("a1", 0, 1)), "a1");

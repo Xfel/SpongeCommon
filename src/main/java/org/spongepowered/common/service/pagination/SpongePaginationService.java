@@ -162,7 +162,7 @@ public class SpongePaginationService implements PaginationService {
                     return CommandResult.success();
                 }).build();
 
-        Parameter pageArgs = Parameter.builder().setKey(t("page")).integer().build();
+        Parameter pageArgs = Parameter.builder().setKey(t("page")).integerNumber().build();
 
         CommandExecutor pageExecutor = (src, args) -> {
             args.<ActivePagination>getOneUnchecked("pagination-id").specificPage(args.<Integer>getOneUnchecked("page"));

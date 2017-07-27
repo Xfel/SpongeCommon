@@ -83,7 +83,7 @@ public class WorldPropertiesValueParameter extends PatternMatchingValueParameter
                 args.next();
 
                 @SuppressWarnings("unchecked")
-                final DimensionType type = (DimensionType) (this.dimensionParameter.getValue(source, args, specifier).iterator().next());
+                final DimensionType type = (DimensionType) (this.dimensionParameter.getValues(source, args, specifier).iterator().next());
                 Iterable<WorldProperties> ret = Sponge.getGame().getServer().getAllWorldProperties().stream().filter(input -> input != null
                         && input.isEnabled() && input.getDimensionType().equals(type)).collect(Collectors.toList());
                 return Optional.of(firstOnly ? ret.iterator().next() : ret);
