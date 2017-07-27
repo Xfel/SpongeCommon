@@ -139,8 +139,8 @@ public class SpongeManagedCommand implements Command, Dispatcher {
 
         // Step two, children. If we have any, we parse them now.
         if (!this.mappings.isEmpty() && args.hasNext()) {
-            Object argsState = args.getState();
-            Object contextState = context.getState();
+            CommandArgs.Snapshot argsState = args.getState();
+            CommandContext.Snapshot contextState = context.getState();
             String subCommand = args.next().toLowerCase(Locale.ENGLISH);
             Optional<? extends CommandMapping> optionalChild = get(subCommand.toLowerCase(Locale.ENGLISH));
             if (optionalChild.isPresent()) {

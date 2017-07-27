@@ -68,7 +68,7 @@ public class LocationValueParameter implements CatalogedValueParameter {
 
     @Override
     public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
-        Object state = args.getState();
+        CommandArgs.Snapshot state = args.getState();
         Optional<String> nextPossibility = args.nextIfPresent();
         if (nextPossibility.isPresent() && nextPossibility.get().startsWith("@")) {
             return Selector.complete(nextPossibility.get());
@@ -85,7 +85,7 @@ public class LocationValueParameter implements CatalogedValueParameter {
     @Override
     public Optional<Object> getValue(CommandSource source, CommandArgs args, CommandContext context)
             throws ArgumentParseException {
-        Object state = args.getState();
+        CommandArgs.Snapshot state = args.getState();
         if (args.peek().startsWith("@")) { // We are a selector
             return Optional.of(Selector.parse(args.next()).resolve(source).stream()
                     .map(Entity::getLocation)

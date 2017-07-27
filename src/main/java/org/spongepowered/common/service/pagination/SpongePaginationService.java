@@ -201,7 +201,7 @@ public class SpongePaginationService implements PaginationService {
                 throw args.createError(t("Source %s has no paginations!", source.getName()));
             }
 
-            Object state = args.getState();
+            CommandArgs.Snapshot state = args.getState();
             try {
                 id = UUID.fromString(args.next());
             } catch (IllegalArgumentException ex) {

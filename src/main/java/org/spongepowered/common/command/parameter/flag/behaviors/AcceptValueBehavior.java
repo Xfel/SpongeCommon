@@ -33,8 +33,8 @@ import org.spongepowered.api.command.parameter.token.CommandArgs;
 public class AcceptValueBehavior implements UnknownFlagBehavior {
 
     @Override
-    public void parse(CommandSource source, CommandArgs args, CommandContext context, Object tokenizedArgsPreviousState,
-            Object contextPreviousState, String flag) throws ArgumentParseException {
+    public void parse(CommandSource source, CommandArgs args, CommandContext context, CommandArgs.Snapshot tokenizedArgsPreviousState,
+            CommandContext.Snapshot contextPreviousState, String flag) throws ArgumentParseException {
         context.putEntry(flag, args.nextIfPresent().map(x -> (Object) x).orElse(true));
     }
 

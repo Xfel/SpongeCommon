@@ -65,10 +65,10 @@ public class SpongeSequenceParameter implements Parameter {
     public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         for (Iterator<Parameter> it = this.parameters.iterator(); it.hasNext(); ) {
             Parameter element = it.next();
-            Object startState = args.getState();
+            CommandArgs.Snapshot startState = args.getState();
             try {
                 element.parse(source, args, context);
-                Object endState = args.getState();
+                CommandArgs.Snapshot endState = args.getState();
                 if (!args.hasNext()) {
                     args.setState(startState);
                     List<String> inputs = element.complete(source, args, context);

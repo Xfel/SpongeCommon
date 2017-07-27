@@ -66,8 +66,8 @@ public class SpongeFlags implements Flags {
         }
 
         // Avoiding APE
-        Object tokenizedPreviousState = args.getState();
-        Object contextPreviousState = context.getState();
+        CommandArgs.Snapshot tokenizedPreviousState = args.getState();
+        CommandContext.Snapshot contextPreviousState = context.getState();
         String next = args.next();
         if (next.startsWith("--")) {
             parseLong(next, source, args, context, tokenizedPreviousState, contextPreviousState);
@@ -76,8 +76,8 @@ public class SpongeFlags implements Flags {
         }
     }
 
-    private void parseShort(String flag, CommandSource source, CommandArgs args, CommandContext context, Object tokenizedPreviousState,
-            Object contextPreviousState) throws ArgumentParseException {
+    private void parseShort(String flag, CommandSource source, CommandArgs args, CommandContext context, CommandArgs.Snapshot tokenizedPreviousState,
+            CommandContext.Snapshot contextPreviousState) throws ArgumentParseException {
         char[] shortFlags = flag.substring(1).toLowerCase(Locale.ENGLISH).toCharArray();
 
         // -abc is parsed as -a -b -c
@@ -96,8 +96,8 @@ public class SpongeFlags implements Flags {
         }
     }
 
-    private void parseLong(String flag, CommandSource source, CommandArgs args, CommandContext context, Object tokenizedPreviousState,
-            Object contextPreviousState) throws ArgumentParseException {
+    private void parseLong(String flag, CommandSource source, CommandArgs args, CommandContext context, CommandArgs.Snapshot tokenizedPreviousState,
+            CommandContext.Snapshot contextPreviousState) throws ArgumentParseException {
         String longFlag = flag.substring(2).toLowerCase(Locale.ENGLISH);
         Parameter param = this.flags.get(longFlag);
         if (param == null) {
@@ -179,12 +179,12 @@ public class SpongeFlags implements Flags {
         }
 
         @Override
-        public Object getState() {
+        public Snapshot getState() {
             return this.args.getState();
         }
 
         @Override
-        public void setState(Object state) {
+        public void setState(Snapshot state) {
             // noop
         }
 

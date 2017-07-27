@@ -151,13 +151,13 @@ public class SpongeCommandContext implements CommandContext {
     }
 
     @Override
-    public Object getState() {
+    public Snapshot getState() {
         return new State(this.internalIdentifier, ImmutableMultimap.copyOf(this.parsedArgs), this.currentCommand);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setState(Object state) {
+    public void setState(Snapshot state) {
         Preconditions.checkArgument(state instanceof State, "This is not a state obtained from getState");
         State toRestore = (State) state;
         Preconditions.checkArgument(toRestore.internalIdentifier.equals(this.internalIdentifier), "This is not a state from this object");
@@ -165,7 +165,7 @@ public class SpongeCommandContext implements CommandContext {
         this.parsedArgs.clear();
         this.parsedArgs.putAll(((State) state).contextState);
 
-        this.currentCommand = currentCommand;
+        this.currentCommand = toRestore.currentCommand;
     }
 
     // Used for determining the current subcommand - if we know what it is.
@@ -177,7 +177,7 @@ public class SpongeCommandContext implements CommandContext {
         this.currentCommand = command;
     }
 
-    private static class State {
+    private static class State implements Snapshot {
         private final UUID internalIdentifier;
         private final Multimap<String, Object> contextState;
         @Nullable private final String currentCommand;

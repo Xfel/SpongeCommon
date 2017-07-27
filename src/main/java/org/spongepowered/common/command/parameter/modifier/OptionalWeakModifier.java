@@ -48,8 +48,8 @@ public class OptionalWeakModifier implements CatalogedValueParameterModifier {
     public void onParse(Text key, CommandSource source, CommandArgs args, CommandContext context, ParsingContext parsingContext)
             throws ArgumentParseException {
         if (args.hasNext()) {
-            Object state = args.getState();
-            Object contextState = context.getState();
+            CommandArgs.Snapshot state = args.getState();
+            CommandContext.Snapshot contextState = context.getState();
             try {
                 parsingContext.next();
             } catch (ArgumentParseException ex) {

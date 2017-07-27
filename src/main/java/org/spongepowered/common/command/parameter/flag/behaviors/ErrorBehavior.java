@@ -35,8 +35,8 @@ import org.spongepowered.api.command.parameter.token.CommandArgs;
 public class ErrorBehavior implements UnknownFlagBehavior {
 
     @Override
-    public void parse(CommandSource source, CommandArgs args, CommandContext context, Object tokenizedArgsPreviousState,
-            Object contextPreviousState, String flag) throws ArgumentParseException {
+    public void parse(CommandSource source, CommandArgs args, CommandContext context, CommandArgs.Snapshot tokenizedArgsPreviousState,
+            CommandContext.Snapshot contextPreviousState, String flag) throws ArgumentParseException {
         args.setState(tokenizedArgsPreviousState);
         throw args.createError(t("%s is not a valid flag", flag));
     }

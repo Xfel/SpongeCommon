@@ -49,8 +49,8 @@ class SpongeFirstOfParameter implements Parameter {
     public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         List<ArgumentParseException> exceptions = new ArrayList<>();
         for (Parameter parameter : this.parameters) {
-            Object argsState = args.getState();
-            Object contextState = context.getState();
+            CommandArgs.Snapshot argsState = args.getState();
+            CommandContext.Snapshot contextState = context.getState();
             try {
                 parameter.parse(source, args, context);
                 return;
@@ -68,7 +68,7 @@ class SpongeFirstOfParameter implements Parameter {
     public List<String> complete(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
         List<String> completions = new ArrayList<>();
         for (Parameter parameter : this.parameters) {
-            Object state = context.getState();
+            CommandContext.Snapshot state = context.getState();
             try {
                 completions.addAll(parameter.complete(source, args, context));
             } finally {
