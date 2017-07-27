@@ -67,6 +67,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class SpongeManagedCommand implements Command, Dispatcher {
@@ -79,8 +80,8 @@ public class SpongeManagedCommand implements Command, Dispatcher {
     private final Flags flags;
     private final CommandExecutor executor;
     @Nullable private final String permission;
-    @Nullable private final Text shortDescription;
-    @Nullable private final Text extendedDescription;
+    private final Function<CommandSource, Optional<Text>> shortDescription;
+    private final Function<CommandSource, Optional<Text>> extendedDescription;
     private final boolean requirePermissionForChildren;
 
     SpongeManagedCommand(Iterable<Parameter> parameters,
@@ -89,8 +90,8 @@ public class SpongeManagedCommand implements Command, Dispatcher {
             InputTokenizer inputTokenizer,
             Flags flags,
             CommandExecutor executor, @Nullable String permission,
-            @Nullable Text shortDescription,
-            @Nullable Text extendedDescription,
+            Function<CommandSource, Optional<Text>> shortDescription,
+            Function<CommandSource, Optional<Text>> extendedDescription,
             boolean requirePermissionForChildren) {
         this.parameters = Parameter.seq(parameters);
         this.childExceptionBehavior = childExceptionBehavior;
@@ -207,11 +208,11 @@ public class SpongeManagedCommand implements Command, Dispatcher {
 
     @Override
     public Optional<Text> getShortDescription(CommandSource source) {
-        return Optional.ofNullable(this.shortDescription);
+        return this.shortDescription.apply(source);
     }
 
     public Optional<Text> getExtendedDescription(CommandSource source) {
-        return Optional.ofNullable(this.extendedDescription);
+        return this.extendedDescription.apply(source);
     }
 
     @Override

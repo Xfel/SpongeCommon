@@ -33,6 +33,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.parameter.token.InputTokenizer;
 import org.spongepowered.api.command.parameter.token.InputTokenizers;
 import org.spongepowered.api.command.managed.ChildExceptionBehavior;
@@ -48,8 +49,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class SpongeCommandBuilder implements Command.Builder {
+
+    private static final Function<CommandSource, Optional<Text>> EMPTY_DESCRIPTION = commandSource -> Optional.empty();
 
     private static final CommandExecutor SUBCOMMAND_ONLY_EXECUTOR = (s, c) -> {
         // TODO: Make this better!
@@ -63,8 +68,8 @@ public class SpongeCommandBuilder implements Command.Builder {
     @Nullable private CommandExecutor executor = null;
     @Nullable private Flags flags = null;
     @Nullable private String permission = null;
-    @Nullable private Text shortDescription = null;
-    @Nullable private Text extendedDescription = null;
+    private Function<CommandSource, Optional<Text>> shortDescription = EMPTY_DESCRIPTION;
+    private Function<CommandSource, Optional<Text>> extendedDescription = EMPTY_DESCRIPTION;
     private boolean requirePermissionForChildren = true;
 
     @Override
@@ -92,20 +97,14 @@ public class SpongeCommandBuilder implements Command.Builder {
     }
 
     @Override
-    public Command.Builder setShortDescription(@Nullable Text description) {
-        this.shortDescription = description;
-        return this;
-    }
-
-    @Override
     public Command.Builder setExecutor(CommandExecutor executor) {
         this.executor = executor;
         return this;
     }
 
     @Override
-    public Command.Builder setExtendedDescription(@Nullable Text extendedDescription) {
-        this.extendedDescription = extendedDescription;
+    public Command.Builder setExtendedDescription(Function<CommandSource, Optional<Text>> extendedDescriptionFunction) {
+        this.extendedDescription = extendedDescriptionFunction;
         return this;
     }
 
@@ -130,6 +129,11 @@ public class SpongeCommandBuilder implements Command.Builder {
     @Override
     public Command.Builder setInputTokenizer(InputTokenizer tokenizer) {
         this.inputTokenizer = tokenizer;
+        return this;
+    }
+
+    @Override public Command.Builder setShortDescription(Function<CommandSource, Optional<Text>> descriptionFunction) {
+        this.shortDescription = descriptionFunction;
         return this;
     }
 
