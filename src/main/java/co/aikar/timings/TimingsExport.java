@@ -116,7 +116,7 @@ class TimingsExport extends Thread {
                 .add("maxmem", runtime.maxMemory())
                 .add("cpu", runtime.availableProcessors())
                 .add("runtime", ManagementFactory.getRuntimeMXBean().getUptime())
-                .add("setFlags", RUNTIME_FLAG_JOINER.join(runtimeBean.getInputArguments()))
+                .add("flags", RUNTIME_FLAG_JOINER.join(runtimeBean.getInputArguments()))
                 .add("gc", JSONUtil.mapArrayToObject(ManagementFactory.getGarbageCollectorMXBeans(), (input) -> {
                     return JSONUtil.singleObjectPair(input.getName(), JSONUtil.arrayOf(input.getCollectionCount(), input.getCollectionTime()));
                 })));
